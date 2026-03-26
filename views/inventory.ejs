@@ -8,4 +8,10 @@
     <% for (var i in inventory) {%>
        <p>ID: <%=inventory[i].ingredient_id%> Name: <%=inventory[i].ingredient%>, Quantity: <%=inventory[i].quantity%><p>
    <% } %>
+   <h2>Add New Ingredient</h2>
+   <form action="/add-ingredient" method="POST">
+    <input type="text" name="ingredient" placeholder="Ingredient Name" required>
+    <input type="number" name="quantity" placeholder="Quantity" required>
+    <button type="submit">Add to Inventory</button>
+</form>
 </body>

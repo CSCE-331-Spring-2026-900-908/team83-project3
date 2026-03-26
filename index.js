@@ -6,6 +6,8 @@ const dotenv = require('dotenv').config();
 const app = express();
 const port = 3000;
 app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -40,7 +42,7 @@ app.get('/', (req, res) => {
 app.get('/inventory', (req, res) => {
     inventory = []
     pool
-        .query('SELECT * FROM inventory;')
+        .query('SELECT * FROM inventory ORDER BY ingredient_id ASC;')
         .then(query_res => {
             for (let i = 0; i < query_res.rowCount; i++){
                 inventory.push(query_res.rows[i]);
@@ -51,6 +53,22 @@ app.get('/inventory', (req, res) => {
         });
 });
 
+//Handles adding an ingredient to the inventory
+app.post('/add-ingredient', (req, res) => {
+    const { ingredient, quantity } = req.body;
+
+    const query = 'INSERT INTO inventory (ingredient, quantity) VALUES ($1, $2)';
+    
+    pool.query(query, [ingredient, quantity])
+        .then(() => {
+            // After adding, send them back to the inventory page to see the update
+            res.redirect('/inventory');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error adding ingredient");
+        });
+});
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
