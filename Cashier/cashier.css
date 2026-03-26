@@ -1,0 +1,171 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #eeeeee; /* Light grey background from your image */
+    color: #333;
+    line-height: 1.6;
+}
+
+
+/* Navigation Bar */
+.navbar {
+    background-color: #1a1a1a;
+    padding: 1rem 2rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-item {
+    color: #bfbfbf;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: #ffffff;
+}
+
+
+/* Main Content Layout */
+.content-wrapper-active-orders {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin-left: 40px;
+}
+
+.content-wrapper-create-order {
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin-left: 40px;
+}
+
+.content-wrapper-cart {
+    padding: 40px 20px;
+    max-width: 800px;
+    margin-left: 40px;
+}
+
+/* Menu Grid Container */
+.menu-grid {
+    display: grid;
+    /* This tells the grid to make as many 200px columns as will fit */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Individual Menu Item Cards */
+.menu-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+}
+
+.menu-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.menu-item h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #111;
+}
+
+.menu-item .price {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #222;
+}
+
+
+.orders-container {
+    background-color: #f5f5f5; /* Slightly lighter grey than body */
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 20px;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Spacing between the inner boxes */
+}
+
+.order-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.order-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: #111;
+}
+
+/* Checklist Styling */
+.checklist {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.checklist li {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.checklist li::before {
+    content: "- "; 
+    margin-right: 8px;
+}
+
+.checklist input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* Buttons */
+.floating-cart-button {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.floating-cart-button:hover {
+    background-color: #000000;
+}
