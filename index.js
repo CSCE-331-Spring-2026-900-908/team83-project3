@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config();
 // Create express app
 const app = express();
 const port = 3000;
-
+app.set('view engine', 'ejs');
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -23,14 +23,7 @@ process.on('SIGINT', function() {
     process.exit(0);
 });
 	 	 	 	
-app.set("view engine", "ejs");
-
 app.get('/', (req, res) => {
-    const data = {name: 'Mario'};
-    res.render('index', data);
-});
-
-app.get('/user', (req, res) => {
     teammembers = []
     pool
         .query('SELECT * FROM teammembers;')
@@ -40,7 +33,21 @@ app.get('/user', (req, res) => {
             }
             const data = {teammembers: teammembers};
             console.log(teammembers);
-            res.render('user', data);
+            res.render('index', data);
+        });
+});
+
+app.get('/inventory', (req, res) => {
+    inventory = []
+    pool
+        .query('SELECT * FROM inventory;')
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                inventory.push(query_res.rows[i]);
+            }
+            const data = {inventory: inventory};
+            console.log(inventory);
+            res.render('inventory', data);
         });
 });
 
