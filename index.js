@@ -24,7 +24,8 @@ process.on('SIGINT', function() {
     console.log('Application successfully shutdown');
     process.exit(0);
 });
-	 	 	 	
+
+//Portal stuff
 app.get('/', (req, res) => {
     teammembers = []
     pool
@@ -35,10 +36,11 @@ app.get('/', (req, res) => {
             }
             const data = {teammembers: teammembers};
             console.log(teammembers);
-            res.render('index', data);
+            res.render('portal', data);
         });
 });
 
+//Initializes inventory
 app.get('/inventory', (req, res) => {
     inventory = []
     pool
@@ -69,6 +71,38 @@ app.post('/add-ingredient', (req, res) => {
             res.status(500).send("Error adding ingredient");
         });
 });
+
+//Initializes employee view table
+app.get('/employee', (req, res) => {
+    employees = []
+    pool
+        .query('SELECT * FROM employee ORDER BY employee_id ASC;')
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                employees.push(query_res.rows[i]);
+            }
+            const data = {employees: employees};
+            console.log(employees);
+            res.render('employees', data);
+        });
+});
+
+//Handles adding an employee to employee
+app.post('/add-employee', (req, res) => {
+    const { employee_name, hours } = req.body;
+
+    const query = 'INSERT INTO employees (employee_name, hours) VALUES ($1, $2)';
+    
+    pool.query(query, [employee_name, hours])
+        .then(() => {
+            res.redirect('/employee');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error adding employee");
+        });
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
