@@ -6,7 +6,12 @@
     <%- include('partials/navigation') %>
     <h1>Inventory</h1>
     <% for (var i in inventory) {%>
-       <p>ID: <%=inventory[i].ingredient_id%> Name: <%=inventory[i].ingredient%>, Quantity: <%=inventory[i].quantity%><p>
+        <p>ID: <%=inventory[i].ingredient_id%> Name: <%=inventory[i].ingredient%>, Quantity: <%=inventory[i].quantity%>
+        <form action="/delete-ingredient" method="POST" style="display:inline;">
+            <input type="hidden" name="ingredient" value="<%= inventory[i].ingredient %>">
+            <button type="submit">Delete</button>
+        </form>
+        <p>
    <% } %>
    <h2>Add New Ingredient</h2>
    <form action="/add-ingredient" method="POST">

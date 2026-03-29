@@ -6,12 +6,18 @@
     <%- include('partials/navigation') %>
     <h1>Employees</h1>
     <% for (var i in employees) {%>
-       <p>ID: <%=employees[i].employee_id%> Name: <%=employees[i].employee_name%>, Quantity: <%=employee[i].hours%><p>
+       <p>ID: <%=employees[i].employee_id%> Name: <%=employees[i].employee_name%>, Hours: <%=employees[i].hours%>
+        <form action="/delete-employee" method="POST" style="display:inline;">
+            <input type="hidden" name="employee_id" value="<%= employees[i].employee_id %>">
+            <button type="submit">Delete</button>
+        </form>
+        <p>
    <% } %>
    <h2>Add New Employee</h2>
    <form action="/add-employee" method="POST">
-    <input type="text" name="ingredient" placeholder="Ingredient Name" required>
-    <input type="number" name="quantity" placeholder="Quantity" required>
+    <input type="number" name="employee_id" placeholder="Employee ID" required>
+    <input type="text" name="employee_name" placeholder="Employee Name" required>
+    <input type="number" name="hours" placeholder="hours" required>
     <button type="submit">Add to Employee</button>
 </form>
 </body>
