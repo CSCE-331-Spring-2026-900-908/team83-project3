@@ -52,7 +52,7 @@ app.get('/inventory', (req, res) => {
             }
             const data = {inventory: inventory};
             console.log(inventory);
-            res.render('inventory', data);
+            res.render('Manager/inventory', data);
         });
 });
 
@@ -64,7 +64,7 @@ app.post('/add-ingredient', (req, res) => {
     
     pool.query(query, [ingredient, quantity])
         .then(() => {
-            res.redirect('/inventory');
+            res.redirect('Manager/inventory');
         })
         .catch(err => {
             console.error(err);
@@ -80,7 +80,7 @@ app.post('/delete-ingredient', (req, res) => {
 
     pool.query(query, [ingredient])
         .then(() => {
-            res.redirect('/inventory');
+            res.redirect('Manager/inventory');
         })
         .catch(err => {
             console.error(err);
@@ -99,7 +99,7 @@ app.get('/employee', (req, res) => {
             }
             const data = {employees: employees};
             console.log(employees);
-            res.render('employee', data);
+            res.render('Manager/employee', data);
         });
 });
 
@@ -111,7 +111,7 @@ app.post('/add-employee', (req, res) => {
     
     pool.query(query, [employee_id, employee_name, hours])
         .then(() => {
-            res.redirect('/employee');
+            res.redirect('Manager/employee');
         })
         .catch(err => {
             console.error(err);
@@ -127,7 +127,7 @@ app.post('/delete-employee', (req, res) => {
 
     pool.query(query, [employee_id])
         .then(() => {
-            res.redirect('/employee');
+            res.redirect('Manager/employee');
         })
         .catch(err => {
             console.error(err);
