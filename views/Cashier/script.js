@@ -54,7 +54,6 @@ function removeItem(index) {
     displayCart();
 }
 
-// THE BIG ONE: Send data to the database/server
 async function checkout() {
     const cart = JSON.parse(localStorage.getItem('cart'));
     

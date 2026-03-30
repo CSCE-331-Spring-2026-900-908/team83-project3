@@ -130,8 +130,7 @@ app.post('/api/complete-order/:id', async (req, res) => {
         const orderToSave = activeOrders[orderIndex];
 
         try {
-            // EXAMPLE: Saving the total to a 'sales' or 'history' table
-            // You'll need to adjust this to match your actual table columns
+            
             const total = orderToSave.items.reduce((sum, item) => sum + Number(item.price), 0);
             
             await pool.query('INSERT INTO order_history (order_id, total_price) VALUES ($1, $2)', [orderToSave.id, total]);
