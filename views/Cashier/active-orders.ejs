@@ -1,26 +1,43 @@
 <html>
     <head>
         <title>Active Orders</title>
-        <link rel="stylesheet" href="./cashier.css">
+        <link rel="stylesheet" href="/cashier/cashier.css">
     </head>
     <body>
+    <%- include('../partials/navigation-cashier') %>
 
-        <nav class="navbar">
-            <div class="nav-links">
-                <a href="order-screen.html" class="nav-item">Create Order</a>
-                <a href="active-orders.html" class="nav-item">Active Orders</a>
-            </div>
-        </nav>
+    <main class="content-wrapper-active-orders">
+        <h1 class="page-title">Active Orders</h1>
+        
+        <div class="orders-container">
+            <% if (orders.length === 0) { %>
+                <p>No active orders at the moment.</p>
+            <% } else { %>
+                <% orders.forEach(order => { %>
+                    <div class="order-card" id="order-<%= order.id %>">
+                        <h3>Order #<%= order.id %></h3>
+                        <ul>
+                            <% order.items.forEach(item => { %>
+                                <li>- <%= item.name %>: $<%= Number(item.price).toFixed(2) %></li>
+                            <% }); %>
+                        </ul>
+                        <button class="complete-btn" onclick="completeOrder(<%= order.id %>)">Order Complete</button>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+    </main>
 
-        <main class="content-wrapper-active-orders">
-            <h1 class="page-title">Active Orders</h1>
-
-            <section id="orders-display-area" class="orders-container">
-                </section>
-        </main>
-
-        <a href="cart.html" class="floating-cart-button">View Cart</a>
-
-        <script src="script.js"></script>
+    <script>
+        async function completeOrder(orderId) {
+            // Send request to server to save this order to the DB and remove it from the list
+            const response = await fetch(`/api/complete-order/${orderId}`, { method: 'POST' });
+            
+            if (response.ok) {
+                // Remove the card from the UI
+                document.getElementById(`order-${orderId}`).remove();
+            }
+        }
+    </script>
     </body>
 </html>

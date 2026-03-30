@@ -1,25 +1,26 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Cart</title>
-        <link rel="stylesheet" href="./cashier.css">
-    </head>
-    <body>
+<head>
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="/cashier/cashier.css">
+</head>
+<body>
+    <%- include('../partials/navigation-cashier') %>
 
-        <nav class="navbar">
-            <div class="nav-links">
-                <a href="order-screen.html" class="nav-item">Create Order</a>
-                <a href="active-orders.html" class="nav-item">Active Orders</a>
-            </div>
-        </nav>
+    <main class="content-wrapper">
+        <h1 class="page-title">Cart</h1>
+        
+        <div id="cart-container" class="cart-container"></div>
 
-        <main class="content-wrapper-cart">
-            <h1 class="page-title">Cart</h1>
+        <div class="cart-actions">
+            <button id="checkout-btn" class="checkout-button" onclick="checkout()">Checkout</button>
+        </div>
+    </main>
 
-            <section id="cart-items" class="cart-container">
-                </section>
-        </main>
-
-
-        <script src="script.js"></script>
-    </body>
+    <script src="/cashier/script.js"></script>
+    <script>
+        // Run this as soon as the page loads to show the items
+        displayCart();
+    </script>
+</body>
 </html>
