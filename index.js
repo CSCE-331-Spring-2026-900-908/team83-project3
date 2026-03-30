@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
             }
             const data = {teammembers: teammembers};
             console.log(teammembers);
-            res.render('portal', data);
+            res.render('Portal/portal', data);
         });
 });
 
@@ -52,7 +52,7 @@ app.get('/inventory', (req, res) => {
             }
             const data = {inventory: inventory};
             console.log(inventory);
-            res.render('inventory', data);
+            res.render('Manager/inventory', data);
         });
 });
 
@@ -64,7 +64,7 @@ app.post('/add-ingredient', (req, res) => {
     
     pool.query(query, [ingredient, quantity])
         .then(() => {
-            res.redirect('/inventory');
+            res.redirect('Manager/inventory');
         })
         .catch(err => {
             console.error(err);
@@ -80,7 +80,7 @@ app.post('/delete-ingredient', (req, res) => {
 
     pool.query(query, [ingredient])
         .then(() => {
-            res.redirect('/inventory');
+            res.redirect('Manager/inventory');
         })
         .catch(err => {
             console.error(err);
@@ -99,7 +99,7 @@ app.get('/employee', (req, res) => {
             }
             const data = {employees: employees};
             console.log(employees);
-            res.render('employee', data);
+            res.render('Manager/employee', data);
         });
 });
 
@@ -111,7 +111,7 @@ app.post('/add-employee', (req, res) => {
     
     pool.query(query, [employee_id, employee_name, hours])
         .then(() => {
-            res.redirect('/employee');
+            res.redirect('Manager/employee');
         })
         .catch(err => {
             console.error(err);
@@ -127,13 +127,60 @@ app.post('/delete-employee', (req, res) => {
 
     pool.query(query, [employee_id])
         .then(() => {
-            res.redirect('/employee');
+            res.redirect('Manager/employee');
         })
         .catch(err => {
             console.error(err);
             res.status(500).send("Error deleting employee");
         });
 });
+
+//Initializes menu view table
+app.get('/menu', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(result => {
+            res.render('Manager/menu', { menu: result.rows });
+        })
+        .catch(err => {
+            console.error("Error loading menu:", err);
+            res.status(500).send("Error loading menu");
+        });
+});
+
+//Handles adding a menu item to menu
+app.post('/add-menu-item', (req, res) => {
+    const { item_name, cost, ingredients } = req.body;
+
+    const query = `
+        INSERT INTO menu (item_name, cost, ingredients)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (item_name) DO UPDATE
+        SET cost = EXCLUDED.cost,
+            ingredients = EXCLUDED.ingredients
+    `;
+
+    pool.query(query, [item_name, cost, ingredients])
+        .then(() => res.redirect('/menu'))
+        .catch(err => {
+            console.error("Error saving menu item:", err);
+            res.status(500).send("Error saving menu item");
+        });
+});
+
+//Delete a menu item
+app.post('/delete-menu-item', (req, res) => {
+    const { item_id } = req.body;
+
+    const query = "DELETE FROM menu WHERE item_id = $1";
+
+    pool.query(query, [item_id])
+        .then(() => res.redirect('/menu'))
+        .catch(err => {
+            console.error("Error deleting menu item:", err);
+            res.status(500).send("Error deleting menu item");
+        });
+});
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
