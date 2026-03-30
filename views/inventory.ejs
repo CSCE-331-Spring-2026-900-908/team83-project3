@@ -5,9 +5,30 @@
 <body>
     <%- include('partials/navigation') %>
     <h1>Inventory</h1>
-    <% for (var i in inventory) {%>
-       <p>ID: <%=inventory[i].ingredient_id%> Name: <%=inventory[i].ingredient%>, Quantity: <%=inventory[i].quantity%><p>
-   <% } %>
+        <table class="inventoryTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ingredient Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% inventory.forEach(item => { %>
+                <tr>
+                    <td><%= item.ingredient_id%></td>
+                    <td><%= item.ingredient%></td>
+                    <td><%= item.quantity%></td>
+                    <td>
+                    <form action="/delete-ingredient" method="POST" style="display:inline;">
+                        <input type="hidden" name="ingredient" value="<%= item.ingredient %>">
+                        <button type="submit">Delete</button>
+                    </form>
+                    </td>
+                </tr>
+            <% }); %>
+            </tbody>
+        </table>
    <h2>Add New Ingredient</h2>
    <form action="/add-ingredient" method="POST">
     <input type="text" name="ingredient" placeholder="Ingredient Name" required>

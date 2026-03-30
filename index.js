@@ -4,7 +4,7 @@ const dotenv = require('dotenv').config();
 
 // Create express app
 const app = express();
-const port = 3000;
+const port = 5500;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -24,7 +24,8 @@ process.on('SIGINT', function() {
     console.log('Application successfully shutdown');
     process.exit(0);
 });
-	 	 	 	
+
+//Portal stuff
 app.get('/', (req, res) => {
     teammembers = []
     pool
@@ -35,10 +36,11 @@ app.get('/', (req, res) => {
             }
             const data = {teammembers: teammembers};
             console.log(teammembers);
-            res.render('index', data);
+            res.render('portal', data);
         });
 });
 
+//Initializes inventory
 app.get('/inventory', (req, res) => {
     inventory = []
     pool
@@ -61,7 +63,6 @@ app.post('/add-ingredient', (req, res) => {
     
     pool.query(query, [ingredient, quantity])
         .then(() => {
-            // After adding, send them back to the inventory page to see the update
             res.redirect('/inventory');
         })
         .catch(err => {
@@ -69,6 +70,70 @@ app.post('/add-ingredient', (req, res) => {
             res.status(500).send("Error adding ingredient");
         });
 });
+
+//delete ingredient
+app.post('/delete-ingredient', (req, res) => {
+    const {ingredient} = req.body;
+
+    const query = "DELETE FROM inventory WHERE ingredient = $1";
+
+    pool.query(query, [ingredient])
+        .then(() => {
+            res.redirect('/inventory');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error deleting ingredient");
+        });
+});
+
+//Initializes employee view table
+app.get('/employee', (req, res) => {
+    employees = []
+    pool
+        .query('SELECT * FROM employees ORDER BY employee_id ASC;')
+        .then(query_res => {
+            for (let i = 0; i < query_res.rowCount; i++){
+                employees.push(query_res.rows[i]);
+            }
+            const data = {employees: employees};
+            console.log(employees);
+            res.render('employee', data);
+        });
+});
+
+//Handles adding an employee to employee
+app.post('/add-employee', (req, res) => {
+    const { employee_id, employee_name, hours } = req.body;
+
+    const query = "INSERT INTO employees (employee_id, employee_name, hours) VALUES ($1, $2, $3) ON CONFLICT (employee_id) DO UPDATE SET employee_name = EXCLUDED.employee_name, hours = EXCLUDED.hours";
+    
+    pool.query(query, [employee_id, employee_name, hours])
+        .then(() => {
+            res.redirect('/employee');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error adding employee");
+        });
+});
+
+//Delete an employee
+app.post('/delete-employee', (req, res) => {
+    const {employee_id} = req.body;
+
+    const query = "DELETE FROM employees WHERE employee_id = $1";
+
+    pool.query(query, [employee_id])
+        .then(() => {
+            res.redirect('/employee');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error deleting employee");
+        });
+});
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
