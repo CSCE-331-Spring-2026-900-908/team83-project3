@@ -1,25 +1,24 @@
 <html>
     <head>
         <title>Create Order</title>
-        <link rel="stylesheet" href="./cashier.css">
+        <link rel="stylesheet" href="/cashier/cashier.css">
     </head>
     <body>
-
-        <nav class="navbar">
-            <div class="nav-links">
-                <a href="order-screen.html" class="nav-item">Create Order</a>
-                <a href="active-orders.html" class="nav-item">Active Orders</a>
-            </div>
-        </nav>
+        <%- include('../partials/navigation-cashier') %>
 
         <main class="content-wrapper-create-order">
             <h1 class="page-title">Menu</h1>
-            <section id="menu-area" class="menu-grid">
-                </section>
-        </main>
-
-        <a href="cart.html" class="floating-cart-button">View Cart</a>
-
-        <script src="script.js"></script>
+            
+            <section class="menu-grid">
+                <% items.forEach(item => { %>
+                    <div class="menu-item" onclick="addToCart('<%= item.item_name %>', <%= item.cost %>)">
+                        <h3><%= item.item_name %></h3>
+                        
+                        <p class="price">$<%= item.cost ? Number(item.cost).toFixed(2) : "0.00" %></p>
+                    </div>
+                <% }); %>
+            </section> </main>
+            <a href="/cart" class="floating-cart-button">View Cart (0 items)</a>
+        <script src="/cashier/script.js"></script>
     </body>
 </html>

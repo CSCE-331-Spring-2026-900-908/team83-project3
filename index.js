@@ -8,6 +8,7 @@ const port = 5500;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use('/cashier', express.static('views/Cashier'));
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -136,4 +137,77 @@ app.post('/delete-employee', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
+});
+
+
+/** CASHIER VIEW */
+let activeOrders = []
+let orderCounter = 1; // Simple counter to assign order IDs
+
+app.get('/order-screen', (req, res) => {
+    // Make sure this table name matches 'menu' from your screenshot
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;') 
+        .then(query_res => {
+            res.render('Cashier/order-screen', { items: query_res.rows });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error fetching menu items");
+        });
+});
+
+app.get('/active-orders', (req, res) => {
+    // Pass the activeOrders array to the EJS template
+    res.render('Cashier/active-orders', { orders: activeOrders });
+});
+
+app.get('/cart', (req, res) => {
+    // We don't need to pass database items here yet, 
+    // because the cart lives in the browser's LocalStorage!
+    res.render('Cashier/cart'); 
+});
+
+app.post('/api/checkout', (req, res) => {
+    const { items } = req.body;
+
+    if (!items || items.length === 0) {
+        return res.status(400).send("No items in cart");
+    }
+
+    // Create a new order object for the active list
+    const newOrder = {
+        id: orderCounter++,
+        items: items, // This is the array of {name, price}
+        timestamp: new Date().toLocaleString()
+    };
+
+    activeOrders.push(newOrder);
+    console.log(`Order #${newOrder.id} added to active orders.`);
+    
+    res.status(200).json({ success: true });
+});
+
+app.post('/api/complete-order/:id', async (req, res) => {
+    const orderId = parseInt(req.params.id);
+    const orderIndex = activeOrders.findIndex(o => o.id === orderId);
+
+    if (orderIndex > -1) {
+        const orderToSave = activeOrders[orderIndex];
+
+        try {
+            
+            const total = orderToSave.items.reduce((sum, item) => sum + Number(item.price), 0);
+            
+            await pool.query('INSERT INTO order_history (order_id, total_price) VALUES ($1, $2)', [orderToSave.id, total]);
+
+            // Remove from temporary server list
+            activeOrders.splice(orderIndex, 1);
+            res.status(200).send("Order finalized and saved to DB");
+        } catch (err) {
+            console.error(err);
+            res.status(500).send("Error saving to database");
+        }
+    } else {
+        res.status(404).send("Order not found");
+    }
 });
