@@ -1,5 +1,11 @@
-<h1>Menu</h1>
+<!DOCTYPE html>
+<head>
+    <title>Menu</title>
+</head>
 
+<body>
+<%- include('../partials/navigation') %>
+<h1>Menu</h1>
 <table border="1">
     <tr>
         <th>ID</th>
@@ -8,7 +14,6 @@
         <th>Ingredients</th>
         <th>Delete</th>
     </tr>
-
     <% menu.forEach(item => { %>
         <tr>
             <td><%= item.item_id %></td>
@@ -33,3 +38,4 @@
     <input type="text" name="ingredients" placeholder="Ingredients">
     <button type="submit">Save</button>
 </form>
+</body>

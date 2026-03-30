@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
             }
             const data = {teammembers: teammembers};
             console.log(teammembers);
-            res.render('portal', data);
+            res.render('Portal/portal', data);
         });
 });
 
@@ -51,7 +51,7 @@ app.get('/inventory', (req, res) => {
             }
             const data = {inventory: inventory};
             console.log(inventory);
-            res.render('inventory', data);
+            res.render('Manager/inventory', data);
         });
 });
 
@@ -98,7 +98,7 @@ app.get('/employee', (req, res) => {
             }
             const data = {employees: employees};
             console.log(employees);
-            res.render('employee', data);
+            res.render('Manager/employee', data);
         });
 });
 
