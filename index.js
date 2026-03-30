@@ -64,7 +64,7 @@ app.post('/add-ingredient', (req, res) => {
     
     pool.query(query, [ingredient, quantity])
         .then(() => {
-            res.redirect('Manager/inventory');
+            res.redirect('/inventory');
         })
         .catch(err => {
             console.error(err);
@@ -80,11 +80,25 @@ app.post('/delete-ingredient', (req, res) => {
 
     pool.query(query, [ingredient])
         .then(() => {
-            res.redirect('Manager/inventory');
+            res.redirect('/inventory');
         })
         .catch(err => {
             console.error(err);
             res.status(500).send("Error deleting ingredient");
+        });
+});
+
+//update ingredient quantity
+app.post('/update-ingredient', (req, res) => {
+    const {ingredient_id, quantity} = req.body;
+    const query = "UPDATE inventory SET quantity = $2 WHERE ingredient_id = $1";
+    pool.query(query, [ingredient_id, quantity])
+        .then(() => {
+            res.redirect('/inventory');
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error updating quantity");
         });
 });
 
@@ -111,7 +125,7 @@ app.post('/add-employee', (req, res) => {
     
     pool.query(query, [employee_id, employee_name, hours])
         .then(() => {
-            res.redirect('Manager/employee');
+            res.redirect('/employee');
         })
         .catch(err => {
             console.error(err);
@@ -127,7 +141,7 @@ app.post('/delete-employee', (req, res) => {
 
     pool.query(query, [employee_id])
         .then(() => {
-            res.redirect('Manager/employee');
+            res.redirect('/employee');
         })
         .catch(err => {
             console.error(err);
