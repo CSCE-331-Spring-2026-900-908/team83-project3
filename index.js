@@ -134,6 +134,53 @@ app.post('/delete-employee', (req, res) => {
         });
 });
 
+//Initializes menu view table
+app.get('/menu', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(result => {
+            res.render('Manager/menu', { menu: result.rows });
+        })
+        .catch(err => {
+            console.error("Error loading menu:", err);
+            res.status(500).send("Error loading menu");
+        });
+});
+
+//Handles adding a menu item to menu
+app.post('/add-menu-item', (req, res) => {
+    const { item_name, cost, ingredients } = req.body;
+
+    const query = `
+        INSERT INTO menu (item_name, cost, ingredients)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (item_name) DO UPDATE
+        SET cost = EXCLUDED.cost,
+            ingredients = EXCLUDED.ingredients
+    `;
+
+    pool.query(query, [item_name, cost, ingredients])
+        .then(() => res.redirect('/menu'))
+        .catch(err => {
+            console.error("Error saving menu item:", err);
+            res.status(500).send("Error saving menu item");
+        });
+});
+
+//Delete a menu item
+app.post('/delete-menu-item', (req, res) => {
+    const { item_id } = req.body;
+
+    const query = "DELETE FROM menu WHERE item_id = $1";
+
+    pool.query(query, [item_id])
+        .then(() => res.redirect('/menu'))
+        .catch(err => {
+            console.error("Error deleting menu item:", err);
+            res.status(500).send("Error deleting menu item");
+        });
+});
+
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
