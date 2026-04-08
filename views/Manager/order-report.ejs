@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Reports</title>
+</head>
+
+<body>
+    <%- include('../partials/navigation-manager') %>
+
+    <h1>Order Reports</h1>
+
+    <label>Date:</label>
+    <input type="date" id="reportDate">
+
+    <label>Hour:</label>
+    <input type="number" id="reportHour" min="0" max="23">
+
+    <button onclick="runXReport()">Run X Report</button>
+    <button onclick="runZReport()">Run Z Report</button>
+
+    <h2>X Report</h2>
+    <table id="xReportTable" border="1">
+        <tr><th>Hour</th><th>Quantity</th><th>Subtotal</th></tr>
+    </table>
+
+    <h2>Z Report</h2>
+    <div id="zReport"></div>
+
+    <script>
+        async function runXReport() {
+            const date = document.getElementById("reportDate").value;
+            const hour = document.getElementById("reportHour").value;
+
+            const res = await fetch('/api/x-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date, hour })
+            });
+
+            const data = await res.json();
+            const table = document.getElementById("xReportTable");
+
+            table.innerHTML = "<tr><th>Hour</th><th>Quantity</th><th>Subtotal</th></tr>";
+
+            data.rows.forEach(r => {
+                table.innerHTML += `
+                    <tr>
+                        <td>${r.hour}</td>
+                        <td>${r.quantity}</td>
+                        <td>${r.subtotal}</td>
+                    </tr>`;
+            });
+        }
+
+        async function runZReport() {
+            const date = document.getElementById("reportDate").value;
+
+            const res = await fetch('/api/z-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date })
+            });
+
+            const data = await res.json();
+            document.getElementById("zReport").innerHTML =
+                `Total Quantity: ${data.total_quantity}<br>
+                 Total Sales: $${data.total_sales}`;
+        }
+    </script>
+</body>
+</html>
