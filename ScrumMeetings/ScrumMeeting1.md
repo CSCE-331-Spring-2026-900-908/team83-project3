@@ -1,5 +1,6 @@
 # SCRUM Meeting 1 for Project 3
 Prepared by: Robbie Hahn
+
 Meeting Date: 3-26-2026
 
 ## Meeting Attendees
