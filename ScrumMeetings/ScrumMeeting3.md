@@ -37,9 +37,11 @@ Meeting Date: 3-29-2026
 ## Before the Next Meeting
 
 ### Plans
-●  Finalize the Cashier page
-●  Finalize Manager page
-●  Make the Customer page
+● Finalize the Cashier page
+
+● Finalize Manager page
+
+● Make the Customer page
 
 
 
