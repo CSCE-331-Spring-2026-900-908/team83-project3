@@ -1,5 +1,6 @@
 # SCRUM Meeting 3 for Project 3
 Prepared by: Matthew Payne
+
 Meeting Date: 3-29-2026
 
 ## Meeting Attendees
@@ -11,6 +12,7 @@ Meeting Date: 3-29-2026
 
 ## Meeting Agenda Items
 ●  Last Minute Check In
+
 ●  Have people help those who are struggling
 
 
@@ -20,6 +22,7 @@ Meeting Date: 3-29-2026
 
 ### Accomplishments
 ●  Made a Barebone Manager Page
+
 ●  Made a Barebone Cashier Page
 
 
@@ -34,8 +37,8 @@ Meeting Date: 3-29-2026
 ## Before the Next Meeting
 
 ### Plans
-●  Finilize the Cashier page
-●  Finilize Manager page
+●  Finalize the Cashier page
+●  Finalize Manager page
 ●  Make the Customer page
 
 
@@ -52,7 +55,7 @@ Meeting Date: 3-29-2026
 ---
 
 ## Minutes from Previous Meeting
-Summarize discussion in paragraph form from the previous meeting.
+Summarize the discussion in paragraph form from the previous meeting.
 
 The tasks were split according to what people worked on in Project 2.
 Team members were expected to have an MVP for the demo on Monday.
