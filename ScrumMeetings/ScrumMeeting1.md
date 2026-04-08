@@ -11,6 +11,7 @@ Meeting Date: 3-26-2026
 
 ## Meeting Agenda Items
 ●  Tallying Goals
+
 ●  Planning Tasks
 
 
@@ -20,6 +21,7 @@ Meeting Date: 3-26-2026
 
 ### Accomplishments
 ●  N/A
+
 ●  N/A
 
 ### Tasks Completed
