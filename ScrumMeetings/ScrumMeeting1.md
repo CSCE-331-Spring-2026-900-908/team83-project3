@@ -37,7 +37,9 @@ Meeting Date: 3-26-2026
 
 ### Plans
 ●  Make the Login page
+
 ●  Make the Cashier page
+
 ●  Make the Manager page
 
 
