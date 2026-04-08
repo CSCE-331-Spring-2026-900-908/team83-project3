@@ -1,5 +1,6 @@
 # SCRUM Meeting 2 for Project 3
 Prepared by: Aedan Darbonne
+
 Meeting Date: 3-28-2026
 
 ## Meeting Attendees
