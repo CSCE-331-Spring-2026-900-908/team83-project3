@@ -10,7 +10,8 @@ Meeting Date: 3-28-2026
 5. Varun Dubagunta
 
 ## Meeting Agenda Items
-●  Finilize Demo items
+●  Finalize Demo items
+
 ●  Organize the file structure 
 
 
@@ -20,6 +21,7 @@ Meeting Date: 3-28-2026
 
 ### Accomplishments
 ●  Finished the Portal Page
+
 ●  Get everyone's environment working
 
 ### Tasks Completed
