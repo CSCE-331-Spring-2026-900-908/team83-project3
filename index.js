@@ -8,7 +8,10 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.use('/cashier', express.static('views/Cashier'));
+app.use('/customer', express.static('views/Customer'));
+
 // Create pool
 const pool = new Pool({
     user: process.env.PSQL_USER,
@@ -16,11 +19,11 @@ const pool = new Pool({
     database: process.env.PSQL_DATABASE,
     password: process.env.PSQL_PASSWORD,
     port: process.env.PSQL_PORT,
-    ssl: {rejectUnauthorized: false}
+    ssl: { rejectUnauthorized: false }
 });
 
 // Add process hook to shutdown pool
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
     pool.end();
     console.log('Application successfully shutdown');
     process.exit(0);
@@ -28,14 +31,14 @@ process.on('SIGINT', function() {
 
 //Portal stuff
 app.get('/', (req, res) => {
-    teammembers = []
+    teammembers = [];
     pool
         .query('SELECT * FROM teammembers;')
         .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
+            for (let i = 0; i < query_res.rowCount; i++) {
                 teammembers.push(query_res.rows[i]);
             }
-            const data = {teammembers: teammembers};
+            const data = { teammembers: teammembers };
             console.log(teammembers);
             res.render('Portal/portal', data);
         });
@@ -43,14 +46,14 @@ app.get('/', (req, res) => {
 
 //Initializes inventory
 app.get('/inventory', (req, res) => {
-    inventory = []
+    inventory = [];
     pool
         .query('SELECT * FROM inventory ORDER BY ingredient_id ASC;')
         .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
+            for (let i = 0; i < query_res.rowCount; i++) {
                 inventory.push(query_res.rows[i]);
             }
-            const data = {inventory: inventory};
+            const data = { inventory: inventory };
             console.log(inventory);
             res.render('Manager/inventory', data);
         });
@@ -59,13 +62,9 @@ app.get('/inventory', (req, res) => {
 //Handles adding an ingredient to the inventory
 app.post('/add-ingredient', (req, res) => {
     const { ingredient, quantity } = req.body;
-
     const query = 'INSERT INTO inventory (ingredient, quantity) VALUES ($1, $2)';
-    
     pool.query(query, [ingredient, quantity])
-        .then(() => {
-            res.redirect('/inventory');
-        })
+        .then(() => res.redirect('/inventory'))
         .catch(err => {
             console.error(err);
             res.status(500).send("Error adding ingredient");
@@ -74,14 +73,10 @@ app.post('/add-ingredient', (req, res) => {
 
 //delete ingredient
 app.post('/delete-ingredient', (req, res) => {
-    const {ingredient} = req.body;
-
+    const { ingredient } = req.body;
     const query = "DELETE FROM inventory WHERE ingredient = $1";
-
     pool.query(query, [ingredient])
-        .then(() => {
-            res.redirect('/inventory');
-        })
+        .then(() => res.redirect('/inventory'))
         .catch(err => {
             console.error(err);
             res.status(500).send("Error deleting ingredient");
@@ -90,12 +85,10 @@ app.post('/delete-ingredient', (req, res) => {
 
 //update ingredient quantity
 app.post('/update-ingredient', (req, res) => {
-    const {ingredient_id, quantity} = req.body;
+    const { ingredient_id, quantity } = req.body;
     const query = "UPDATE inventory SET quantity = $2 WHERE ingredient_id = $1";
     pool.query(query, [ingredient_id, quantity])
-        .then(() => {
-            res.redirect('/inventory');
-        })
+        .then(() => res.redirect('/inventory'))
         .catch(err => {
             console.error(err);
             res.status(500).send("Error updating quantity");
@@ -104,14 +97,14 @@ app.post('/update-ingredient', (req, res) => {
 
 //Initializes employee view table
 app.get('/employee', (req, res) => {
-    employees = []
+    employees = [];
     pool
         .query('SELECT * FROM employees ORDER BY employee_id ASC;')
         .then(query_res => {
-            for (let i = 0; i < query_res.rowCount; i++){
+            for (let i = 0; i < query_res.rowCount; i++) {
                 employees.push(query_res.rows[i]);
             }
-            const data = {employees: employees};
+            const data = { employees: employees };
             console.log(employees);
             res.render('Manager/employee', data);
         });
@@ -120,13 +113,9 @@ app.get('/employee', (req, res) => {
 //Handles adding an employee to employee
 app.post('/add-employee', (req, res) => {
     const { employee_id, employee_name, hours } = req.body;
-
     const query = "INSERT INTO employees (employee_id, employee_name, hours) VALUES ($1, $2, $3) ON CONFLICT (employee_id) DO UPDATE SET employee_name = EXCLUDED.employee_name, hours = EXCLUDED.hours";
-    
     pool.query(query, [employee_id, employee_name, hours])
-        .then(() => {
-            res.redirect('/employee');
-        })
+        .then(() => res.redirect('/employee'))
         .catch(err => {
             console.error(err);
             res.status(500).send("Error adding employee");
@@ -135,14 +124,10 @@ app.post('/add-employee', (req, res) => {
 
 //Delete an employee
 app.post('/delete-employee', (req, res) => {
-    const {employee_id} = req.body;
-
+    const { employee_id } = req.body;
     const query = "DELETE FROM employees WHERE employee_id = $1";
-
     pool.query(query, [employee_id])
-        .then(() => {
-            res.redirect('/employee');
-        })
+        .then(() => res.redirect('/employee'))
         .catch(err => {
             console.error(err);
             res.status(500).send("Error deleting employee");
@@ -164,7 +149,6 @@ app.get('/menu', (req, res) => {
 //Handles adding a menu item to menu
 app.post('/add-menu-item', (req, res) => {
     const { item_name, cost, ingredients } = req.body;
-
     const query = `
         INSERT INTO menu (item_name, cost, ingredients)
         VALUES ($1, $2, $3)
@@ -172,7 +156,6 @@ app.post('/add-menu-item', (req, res) => {
         SET cost = EXCLUDED.cost,
             ingredients = EXCLUDED.ingredients
     `;
-
     pool.query(query, [item_name, cost, ingredients])
         .then(() => res.redirect('/menu'))
         .catch(err => {
@@ -184,9 +167,7 @@ app.post('/add-menu-item', (req, res) => {
 //Delete a menu item
 app.post('/delete-menu-item', (req, res) => {
     const { item_id } = req.body;
-
     const query = "DELETE FROM menu WHERE item_id = $1";
-
     pool.query(query, [item_id])
         .then(() => res.redirect('/menu'))
         .catch(err => {
@@ -195,18 +176,12 @@ app.post('/delete-menu-item', (req, res) => {
         });
 });
 
-
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});
-
-
 /** CASHIER VIEW */
-let activeOrders = []
+let activeOrders = [];
 let orderCounter = 1; // Simple counter to assign order IDs
 
 app.get('/cashier-order-screen', (req, res) => {
-    pool.query('SELECT * FROM menu ORDER BY item_id ASC;') 
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
             res.render('Cashier/cashier-order-screen', { items: query_res.rows });
         })
@@ -217,33 +192,27 @@ app.get('/cashier-order-screen', (req, res) => {
 });
 
 app.get('/active-orders', (req, res) => {
-    // Pass the activeOrders array to the EJS template
     res.render('Cashier/active-orders', { orders: activeOrders });
 });
 
 app.get('/cart', (req, res) => {
-    // We don't need to pass database items here yet, 
-    // because the cart lives in the browser's Local Storage
-    res.render('Cashier/cart'); 
+    res.render('Cashier/cart');
 });
 
 app.post('/api/checkout', (req, res) => {
     const { items } = req.body;
-
     if (!items || items.length === 0) {
         return res.status(400).send("No items in cart");
     }
 
-    // Create a new order object for the active list
     const newOrder = {
         id: orderCounter++,
-        items: items, // This is the array of {name, price}
+        items: items,
         timestamp: new Date().toLocaleString()
     };
 
     activeOrders.push(newOrder);
     console.log(`Order #${newOrder.id} added to active orders.`);
-    
     res.status(200).json({ success: true });
 });
 
@@ -253,14 +222,9 @@ app.post('/api/complete-order/:id', async (req, res) => {
 
     if (orderIndex > -1) {
         const orderToSave = activeOrders[orderIndex];
-
         try {
-            
             const total = orderToSave.items.reduce((sum, item) => sum + Number(item.price), 0);
-            
             await pool.query('INSERT INTO order_history (order_id, total_price) VALUES ($1, $2)', [orderToSave.id, total]);
-
-            // Remove from temporary server list
             activeOrders.splice(orderIndex, 1);
             res.status(200).send("Order finalized and saved to DB");
         } catch (err) {
@@ -270,4 +234,48 @@ app.post('/api/complete-order/:id', async (req, res) => {
     } else {
         res.status(404).send("Order not found");
     }
+});
+
+app.get('/customer', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(query_res => {
+            res.render('Customer/customer_menu', { menu: query_res.rows });
+        })
+        .catch(err => {
+            console.error("Error fetching menu for customer:", err);
+            res.status(500).send("Error loading menu");
+        });
+});
+
+app.get('/customer/cart', (req, res) => {
+    res.render('Customer/cart');
+});
+
+app.get('/customer/checkout', (req, res) => {
+    res.render('Customer/checkout');
+});
+
+app.get('/customer/order-confirmation', (req, res) => {
+    res.render('Customer/order_confirmation');
+});
+
+app.post('/api/customer-checkout', (req, res) => {
+    const { items } = req.body;
+    if (!items || items.length === 0) {
+        return res.status(400).json({ error: "No items in cart" });
+    }
+
+    const newOrder = {
+        id: orderCounter++,
+        items: items,
+        timestamp: new Date().toLocaleString()
+    };
+
+    activeOrders.push(newOrder);
+    console.log(`Customer Order #${newOrder.id} placed.`);
+    res.status(200).json({ success: true });
+});
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
 });

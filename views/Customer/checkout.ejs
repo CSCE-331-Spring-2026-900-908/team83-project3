@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>Checkout</title>
+        <link rel="stylesheet" href="/customer/customer.css">
+    </head>
+    <body>
+    <%- include('../partials/navigation-customer') %>
+
+    <main class="content-wrapper">
+        <h1 class="page-title">How would you like to pay?</h1>
+
+        <div class="payment-options">
+            <div class="payment-card" onclick="submitOrder()">
+                <h2>Pay at Counter</h2>
+                <p>Place your order and pay with the cashier</p>
+            </div>
+            <div class="payment-card" onclick="submitOrder()">
+                <h2>Pay with Card</h2>
+                <p>Swipe or tap your card at the kiosk</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function submitOrder() {
+            const cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+
+            fetch('/api/customer-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: cart })
+            })
+            .then(res => {
+                if (res.ok) {
+                    localStorage.removeItem('customer-cart');
+                    window.location.href = '/customer/order-confirmation';
+                } else {
+                    alert('Something went wrong. Please try again.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Could not place order. Please try again.');
+            });
+        }
+    </script>
+    </body>
+</html>
