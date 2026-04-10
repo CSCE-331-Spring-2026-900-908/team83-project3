@@ -176,6 +176,85 @@ app.post('/delete-menu-item', (req, res) => {
         });
 });
 
+// ORDER REPORT PAGE
+let lastZReport = null;
+app.get('/order-report', (req, res) => {
+    res.render('Manager/order-report');
+});
+
+// X REPORT
+app.post('/api/x-report', async (req, res) => {
+    const { date, hour } = req.body;
+
+    if (!date || hour === undefined) {
+        return res.status(400).json({ error: "Missing date or hour" });
+    }
+
+    // Initialize lastZReport
+    if (!lastZReport) {
+        lastZReport = new Date(date);
+        lastZReport.setDate(lastZReport.getDate() - 1);
+    }
+
+    const lastZString = lastZReport.toISOString().slice(0, 10);
+
+    const sql = `
+        SELECT hour, SUM(quantity) AS quantity, SUM(subtotal) AS subtotal
+        FROM orders
+        WHERE date = $1
+        AND hour <= $2
+        AND date > $3
+        GROUP BY hour
+        ORDER BY hour ASC;
+    `;
+
+    try {
+        const result = await pool.query(sql, [date, hour, lastZString]);
+        res.json({ rows: result.rows });
+    } catch (err) {
+        console.error("Error generating X report:", err);
+        res.status(500).json({ error: "Error generating X report" });
+    }
+});
+
+// Z REPORT
+app.post('/api/z-report', async (req, res) => {
+    const { date } = req.body;
+
+    if (!date) {
+        return res.status(400).json({ error: "Missing date" });
+    }
+
+    // Duplicate check
+    if (lastZReport && lastZReport.toISOString().slice(0, 10) === date) {
+        return res.json({ message: "Already ran Z-report today", data: null });
+    }
+
+    const sql = `
+        SELECT
+            SUM(quantity) AS total_quantity,
+            SUM(subtotal) AS total_sales
+        FROM orders
+        WHERE date = $1;
+    `;
+
+    try {
+        const result = await pool.query(sql, [date]);
+        const row = result.rows[0];
+
+        lastZReport = new Date(date);
+
+        res.json({
+            total_quantity: row.total_quantity || 0,
+            total_sales: row.total_sales || 0
+        });
+    } catch (err) {
+        console.error("Error generating Z report:", err);
+        res.status(500).json({ error: "Error generating Z report" });
+    }
+});
+
+
 /** CASHIER VIEW */
 let activeOrders = [];
 let orderCounter = 1; // Simple counter to assign order IDs

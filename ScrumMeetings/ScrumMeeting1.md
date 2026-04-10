@@ -1,5 +1,6 @@
 # SCRUM Meeting 1 for Project 3
 Prepared by: Robbie Hahn
+
 Meeting Date: 3-26-2026
 
 ## Meeting Attendees
@@ -11,6 +12,7 @@ Meeting Date: 3-26-2026
 
 ## Meeting Agenda Items
 ●  Tallying Goals
+
 ●  Planning Tasks
 
 
@@ -20,6 +22,7 @@ Meeting Date: 3-26-2026
 
 ### Accomplishments
 ●  N/A
+
 ●  N/A
 
 ### Tasks Completed
@@ -34,7 +37,9 @@ Meeting Date: 3-26-2026
 
 ### Plans
 ●  Make the Login page
+
 ●  Make the Cashier page
+
 ●  Make the Manager page
 
 
