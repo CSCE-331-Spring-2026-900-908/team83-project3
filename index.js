@@ -216,26 +216,83 @@ app.post('/api/checkout', (req, res) => {
     res.status(200).json({ success: true });
 });
 
+const crypto = require('crypto');
+
 app.post('/api/complete-order/:id', async (req, res) => {
-    const orderId = parseInt(req.params.id);
-    const orderIndex = activeOrders.findIndex(o => o.id === orderId);
+    const activeOrderId = parseInt(req.params.id);
+    const orderIndex = activeOrders.findIndex(o => o.id === activeOrderId);
 
     if (orderIndex > -1) {
         const orderToSave = activeOrders[orderIndex];
+        const receiptId = crypto.randomUUID();
+        const now = new Date();
+
         try {
-            const total = orderToSave.items.reduce((sum, item) => sum + Number(item.price), 0);
-            await pool.query('INSERT INTO order_history (order_id, total_price) VALUES ($1, $2)', [orderToSave.id, total]);
+            const maxIdResult = await pool.query('SELECT MAX(order_id) FROM orders');
+            const nextDbOrderId = (maxIdResult.rows[0].max || 0) + 1;
+
+            const startOfYear = new Date(now.getFullYear(), 0, 0);
+            const diff = now - startOfYear;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayIndex = Math.floor(diff / oneDay);
+            const weekIndex = Math.floor(dayIndex / 7);
+            const dayOfWeek = now.getDay();
+            const hour = now.getHours();
+            const dateString = now.toISOString().split('T')[0];
+
+            // Group items by name to calculate quantity and subtotal
+            const groupedItems = {};
+            orderToSave.items.forEach(item => {
+                if (groupedItems[item.name]) {
+                    groupedItems[item.name].quantity += 1;
+                } else {
+                    groupedItems[item.name] = { price: item.price, quantity: 1 };
+                }
+            });
+
+            for (const itemName in groupedItems) {
+                const itemData = groupedItems[itemName];
+                const subtotal = itemData.price * itemData.quantity;
+                const menuResult = await pool.query('SELECT item_id FROM menu WHERE item_name = $1', [itemName]);
+                const itemId = menuResult.rows.length > 0 ? menuResult.rows[0].item_id : null;
+
+                await pool.query(
+                    `INSERT INTO orders (
+                        order_id, receipt_id, date, week_index, day_index, 
+                        day_of_we, is_peak_da, hour, item_id, item_name, 
+                        unit_price, quantity, subtotal
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+                    [
+                        nextDbOrderId, 
+                        receiptId, 
+                        dateString, 
+                        weekIndex, 
+                        dayIndex, 
+                        dayOfWeek,
+                        'f', 
+                        hour, 
+                        itemId,
+                        itemName,           
+                        itemData.price,   
+                        itemData.quantity,  
+                        subtotal            
+                    ]
+                );
+            }
+
             activeOrders.splice(orderIndex, 1);
-            res.status(200).send("Order finalized and saved to DB");
+            res.status(200).json({ success: true });
+            
         } catch (err) {
-            console.error(err);
-            res.status(500).send("Error saving to database");
+            console.error("DATABASE INSERT ERROR:", err);
+            res.status(500).json({ success: false, error: err.message });
         }
     } else {
-        res.status(404).send("Order not found");
+        res.status(404).json({ success: false, message: "Order not found" });
     }
 });
 
+/** CUSTOMER VIEW */
 app.get('/customer', (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
