@@ -264,6 +264,72 @@ app.post('/api/z-report', async (req, res) => {
     }
 });
 
+// Combined Sales + Product Usage page
+app.get('/stats', (req, res) => {
+    res.render('Manager/stats');
+});
+
+
+// SALES REPORT
+app.get('/api/sales-report', async (req, res) => {
+    const { start, end } = req.query;
+
+    if (!start || !end) {
+        return res.status(400).json({ error: "Missing start or end date" });
+    }
+
+    const sql = `
+        SELECT o.item_name,
+               SUM(o.quantity * m.cost) AS revenue
+        FROM orders o
+        JOIN menu m ON o.item_name = m.item_name
+        WHERE o.date BETWEEN $1 AND $2
+        GROUP BY o.item_name
+        ORDER BY revenue DESC;
+    `;
+
+    try {
+        const result = await pool.query(sql, [start, end]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error generating sales report:", err);
+        res.status(500).json({ error: "Error generating sales report" });
+    }
+});
+
+// PRODUCT USAGE REPORT
+app.get('/api/product-usage', async (req, res) => {
+    const { start, end } = req.query;
+
+    if (!start || !end) {
+        return res.status(400).json({ error: "Missing start or end date" });
+    }
+
+    const sql = `
+        SELECT 
+            TRIM(ingredient) AS ingredient_name,
+            COUNT(*) AS ingredient_usage
+        FROM (
+            SELECT 
+                unnest(string_to_array(m.ingredients, ',')) AS ingredient
+            FROM orders o
+            JOIN menu m ON o.item_id = m.item_id
+            WHERE o.date BETWEEN $1 AND $2
+        ) AS ingredient_list
+        GROUP BY TRIM(ingredient)
+        ORDER BY ingredient_usage DESC;
+    `;
+
+    try {
+        const result = await pool.query(sql, [start, end]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error generating product usage report:", err);
+        res.status(500).json({ error: "Error generating product usage report" });
+    }
+});
+
+
 
 /** CASHIER VIEW */
 let activeOrders = [];
