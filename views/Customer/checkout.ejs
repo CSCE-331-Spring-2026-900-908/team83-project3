@@ -2,10 +2,15 @@
     <head>
         <title>Checkout</title>
         <link rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+        <div id ="magnifier">
+        <div id="magnifier-content">
+        </div>
+    </div>
+    <div id="page-content">
     <%- include('../partials/navigation-customer') %>
-
     <main class="content-wrapper">
         <h1 class="page-title">How would you like to pay?</h1>
 
@@ -20,7 +25,7 @@
             </div>
         </div>
     </main>
-
+    </div>
     <script>
         function submitOrder() {
             const cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
@@ -50,4 +55,5 @@
         }
     </script>
     </body>
+    <script src="magnify.js"></script>
 </html>

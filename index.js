@@ -153,8 +153,7 @@ app.post('/add-menu-item', (req, res) => {
         INSERT INTO menu (item_name, cost, ingredients)
         VALUES ($1, $2, $3)
         ON CONFLICT (item_name) DO UPDATE
-        SET cost = EXCLUDED.cost,
-            ingredients = EXCLUDED.ingredients
+        SET cost = EXCLUDED.cost
     `;
     pool.query(query, [item_name, cost, ingredients])
         .then(() => res.redirect('/menu'))
@@ -164,6 +163,17 @@ app.post('/add-menu-item', (req, res) => {
         });
 });
 
+//Edit a menu item
+app.post('/edit-menu-item', (req, res) => {
+    const { item_id, cost, ingredients } = req.body;
+    const query = "UPDATE menu SET cost = $2, ingredients = $3 WHERE item_id = $1";
+    pool.query(query, [item_id, cost, ingredients])
+        .then(() => res.redirect('/menu'))
+        .catch(err => {
+            console.error("Error updating menu item:", err);
+            res.status(500).send("Error updating menu item");
+        });
+});
 //Delete a menu item
 app.post('/delete-menu-item', (req, res) => {
     const { item_id } = req.body;

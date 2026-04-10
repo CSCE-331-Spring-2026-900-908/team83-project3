@@ -2,8 +2,14 @@
     <head>
         <title>Cart</title>
         <link rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+        <div id ="magnifier">
+        <div id="magnifier-content">
+        </div>
+    </div>
+    <div id="page-content">
     <%- include('../partials/navigation-customer') %>
 
     <main class="content-wrapper">
@@ -24,7 +30,7 @@
             <a href="/customer/checkout">Checkout</a>
         </div>
     </main>
-
+    </div>
     <script>
         function renderCart() {
             const cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
@@ -64,5 +70,6 @@
 
         renderCart();
     </script>
+    <script src="magnify.js"></script>
     </body>
 </html>
