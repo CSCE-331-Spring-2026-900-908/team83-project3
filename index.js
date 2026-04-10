@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.use('/cashier', express.static('views/Cashier'));
 app.use('/customer', express.static('views/Customer'));
+app.use('/manager', express.static('views/Manager'));
 
 // Create pool
 const pool = new Pool({

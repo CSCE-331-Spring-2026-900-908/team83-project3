@@ -1,3 +1,8 @@
+:root {
+    --base-text-size: 16px;   /* Controlled by Text Slider */
+    --button-scale: 1;      /* Controlled by Button Slider */
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -9,6 +14,7 @@ body {
     background-color: #eeeeee;
     color: #333;
     line-height: 1.6;
+    font-size: var(--base-text-size);
 }
 
 
@@ -21,12 +27,14 @@ body {
 .nav-links {
     display: flex;
     gap: 30px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .nav-item {
     color: #bfbfbf;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.9em;
     transition: color 0.2s;
 }
 
@@ -99,7 +107,7 @@ body {
 }
 
 .page-title {
-    font-size: 1.8rem;
+    font-size: 1.8em;
     font-weight: 700;
     margin-bottom: 25px;
     color: #222;
@@ -172,6 +180,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: fit-content;
 }
 
 .cart-actions {
@@ -233,6 +242,20 @@ body {
     color: #ffffff;
     border: none;
     padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Apply this logic to all your button classes */
+.complete-button, .checkout-button, .remove-button, .floating-cart-button {
+    /* Use calc to multiply standard padding by our scale factor */
+    padding: calc(10px * var(--button-scale)) calc(20px * var(--button-scale));
+    
+    /* Ensure the text inside the button still scales with the text slider */
+    font-size: 1em; 
+    
+    border: none;
     border-radius: 4px;
     font-weight: 600;
     cursor: pointer;

@@ -67,5 +67,35 @@ async function checkout() {
     }
 }
 
+const textSizeSlider = document.getElementById('text-size-slider');
+const buttonSizeSlider = document.getElementById('button-size-slider');
+
+// Update Text Size
+textSizeSlider.addEventListener('input', (e) => {
+    document.documentElement.style.setProperty('--base-text-size', `${e.target.value}px`);
+    localStorage.setItem('preferred-text-size', e.target.value); // Save preference
+});
+
+// Update Button Scale
+buttonSizeSlider.addEventListener('input', (e) => {
+    document.documentElement.style.setProperty('--button-scale', e.target.value);
+    localStorage.setItem('preferred-button-scale', e.target.value); // Save preference
+});
+
+// Load saved preferences on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const savedText = localStorage.getItem('preferred-text-size');
+    const savedButton = localStorage.getItem('preferred-button-scale');
+    
+    if (savedText) {
+        document.documentElement.style.setProperty('--base-text-size', `${savedText}px`);
+        textSizeSlider.value = savedText;
+    }
+    if (savedButton) {
+        document.documentElement.style.setProperty('--button-scale', savedButton);
+        buttonSizeSlider.value = savedButton;
+    }
+});
+
 // Run once on page load to show existing items
 updateCartButton();
