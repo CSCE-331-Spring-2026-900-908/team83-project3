@@ -1,9 +1,20 @@
 const lens = document.getElementById('magnifier');
 const lensContent = document.getElementById('magnifier-content');
 const pageContent = document.getElementById('page-content');
-let toggle = true;
+const toggleButton = document.getElementById('magnifier-toggle');
+const statusText = document.getElementById('toggle-status');
+let toggle = false;
 
 lensContent.innerHTML = pageContent.innerHTML;
+if (toggleButton) {
+  toggleButton.addEventListener('click', () => {
+    toggle = !toggle;
+    statusText.innerText = toggle ? "ON" : "OFF";
+    if (!toggle) {
+      lens.style.display = 'none';
+    }
+  })
+}
 window.addEventListener('load', () => {
   lensContent.innerHTML = pageContent.innerHTML;
   console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);

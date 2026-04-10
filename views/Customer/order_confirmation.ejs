@@ -2,8 +2,14 @@
     <head>
         <title>Order Confirmed</title>
         <link rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+        <div id ="magnifier">
+        <div id="magnifier-content">
+        </div>
+    </div>
+    <div id="page-content">
     <%- include('../partials/navigation-customer') %>
 
     <main class="content-wrapper">
@@ -14,5 +20,7 @@
             <a href="/customer">Back to Menu</a>
         </div>
     </main>
+    </div>
+    <script src="magnify.js"></script>
     </body>
 </html>
