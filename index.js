@@ -4,7 +4,7 @@ const dotenv = require('dotenv').config();
 
 // Create express app
 const app = express();
-const port = 3000;
+const port = 5500;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -12,6 +12,7 @@ app.use(express.json());
 app.use('/cashier', express.static('views/Cashier'));
 app.use('/customer', express.static('views/Customer'));
 app.use('/manager', express.static('views/Manager'));
+app.use('/portal', express.static('views/Portal'));
 
 // Create pool
 const pool = new Pool({
