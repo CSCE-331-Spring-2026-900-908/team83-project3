@@ -40,3 +40,38 @@ window.addEventListener('mousemove', (e) => {
 window.addEventListener('mouseleave', () => {
   lens.style.display = 'none';
 });
+
+function moveMagnifier(pageX, pageY, clientX, clientY) {
+    lens.style.display = 'block';
+    lens.style.left = `${clientX}px`;
+    lens.style.top = `${clientY}px`;
+
+    const zoom = 2;
+    const lensRadius = 75;
+
+    const moveX = lensRadius - (pageX * zoom);
+    const moveY = lensRadius - (pageY * zoom);
+
+    lensContent.style.left = `${moveX}px`;
+    lensContent.style.top = `${moveY}px`;
+}
+
+//Touchscreen
+window.addEventListener('touchmove', (e) => {
+    if (!toggle) return;
+    
+    const touch = e.touches[0];
+    const fingerOffset = 80;
+    lens.style.top = `${touch.clientY - fingerOffset}px`;
+    moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
+}, { passive: false });
+
+window.addEventListener('touchstart', (e) => {
+    if (!toggle) return;
+    const touch = e.touches[0];
+    moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
+});
+
+window.addEventListener('touchend', () => {
+    lens.style.display = 'none';
+});
