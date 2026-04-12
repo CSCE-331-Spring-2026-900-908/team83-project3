@@ -50,12 +50,10 @@ Meeting Date: 4-06-2026
 ### Task Assignments
 | Task Description | Assigned To |
 |------------------|-------------|
-| Weather API      |    Varun    |
 | Manager Page Full Stack     |    Robbie   |
-| Scheduler | Aedan |
 | Magnifying Glass    |    Aedan    |
-| Button/Image Enlarging    |    Matthew/Caroline  |
-| CSS Pages    |    Caroline |
+| Button/Image Enlarging    |    Matthew    |
+| High Contrast    |    Caroline |
 
 ---
 
