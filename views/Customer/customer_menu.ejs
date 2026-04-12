@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>Menu</title>
-        <link rel="stylesheet" href="/customer/customer.css">
+        <link id="theme-stylesheet" rel="stylesheet" href="/customer/customer.css">
         <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
@@ -12,7 +12,12 @@
     <div id="page-content">
     <%- include('../partials/navigation-customer') %>
     <main class="content-wrapper">
-        <h1 class="page-title">Menu</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h1 class="page-title" style="margin-bottom: 0;">Menu</h1>
+            <button onclick="toggleTheme()" style="padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border: 2px solid currentColor; background: transparent; color: inherit;">
+                Toggle Theme
+            </button>
+        </div>
 
         <div class="menu-grid">
             <% if (menu.length === 0) { %>
@@ -36,6 +41,21 @@
             cart.push({ name, price: Number(price) });
             localStorage.setItem('customer-cart', JSON.stringify(cart));
         }
+        function toggleTheme() {
+            const themeLink = document.getElementById('theme-stylesheet');
+            const currentTheme = themeLink.getAttribute('href');
+            const newTheme = currentTheme === '/customer/customer.css'
+                ? '/customer/high-contrast-customer.css'
+                : '/customer/customer.css';
+            themeLink.setAttribute('href', newTheme);
+            localStorage.setItem('kiosk-theme', newTheme);
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('kiosk-theme');
+            if (savedTheme) {
+                document.getElementById('theme-stylesheet').setAttribute('href', savedTheme);
+            }
+        });
     </script>
     <script src="magnify.js"></script>
     </body>
