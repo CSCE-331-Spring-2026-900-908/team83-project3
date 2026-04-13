@@ -52,8 +52,10 @@ Meeting Date: 4-06-2026
 |------------------|-------------|
 | Manager Page Full Stack     |    Robbie   |
 | Magnifying Glass    |    Aedan    |
-| Button/Image Enlarging    |    Matthew    |
+| Button/Text Enlarging    |    Matthew    |
 | High Contrast    |    Caroline |
+| OAuth    |    Varun    |
+| Machine Translation    |    Varun  |
 
 ---
 
