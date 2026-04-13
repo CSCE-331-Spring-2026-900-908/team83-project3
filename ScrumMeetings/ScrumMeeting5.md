@@ -65,11 +65,9 @@ Meeting Date: 4-08-2026
 
 ### Plans
 
-● Get OAuth Working
+● Finish up OAuth
 
 ● Get Machine Translation Working
-
-● Implement Weather API
 
 
 ### Task Assignments
