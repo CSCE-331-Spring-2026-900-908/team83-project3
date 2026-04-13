@@ -63,6 +63,6 @@ Meeting Date: 4-06-2026
 ## Minutes from Previous Meeting
 Summarize discussion in paragraph form from the previous meeting.
 
-Finilized some of the applications for Manager and Cashier while beginning to
-implement Cashier and delegated the remaining tasks among team memebers.
+Finalized some of the applications for Manager and Cashier while beginning to
+implement Cashier and delegated the remaining tasks among team members.
 
