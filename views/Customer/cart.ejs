@@ -1,54 +1,63 @@
 <html>
     <head>
-        <title>Cart</title>
+        <title><%= lang === 'es' ? 'Carrito' : 'Cart' %></title>
         <link rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
-    <%- include('../partials/navigation-customer') %>
+    <div id="magnifier">
+        <div id="magnifier-content"></div>
+    </div>
+    <div id="page-content">
+    <%- include('../partials/navigation-customer', { lang: lang }) %>
 
     <main class="content-wrapper">
-        <h1 class="page-title">Your Cart</h1>
+        <h1 class="page-title"><%= lang === 'es' ? 'Tu Carrito' : 'Your Cart' %></h1>
 
         <div class="cart-list" id="cart-list">
-            <p>Loading cart...</p>
+            <p><%= lang === 'es' ? 'Cargando carrito...' : 'Loading cart...' %></p>
         </div>
 
-        <div class="cart-summary" id="cart-summary" style="display:none;">
-            <p>Subtotal: <span id="subtotal">$0.00</span></p>
-            <p>Tax (8.25%): <span id="tax">$0.00</span></p>
+        <div class="cart-summary" id="cart-summary">
+            <p><%= lang === 'es' ? 'Subtotal' : 'Subtotal' %>: <span id="subtotal">$0.00</span></p>
+            <p><%= lang === 'es' ? 'Impuesto (8.25%)' : 'Tax (8.25%)' %>: <span id="tax">$0.00</span></p>
             <p class="total">Total: <span id="total">$0.00</span></p>
         </div>
 
         <div class="cart-actions">
-            <a href="/customer">Back to Menu</a>
-            <a href="/customer/checkout">Checkout</a>
+            <a href="/customer?lang=<%= lang %>"><%= lang === 'es' ? 'Volver al Menú' : 'Back to Menu' %></a>
+            <a href="/customer/checkout?lang=<%= lang %>"><%= lang === 'es' ? 'Pagar' : 'Checkout' %></a>
         </div>
     </main>
+    </div>
 
     <script>
+        var lang = '<%= lang %>';
+
         function renderCart() {
-            const cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
-            const listEl = document.getElementById('cart-list');
-            const summaryEl = document.getElementById('cart-summary');
+            var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+            var listEl = document.getElementById('cart-list');
+            var summaryEl = document.getElementById('cart-summary');
 
             if (cart.length === 0) {
-                listEl.innerHTML = '<p>Your cart is empty.</p>';
+                listEl.innerHTML = '<p>' + (lang === 'es' ? 'Tu carrito está vacío.' : 'Your cart is empty.') + '</p>';
                 summaryEl.style.display = 'none';
                 return;
             }
 
-            let html = '';
-            let subtotal = 0;
-            cart.forEach((item, i) => {
+            var html = '';
+            var subtotal = 0;
+            cart.forEach(function(item, i) {
                 subtotal += item.price;
-                html += `<div class="cart-item">
-                    <span>${item.name} - $${item.price.toFixed(2)}</span>
-                    <button onclick="removeItem(${i})">Remove</button>
-                </div>`;
+                html += '<div class="cart-item"><div class="cart-item-info"><span>' + item.name + ' - $' + item.price.toFixed(2) + '</span>';
+                if (item.customizations) {
+                    html += '<span class="cart-item-custom">' + item.customizations + '</span>';
+                }
+                html += '</div><button onclick="removeItem(' + i + ')">' + (lang === 'es' ? 'Quitar' : 'Remove') + '</button></div>';
             });
             listEl.innerHTML = html;
 
-            const tax = subtotal * 0.0825;
+            var tax = subtotal * 0.0825;
             document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
             document.getElementById('tax').textContent = '$' + tax.toFixed(2);
             document.getElementById('total').textContent = '$' + (subtotal + tax).toFixed(2);
@@ -56,7 +65,7 @@
         }
 
         function removeItem(index) {
-            let cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+            var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             cart.splice(index, 1);
             localStorage.setItem('customer-cart', JSON.stringify(cart));
             renderCart();
@@ -64,5 +73,7 @@
 
         renderCart();
     </script>
+    <script src="sliders.js"></script>
+    <script src="/customer/magnify.js"></script>
     </body>
 </html>
