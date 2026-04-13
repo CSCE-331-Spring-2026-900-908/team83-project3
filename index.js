@@ -1,5 +1,8 @@
 const express = require('express');
 const { Pool } = require('pg');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const dotenv = require('dotenv').config();
 
 // Create express app
@@ -29,8 +32,64 @@ process.on('SIGINT', function () {
     process.exit(0);
 });
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: '/auth/google/callback'
+    },
+    function (accessToken, refreshToken, profile, done) {
+        return done(null, profile);
+    }
+));
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+});
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+app.get('/login', (req, res) => {
+    res.render('Portal/login');
+});
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res) => {
+        res.redirect('/');
+    }
+);
+
+app.get('/logout', (req, res) => {
+    req.logout(function (err) {
+        if (err) { console.error(err); }
+        res.redirect('/login');
+    });
+});
+
 //Portal stuff
-app.get('/', (req, res) => {
+app.get('/', isAuthenticated, (req, res) => {
     teammembers = [];
     pool
         .query('SELECT * FROM teammembers;')
@@ -38,14 +97,14 @@ app.get('/', (req, res) => {
             for (let i = 0; i < query_res.rowCount; i++) {
                 teammembers.push(query_res.rows[i]);
             }
-            const data = { teammembers: teammembers };
+            const data = { teammembers: teammembers, user: req.user };
             console.log(teammembers);
             res.render('Portal/portal', data);
         });
 });
 
 //Initializes inventory
-app.get('/inventory', (req, res) => {
+app.get('/inventory', isAuthenticated, (req, res) => {
     inventory = [];
     pool
         .query('SELECT * FROM inventory ORDER BY ingredient_id ASC;')
@@ -60,7 +119,7 @@ app.get('/inventory', (req, res) => {
 });
 
 //Handles adding an ingredient to the inventory
-app.post('/add-ingredient', (req, res) => {
+app.post('/add-ingredient', isAuthenticated, (req, res) => {
     const { ingredient, quantity } = req.body;
     const query = 'INSERT INTO inventory (ingredient, quantity) VALUES ($1, $2)';
     pool.query(query, [ingredient, quantity])
@@ -72,7 +131,7 @@ app.post('/add-ingredient', (req, res) => {
 });
 
 //delete ingredient
-app.post('/delete-ingredient', (req, res) => {
+app.post('/delete-ingredient', isAuthenticated, (req, res) => {
     const { ingredient } = req.body;
     const query = "DELETE FROM inventory WHERE ingredient = $1";
     pool.query(query, [ingredient])
@@ -84,7 +143,7 @@ app.post('/delete-ingredient', (req, res) => {
 });
 
 //update ingredient quantity
-app.post('/update-ingredient', (req, res) => {
+app.post('/update-ingredient', isAuthenticated, (req, res) => {
     const { ingredient_id, quantity } = req.body;
     const query = "UPDATE inventory SET quantity = $2 WHERE ingredient_id = $1";
     pool.query(query, [ingredient_id, quantity])
@@ -96,7 +155,7 @@ app.post('/update-ingredient', (req, res) => {
 });
 
 //Initializes employee view table
-app.get('/employee', (req, res) => {
+app.get('/employee', isAuthenticated, (req, res) => {
     employees = [];
     pool
         .query('SELECT * FROM employees ORDER BY employee_id ASC;')
@@ -111,7 +170,7 @@ app.get('/employee', (req, res) => {
 });
 
 //Handles adding an employee to employee
-app.post('/add-employee', (req, res) => {
+app.post('/add-employee', isAuthenticated, (req, res) => {
     const { employee_id, employee_name, hours } = req.body;
     const query = "INSERT INTO employees (employee_id, employee_name, hours) VALUES ($1, $2, $3) ON CONFLICT (employee_id) DO UPDATE SET employee_name = EXCLUDED.employee_name, hours = EXCLUDED.hours";
     pool.query(query, [employee_id, employee_name, hours])
@@ -123,7 +182,7 @@ app.post('/add-employee', (req, res) => {
 });
 
 //Delete an employee
-app.post('/delete-employee', (req, res) => {
+app.post('/delete-employee', isAuthenticated, (req, res) => {
     const { employee_id } = req.body;
     const query = "DELETE FROM employees WHERE employee_id = $1";
     pool.query(query, [employee_id])
@@ -135,7 +194,7 @@ app.post('/delete-employee', (req, res) => {
 });
 
 //Initializes menu view table
-app.get('/menu', (req, res) => {
+app.get('/menu', isAuthenticated, (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(result => {
             res.render('Manager/menu', { menu: result.rows });
@@ -147,7 +206,7 @@ app.get('/menu', (req, res) => {
 });
 
 //Handles adding a menu item to menu
-app.post('/add-menu-item', (req, res) => {
+app.post('/add-menu-item', isAuthenticated, (req, res) => {
     const { item_name, cost, ingredients } = req.body;
     const query = `
         INSERT INTO menu (item_name, cost, ingredients)
@@ -165,7 +224,7 @@ app.post('/add-menu-item', (req, res) => {
 });
 
 //Delete a menu item
-app.post('/delete-menu-item', (req, res) => {
+app.post('/delete-menu-item', isAuthenticated, (req, res) => {
     const { item_id } = req.body;
     const query = "DELETE FROM menu WHERE item_id = $1";
     pool.query(query, [item_id])
@@ -180,7 +239,7 @@ app.post('/delete-menu-item', (req, res) => {
 let activeOrders = [];
 let orderCounter = 1; // Simple counter to assign order IDs
 
-app.get('/cashier-order-screen', (req, res) => {
+app.get('/cashier-order-screen', isAuthenticated, (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
             res.render('Cashier/cashier-order-screen', { items: query_res.rows });
@@ -191,11 +250,11 @@ app.get('/cashier-order-screen', (req, res) => {
         });
 });
 
-app.get('/active-orders', (req, res) => {
+app.get('/active-orders', isAuthenticated, (req, res) => {
     res.render('Cashier/active-orders', { orders: activeOrders });
 });
 
-app.get('/cart', (req, res) => {
+app.get('/cart', isAuthenticated, (req, res) => {
     res.render('Cashier/cart');
 });
 
