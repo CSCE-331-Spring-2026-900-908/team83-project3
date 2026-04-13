@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
     <title>Menu</title>
+    <link rel="stylesheet" href="/manager/manager.css">
 </head>
 
 <body>
@@ -12,14 +13,25 @@
         <th>Name</th>
         <th>Cost</th>
         <th>Ingredients</th>
+        <th>Edit</th>
         <th>Delete</th>
     </tr>
     <% menu.forEach(item => { %>
         <tr>
             <td><%= item.item_id %></td>
             <td><%= item.item_name %></td>
-            <td>$<%= item.cost %></td>
-            <td><%= item.ingredients %></td>
+            <form action="/edit-menu-item" method="POST">
+                <input type="hidden" name="item_id" value="<%= item.item_id%>">
+                <td>
+                    $<input type="number" step="0.01" name="cost" value="<%=item.cost %>">
+                </td>
+                <td>
+                    <input type="text" name="ingredients" value="<%=item.ingredients%>">
+                </td>
+                <td>
+                    <button type="submit">Save Edits</button>
+                </td>
+            </form>
             <td>
                 <form action="/delete-menu-item" method="POST">
                     <input type="hidden" name="item_id" value="<%= item.item_id %>">
@@ -30,7 +42,7 @@
     <% }) %>
 </table>
 
-<h2>Add / Update Menu Item</h2>
+<h2>Add Menu Item</h2>
 
 <form action="/add-menu-item" method="POST">
     <input type="text" name="item_name" placeholder="Item name" required>

@@ -2,8 +2,13 @@
     <head>
         <title><%= lang === 'es' ? 'Menú' : 'Menu' %></title>
         <link rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+    <div id="magnifier">
+        <div id="magnifier-content"></div>
+    </div>
+    <div id="page-content">
     <%- include('../partials/navigation-customer', { lang: lang }) %>
 
     <main class="content-wrapper">
@@ -17,23 +22,24 @@
                     <div class="menu-card">
                         <div class="img-placeholder"></div>
                         <h3><%= item.item_name %></h3>
-                        <p>$<%= Number(item.cost).toFixed(2) %></p>
-                        <p style="font-size:11px; color:#999;"><%= item.ingredients %></p>
+                        <p class="menu-card-price">$<%= Number(item.cost).toFixed(2) %></p>
+                        <p class="menu-card-ingredients"><%= item.ingredients %></p>
                         <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>', '<%= item.ingredients %>')"><%= lang === 'es' ? 'Agregar' : 'Add to Cart' %></button>
                     </div>
                 <% }); %>
             <% } %>
         </div>
     </main>
+    </div>
 
-    <div id="customize-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100;">
-        <div style="background:#fff; max-width:400px; margin:80px auto; padding:24px; border:1px solid #ddd;">
-            <h2 id="modal-title" style="font-size:18px; margin-bottom:12px;"></h2>
-            <p style="font-size:13px; color:#666; margin-bottom:12px;"><%= lang === 'es' ? 'Ingredientes:' : 'Ingredients:' %> <span id="modal-ingredients"></span></p>
+    <div id="customize-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title"></h2>
+            <p class="modal-ingredients"><%= lang === 'es' ? 'Ingredientes:' : 'Ingredients:' %> <span id="modal-ingredients"></span></p>
 
-            <div style="margin-bottom:12px;">
-                <label style="font-size:13px; font-weight:bold;"><%= lang === 'es' ? 'Tipo de Leche:' : 'Milk Choice:' %></label><br>
-                <select id="milk-choice" style="margin-top:4px; padding:4px 8px; font-size:13px;">
+            <div class="modal-field">
+                <label><%= lang === 'es' ? 'Tipo de Leche:' : 'Milk Choice:' %></label>
+                <select id="milk-choice">
                     <option value="2% Milk"><%= lang === 'es' ? 'Leche 2%' : '2% Milk' %></option>
                     <option value="Whole Milk"><%= lang === 'es' ? 'Leche Entera' : 'Whole Milk' %></option>
                     <option value="Soy Milk"><%= lang === 'es' ? 'Leche de Soya' : 'Soy Milk' %></option>
@@ -41,11 +47,11 @@
                 </select>
             </div>
 
-            <div id="subs-container" style="margin-bottom:12px;"></div>
+            <div id="subs-container" class="modal-field"></div>
 
-            <div style="display:flex; gap:10px;">
-                <button onclick="confirmAdd()" style="background:#333; color:#fff; border:none; padding:8px 16px; font-size:13px; cursor:pointer;"><%= lang === 'es' ? 'Agregar al Carrito' : 'Add to Cart' %></button>
-                <button onclick="closeCustomize()" style="background:none; border:1px solid #ccc; padding:8px 16px; font-size:13px; cursor:pointer;"><%= lang === 'es' ? 'Cancelar' : 'Cancel' %></button>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="confirmAdd()"><%= lang === 'es' ? 'Agregar al Carrito' : 'Add to Cart' %></button>
+                <button class="btn-secondary" onclick="closeCustomize()"><%= lang === 'es' ? 'Cancelar' : 'Cancel' %></button>
             </div>
         </div>
     </div>
@@ -64,29 +70,26 @@
             container.innerHTML = '';
 
             parts.forEach(function(ing) {
-                var lower = ing.toLowerCase();
-                if (lower.indexOf('milk') !== -1) return;
+                if (ing.toLowerCase().indexOf('milk') !== -1) return;
 
                 var div = document.createElement('div');
-                div.style.marginBottom = '6px';
+                div.className = 'sub-option';
                 var label = document.createElement('label');
-                label.style.fontSize = '13px';
                 var cb = document.createElement('input');
                 cb.type = 'checkbox';
                 cb.value = ing;
                 cb.className = 'sub-checkbox';
-                cb.style.marginRight = '6px';
                 label.appendChild(cb);
-                label.appendChild(document.createTextNode((lang === 'es' ? 'Sin ' : 'No ') + ing));
+                label.appendChild(document.createTextNode((lang === 'es' ? ' Sin ' : ' No ') + ing));
                 div.appendChild(label);
                 container.appendChild(div);
             });
 
-            document.getElementById('customize-modal').style.display = 'block';
+            document.getElementById('customize-modal').classList.add('active');
         }
 
         function closeCustomize() {
-            document.getElementById('customize-modal').style.display = 'none';
+            document.getElementById('customize-modal').classList.remove('active');
         }
 
         function confirmAdd() {
@@ -112,5 +115,6 @@
             alert(lang === 'es' ? 'Agregado al carrito' : 'Added to cart');
         }
     </script>
+    <script src="/customer/magnify.js"></script>
     </body>
 </html>

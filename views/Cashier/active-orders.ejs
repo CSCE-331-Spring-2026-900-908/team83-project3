@@ -16,12 +16,12 @@
                 <% orders.forEach(order => { %>
                     <div class="order-card" id="order-<%= order.id %>">
                         <h3>Order #<%= order.id %></h3>
-                        <ul>
+                        <ul class = "checklist">
                             <% order.items.forEach(item => { %>
-                                <li>- <%= item.name %>: $<%= Number(item.price).toFixed(2) %></li>
+                                <li> <%= item.name %>: $<%= Number(item.price).toFixed(2) %></li>
                             <% }); %>
                         </ul>
-                        <button class="complete-btn" onclick="completeOrder(<%= order.id %>)">Order Complete</button>
+                        <button class="complete-button" onclick="completeOrder(<%= order.id %>)">Order Complete</button>
                     </div>
                 <% }); %>
             <% } %>

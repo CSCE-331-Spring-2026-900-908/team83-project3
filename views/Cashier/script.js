@@ -1,19 +1,12 @@
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 function addToCart(name, price) {
-    // 1. Create the item object
     const item = {
         name: name,
         price: parseFloat(price)
     };
-
-    // 2. Add to our array
     cart.push(item);
-
-    // 3. Save to LocalStorage so we can see it on the Cart page later
     localStorage.setItem('cart', JSON.stringify(cart));
-
-    // 4. Update the UI button text
     updateCartButton();
     
     console.log("Added:", name, "Current Cart:", cart);
@@ -42,7 +35,7 @@ function displayCart() {
                 <h3>${item.name}</h3>
                 <p>$${item.price.toFixed(2)}</p>
             </div>
-            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+            <button class="remove-button" onclick="removeItem(${index})">Remove</button>
         </div>
     `).join('');
 }
@@ -59,7 +52,7 @@ async function checkout() {
     
     if (!cart || cart.length === 0) return alert("Cart is empty!");
 
-    // Send the cart to your Node.js server
+    // Send the cart to Node.js server
     const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -73,5 +66,36 @@ async function checkout() {
         alert("Checkout failed. Check server logs.");
     }
 }
+
+const textSizeSlider = document.getElementById('text-size-slider');
+const buttonSizeSlider = document.getElementById('button-size-slider');
+
+// Update Text Size
+textSizeSlider.addEventListener('input', (e) => {
+    document.documentElement.style.setProperty('--base-text-size', `${e.target.value}px`);
+    localStorage.setItem('preferred-text-size', e.target.value); // Save preference
+});
+
+// Update Button Scale
+buttonSizeSlider.addEventListener('input', (e) => {
+    document.documentElement.style.setProperty('--button-scale', e.target.value);
+    localStorage.setItem('preferred-button-scale', e.target.value); // Save preference
+});
+
+// Load saved preferences on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const savedText = localStorage.getItem('preferred-text-size');
+    const savedButton = localStorage.getItem('preferred-button-scale');
+    
+    if (savedText) {
+        document.documentElement.style.setProperty('--base-text-size', `${savedText}px`);
+        textSizeSlider.value = savedText;
+    }
+    if (savedButton) {
+        document.documentElement.style.setProperty('--button-scale', savedButton);
+        buttonSizeSlider.value = savedButton;
+    }
+});
+
 // Run once on page load to show existing items
 updateCartButton();

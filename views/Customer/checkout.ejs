@@ -2,8 +2,13 @@
     <head>
         <title><%= lang === 'es' ? 'Pagar' : 'Checkout' %></title>
         <link rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+    <div id="magnifier">
+        <div id="magnifier-content"></div>
+    </div>
+    <div id="page-content">
     <%- include('../partials/navigation-customer', { lang: lang }) %>
 
     <main class="content-wrapper">
@@ -20,6 +25,7 @@
             </div>
         </div>
     </main>
+    </div>
 
     <script>
         var lang = '<%= lang %>';
@@ -51,5 +57,6 @@
             });
         }
     </script>
+    <script src="/customer/magnify.js"></script>
     </body>
 </html>

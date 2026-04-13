@@ -1,3 +1,8 @@
+:root {
+    --base-text-size: 16px;   /* Controlled by Text Slider */
+    --button-scale: 1;      /* Controlled by Button Slider */
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,9 +11,10 @@
 
 body {
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #eeeeee; /* Light grey background from your image */
+    background-color: #eeeeee;
     color: #333;
     line-height: 1.6;
+    font-size: var(--base-text-size);
 }
 
 
@@ -21,12 +27,14 @@ body {
 .nav-links {
     display: flex;
     gap: 30px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .nav-item {
     color: #bfbfbf;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.9em;
     transition: color 0.2s;
 }
 
@@ -38,26 +46,30 @@ body {
 /* Main Content Layout */
 .content-wrapper-active-orders {
     padding: 40px 20px;
-    max-width: 1200px;
+    /*max-width: 1200px; */
+    max-width: 100vw;
+    margin-right: 40px;
     margin-left: 40px;
 }
 
 .content-wrapper-create-order {
     padding: 40px 20px;
-    max-width: 1000px;
+    max-width: 100vw;
+    margin-right: 40px;
     margin-left: 40px;
 }
 
 .content-wrapper-cart {
     padding: 40px 20px;
-    max-width: 800px;
+    /* max-width: 800px; */
+    max-width: 100vw;
+    margin-right: 40px;
     margin-left: 40px;
 }
 
 /* Menu Grid Container */
 .menu-grid {
     display: grid;
-    /* This tells the grid to make as many 200px columns as will fit */
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     margin-top: 20px;
@@ -95,7 +107,7 @@ body {
 }
 
 .page-title {
-    font-size: 1.8rem;
+    font-size: 1.8em;
     font-weight: 700;
     margin-bottom: 25px;
     color: #222;
@@ -151,6 +163,33 @@ body {
     cursor: pointer;
 }
 
+/* Cart Styling */
+.cart-container {
+    background-color: #f5f5f5;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 20px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cart-item {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: fit-content;
+}
+
+.cart-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
 /* Buttons */
 .floating-cart-button {
     position: fixed;
@@ -168,4 +207,56 @@ body {
 
 .floating-cart-button:hover {
     background-color: #000000;
+}
+
+.complete-button {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.complete-button:hover {
+    background-color: #218838;
+}
+
+.checkout-button {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.checkout-button:hover {
+    background-color: #000000;
+}
+
+.remove-button {
+    background-color: #dc3545;
+    color: #ffffff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Apply this logic to all your button classes */
+.complete-button, .checkout-button, .remove-button, .floating-cart-button {
+    /* Use calc to multiply standard padding by our scale factor */
+    padding: calc(10px * var(--button-scale)) calc(20px * var(--button-scale));
+    
+    /* Ensure the text inside the button still scales with the text slider */
+    font-size: 1em; 
+    
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
 }

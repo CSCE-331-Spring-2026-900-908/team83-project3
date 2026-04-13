@@ -1,0 +1,32 @@
+#magnifier {
+  position: fixed;
+  width: 250px;
+  height: 250px;
+  border: 3px solid #000;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  display: none;
+  
+  background-repeat: no-repeat;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#magnifier-content {
+  position: absolute;
+  width: 100vw;
+  transform-origin: 0 0;
+  transform: scale(2);
+  left: 0;
+  top: 0;
+  touch-action: none;
+}
+
+#magnifier-content .content-wrapper {
+  margin: 0 auto;
+  padding: 20px 32px;
+  max-width: 1000px;
+}
