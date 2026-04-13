@@ -78,7 +78,7 @@ Meeting Date: 4-08-2026
 
 | OAuth      |    Varun    |
 
-| Machine Translation    |    Robbie   |
+| Machine Translation    |    Varun   |
 
 | Magnifier Touch Screen Compatibility    |    Aedan    |
 
