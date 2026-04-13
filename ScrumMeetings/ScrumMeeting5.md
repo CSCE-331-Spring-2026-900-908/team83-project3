@@ -67,7 +67,7 @@ Meeting Date: 4-08-2026
 
 ● Finish up OAuth
 
-● Get Machine Translation Working
+● Continue working on machine translation
 
 
 ### Task Assignments
