@@ -33,7 +33,7 @@ Meeting Date: 4-06-2026
 | Task Description | Assigned To | Completed? (yes/no) |
 |---------------------|----------------|----------------------|
 |Make a viewable Customer Page | Matthew/Caroline/Varun |        Yes         |
-|Implement X- Reports |    Robbie    |        Yes         |
+|Implement X - Reports |    Robbie    |        Yes         |
 ---
 
 ## Before the Next Meeting
