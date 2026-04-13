@@ -80,9 +80,9 @@ Meeting Date: 4-08-2026
 
 | Machine Translation    |    Robbie   |
 
-| Scheduler | Aedan |
+| Magnifier Touch Screen Compatibility    |    Aedan    |
 
-| Button/Image Enlarging    |    Matthew/Caroline  |
+| Button/Image Enlarging    |    Matthew  |
 
 | CSS Pages    |    Caroline |
 
