@@ -7,7 +7,7 @@ const dotenv = require('dotenv').config();
 
 // Create express app
 const app = express();
-const port = 5500;
+const port = 3000;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
