@@ -22,6 +22,9 @@ body {
 .navbar {
     background-color: #1a1a1a;
     padding: 1rem 2rem;
+    display: flex;             /* Enable Flexbox */
+    justify-content: space-between; /* Links left, Sliders right */
+    align-items: center;       /* Vertical centering */
 }
 
 .nav-links {
@@ -42,7 +45,25 @@ body {
     color: #ffffff;
 }
 
+.accessibility-controls {
+    display: flex;
+    gap: 20px;
+    color: #ffffff;          
+    font-size: 0.85em;
+    font-weight: 500;
+}
 
+.accessibility-controls label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.accessibility-controls input[type="range"] {
+    cursor: pointer;
+    accent-color: #919191;    /* Makes the slider handle white in modern browsers */
+}
 /* Main Content Layout */
 .content-wrapper-active-orders {
     padding: 40px 20px;
@@ -80,7 +101,7 @@ body {
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 20px;
+    padding: calc(20px * var(--button-scale));    
     text-align: left;
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.1s;
@@ -96,21 +117,21 @@ body {
 }
 
 .menu-item h3 {
-    font-size: 1rem;
+    font-size: 1em;
     margin-bottom: 10px;
     color: #111;
 }
 
 .menu-item .price {
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.9em;
 }
 
 .page-title {
-    font-size: 1.8em;
+    font-size: calc(var(--base-text-size) * 1.8);
     font-weight: 700;
     margin-bottom: 25px;
-    color: #222;
+    color: #222222;
 }
 
 
