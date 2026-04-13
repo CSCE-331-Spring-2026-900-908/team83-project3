@@ -1,28 +1,14 @@
-<nav style="background:#222; color:#fff; padding:14px 32px; display:flex; justify-content:space-between; align-items:center;">
-    <div style="font-size:20px; font-weight:bold;">TEAM83-BOBA</div>
-    <div>
-<<<<<<< HEAD
-=======
-<<<<<<<< HEAD:views/Customer/navigation_customer.ejs
->>>>>>> 9e50c5d8c6475852d90a4f00dbd10ae21a77c94b
-        <a href="/customer?lang=<%= lang %>" style="color:#ccc; text-decoration:none; margin-left:20px;"><%= lang === 'es' ? 'Menú' : 'Menu' %></a>
-        <a href="/customer/cart?lang=<%= lang %>" style="color:#ccc; text-decoration:none; margin-left:20px;"><%= lang === 'es' ? 'Carrito' : 'Cart' %></a>
-        <a href="/customer/checkout?lang=<%= lang %>" style="color:#ccc; text-decoration:none; margin-left:20px;"><%= lang === 'es' ? 'Pagar' : 'Checkout' %></a>
+<nav class="customer-nav">
+    <div class="nav-brand">SHARETEA</div>
+    <div class="nav-links">
+        <a href="/customer?lang=<%= lang %>"><%= lang === 'es' ? 'Menú' : 'Menu' %></a>
+        <a href="/customer/cart?lang=<%= lang %>"><%= lang === 'es' ? 'Carrito' : 'Cart' %></a>
+        <a href="/customer/checkout?lang=<%= lang %>"><%= lang === 'es' ? 'Pagar' : 'Checkout' %></a>
+        <button id="magnifier-toggle" class="btn-secondary"><%= lang === 'es' ? 'Lupa' : 'Magnifier' %>: <span id="toggle-status">OFF</span></button>
         <% if (lang === 'es') { %>
-            <a href="?lang=en" style="color:#ffcc00; text-decoration:none; margin-left:20px;">English</a>
+            <a href="?lang=en" class="lang-toggle">English</a>
         <% } else { %>
-            <a href="?lang=es" style="color:#ffcc00; text-decoration:none; margin-left:20px;">Español</a>
+            <a href="?lang=es" class="lang-toggle">Español</a>
         <% } %>
-<<<<<<< HEAD
-=======
-========
-        <a href="/customer" style="color:#ccc; text-decoration:none; margin-left:20px;">Menu</a>
-        <a href="/customer/cart" style="color:#ccc; text-decoration:none; margin-left:20px;">Cart</a>
-        <a href="/customer/checkout" style="color:#ccc; text-decoration:none; margin-left:20px;">Checkout</a>
-        <button id="magnifier-toggle" class="nav-button">
-            Magnifier: <span id="toggle-status">OFF</span>
-        </button>
->>>>>>>> 9e50c5d8c6475852d90a4f00dbd10ae21a77c94b:views/partials/navigation-customer.ejs
->>>>>>> 9e50c5d8c6475852d90a4f00dbd10ae21a77c94b
     </div>
 </nav>
