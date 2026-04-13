@@ -3,6 +3,9 @@
    <title>Home Page</title>
 </head>
 <body>
+   <div style="text-align:right; padding:10px 20px; background:#eee; font-size:14px;">
+       Signed in as <%= user.displayName %> | <a href="/logout">Logout</a>
+   </div>
    <h1>Team Members</h1>
    <% for (var i in teammembers) {%>
        <p>Name: <%=teammembers[i].student_name%>, Section: <%=teammembers[i].section%>, Fave Movie: <%=teammembers[i].favorite_movie%><p>
