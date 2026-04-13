@@ -51,7 +51,7 @@ Meeting Date: 4-08-2026
 
 | Make a viewable stats page |    Robbie    |        Yes         |
 
-| High Contrast Accessibility |    Caroline/Matthew   |        Yes         |
+| High Contrast Accessibility |    Caroline   |        Yes         |
 
 |Active Order Completion | Matthew     | Yes   |
 
