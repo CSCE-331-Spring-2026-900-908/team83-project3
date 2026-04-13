@@ -69,6 +69,8 @@ Meeting Date: 4-08-2026
 
 ● Continue working on machine translation
 
+● Continue working text/button sliders
+
 
 ### Task Assignments
 
@@ -82,7 +84,7 @@ Meeting Date: 4-08-2026
 
 | Magnifier Touch Screen Compatibility    |    Aedan    |
 
-| Button/Image Enlarging    |    Matthew  |
+| Button/Text Enlarging    |    Matthew  |
 
 | CSS Pages    |    Caroline |
 
