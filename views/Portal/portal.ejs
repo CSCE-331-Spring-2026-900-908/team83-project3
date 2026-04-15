@@ -1,29 +1,21 @@
 <!DOCTYPE html>
 <head>
    <title>Home Page</title>
+   <link rel="stylesheet" href="/portal/portal.css"> </head>
 </head>
 <body>
-   <div style="text-align:right; padding:10px 20px; background:#eee; font-size:14px;">
-       Signed in as <%= user.displayName %> | <a href="/logout">Logout</a>
+   <div class="content-wrapper">
+      <h1 class="page-title">Portal</h1>
+      <ul class="portal-grid">
+            <li class="portal-card">
+                <a href="/menu">Manager</a>
+            </li>
+            <li class="portal-card">
+                <a href="/cashier-order-screen">Cashier</a>
+            </li>
+            <li class="portal-card">
+                <a href="/customer">Customer</a>
+            </li>
+        </ul>
    </div>
- 
-   <h2>Portal</h2>
-   <h3>Manager</h3>
-   <ul>
-    <li><a href="/inventory">View Inventory</a></li>
-    <li><a href="/employee">View Employees</a></li>
-    <li><a href="/menu">View Menu</a></li>
-    <li><a href="/order-report">View Reports</a></li>
-      <li><a href="/stats">View Stats</a></li>
-   </ul>
-   <h4>Cashier</h4>
-   <ul>
-      <li><a href="/cashier-order-screen">View Cashier Order Screen</a></li>
-      <li><a href="cashier-order-screen">View Cashier Order Screen</a></li>
-      <li><a href="/cashier-order-screen">Cashier View</a></li>
-   </ul>
-   <h5>Customer</h5>
-   <ul>
-      <li><a href="/customer">View Customer Order Screen</a></li>
-   </ul>
 </body>
