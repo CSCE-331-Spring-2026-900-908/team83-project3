@@ -6,6 +6,8 @@ const statusText = document.getElementById('toggle-status');
 let toggle = false;
 
 lensContent.innerHTML = pageContent.innerHTML;
+
+//Toggle magnifier on or off
 if (toggleButton) {
   toggleButton.addEventListener('click', () => {
     toggle = !toggle;
@@ -15,11 +17,14 @@ if (toggleButton) {
     }
   })
 }
+
+//Grabs page after it loads
 window.addEventListener('load', () => {
   lensContent.innerHTML = pageContent.innerHTML;
   console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);
 });
 
+//Magnifier follows mouse movement
 window.addEventListener('mousemove', (e) => {
   if (!toggle) {
     return;
@@ -41,6 +46,7 @@ window.addEventListener('mouseleave', () => {
   lens.style.display = 'none';
 });
 
+//The magnifier will correctly display what the user is hovering over
 function moveMagnifier(pageX, pageY, clientX, clientY) {
     lens.style.display = 'block';
     lens.style.left = `${clientX}px`;
@@ -56,7 +62,7 @@ function moveMagnifier(pageX, pageY, clientX, clientY) {
     lensContent.style.top = `${moveY}px`;
 }
 
-//Touchscreen
+//Magnifier follows user touch input
 window.addEventListener('touchmove', (e) => {
     if (!toggle) return;
     
@@ -66,6 +72,7 @@ window.addEventListener('touchmove', (e) => {
     moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
 }, { passive: false });
 
+//Magnifier placed under user's finger
 window.addEventListener('touchstart', (e) => {
     if (!toggle) return;
     const touch = e.touches[0];
