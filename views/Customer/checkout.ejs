@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title><%= lang === 'es' ? 'Pagar' : 'Checkout' %></title>
+        <title>Checkout</title>
         <link rel="stylesheet" href="/customer/customer.css">
         <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
@@ -9,32 +9,30 @@
         <div id="magnifier-content"></div>
     </div>
     <div id="page-content">
-    <%- include('../partials/navigation-customer', { lang: lang }) %>
+    <%- include('../partials/navigation-customer') %>
 
     <main class="content-wrapper">
-        <h1 class="page-title"><%= lang === 'es' ? '¿Cómo desea pagar?' : 'How would you like to pay?' %></h1>
+        <h1 class="page-title">How would you like to pay?</h1>
 
         <div class="payment-options">
             <div class="payment-card" onclick="submitOrder()">
-                <h2><%= lang === 'es' ? 'Pagar en Caja' : 'Pay at Counter' %></h2>
-                <p><%= lang === 'es' ? 'Haga su pedido y pague con el cajero' : 'Place your order and pay with the cashier' %></p>
+                <h2>Pay at Counter</h2>
+                <p>Place your order and pay with the cashier</p>
             </div>
             <div class="payment-card" onclick="submitOrder()">
-                <h2><%= lang === 'es' ? 'Pagar con Tarjeta' : 'Pay with Card' %></h2>
-                <p><%= lang === 'es' ? 'Deslice o toque su tarjeta' : 'Swipe or tap your card at the kiosk' %></p>
+                <h2>Pay with Card</h2>
+                <p>Swipe or tap your card at the kiosk</p>
             </div>
         </div>
     </main>
     </div>
 
     <script>
-        var lang = '<%= lang %>';
-
         function submitOrder() {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
 
             if (cart.length === 0) {
-                alert(lang === 'es' ? '¡Tu carrito está vacío!' : 'Your cart is empty!');
+                alert('Your cart is empty!');
                 return;
             }
 
@@ -46,14 +44,14 @@
             .then(function(res) {
                 if (res.ok) {
                     localStorage.removeItem('customer-cart');
-                    window.location.href = '/customer/order-confirmation?lang=' + lang;
+                    window.location.href = '/customer/order-confirmation';
                 } else {
-                    alert(lang === 'es' ? 'Algo salió mal.' : 'Something went wrong. Please try again.');
+                    alert('Something went wrong. Please try again.');
                 }
             })
             .catch(function(err) {
                 console.error(err);
-                alert(lang === 'es' ? 'No se pudo hacer el pedido.' : 'Could not place order. Please try again.');
+                alert('Could not place order. Please try again.');
             });
         }
     </script>

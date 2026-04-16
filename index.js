@@ -509,10 +509,9 @@ app.post('/api/complete-order/:id', async (req, res) => {
 
 /** CUSTOMER VIEW */
 app.get('/customer', (req, res) => {
-    const lang = req.query.lang || 'en';
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
-            res.render('Customer/customer_menu', { menu: query_res.rows, lang: lang });
+            res.render('Customer/customer_menu', { menu: query_res.rows });
         })
         .catch(err => {
             console.error("Error fetching menu for customer:", err);
@@ -521,18 +520,15 @@ app.get('/customer', (req, res) => {
 });
 
 app.get('/customer/cart', (req, res) => {
-    const lang = req.query.lang || 'en';
-    res.render('Customer/cart', { lang: lang });
+    res.render('Customer/cart');
 });
 
 app.get('/customer/checkout', (req, res) => {
-    const lang = req.query.lang || 'en';
-    res.render('Customer/checkout', { lang: lang });
+    res.render('Customer/checkout');
 });
 
 app.get('/customer/order-confirmation', (req, res) => {
-    const lang = req.query.lang || 'en';
-    res.render('Customer/order_confirmation', { lang: lang });
+    res.render('Customer/order_confirmation');
 });
 
 app.post('/api/customer-checkout', (req, res) => {

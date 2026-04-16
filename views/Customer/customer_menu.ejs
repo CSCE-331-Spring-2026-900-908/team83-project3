@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title><%= lang === 'es' ? 'Menú' : 'Menu' %></title>
+        <title>Menu</title>
         <link rel="stylesheet" href="/customer/customer.css">
         <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
@@ -9,14 +9,14 @@
         <div id="magnifier-content"></div>
     </div>
     <div id="page-content">
-    <%- include('../partials/navigation-customer', { lang: lang }) %>
+    <%- include('../partials/navigation-customer') %>
 
     <main class="content-wrapper">
-        <h1 class="page-title"><%= lang === 'es' ? 'Menú' : 'Menu' %></h1>
+        <h1 class="page-title">Menu</h1>
 
         <div class="menu-grid">
             <% if (menu.length === 0) { %>
-                <p><%= lang === 'es' ? 'No hay artículos disponibles.' : 'No menu items available.' %></p>
+                <p>No menu items available.</p>
             <% } else { %>
                 <% menu.forEach(item => { %>
                     <div class="menu-card">
@@ -24,7 +24,7 @@
                         <h3><%= item.item_name %></h3>
                         <p class="menu-card-price">$<%= Number(item.cost).toFixed(2) %></p>
                         <p class="menu-card-ingredients"><%= item.ingredients %></p>
-                        <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>', '<%= item.ingredients %>')"><%= lang === 'es' ? 'Agregar' : 'Add to Cart' %></button>
+                        <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>', '<%= item.ingredients %>')">Add to Cart</button>
                     </div>
                 <% }); %>
             <% } %>
@@ -35,30 +35,29 @@
     <div id="customize-modal" class="modal-overlay">
         <div class="modal-box">
             <h2 id="modal-title"></h2>
-            <p class="modal-ingredients"><%= lang === 'es' ? 'Ingredientes:' : 'Ingredients:' %> <span id="modal-ingredients"></span></p>
+            <p class="modal-ingredients">Ingredients: <span id="modal-ingredients"></span></p>
 
             <div class="modal-field">
-                <label><%= lang === 'es' ? 'Tipo de Leche:' : 'Milk Choice:' %></label>
+                <label>Milk Choice:</label>
                 <select id="milk-choice">
-                    <option value="2% Milk"><%= lang === 'es' ? 'Leche 2%' : '2% Milk' %></option>
-                    <option value="Whole Milk"><%= lang === 'es' ? 'Leche Entera' : 'Whole Milk' %></option>
-                    <option value="Soy Milk"><%= lang === 'es' ? 'Leche de Soya' : 'Soy Milk' %></option>
-                    <option value="Oat Milk"><%= lang === 'es' ? 'Leche de Avena' : 'Oat Milk' %></option>
+                    <option value="2% Milk">2% Milk</option>
+                    <option value="Whole Milk">Whole Milk</option>
+                    <option value="Soy Milk">Soy Milk</option>
+                    <option value="Oat Milk">Oat Milk</option>
                 </select>
             </div>
 
             <div id="subs-container" class="modal-field"></div>
 
             <div class="modal-actions">
-                <button class="btn-primary" onclick="confirmAdd()"><%= lang === 'es' ? 'Agregar al Carrito' : 'Add to Cart' %></button>
-                <button class="btn-secondary" onclick="closeCustomize()"><%= lang === 'es' ? 'Cancelar' : 'Cancel' %></button>
+                <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
+                <button class="btn-secondary" onclick="closeCustomize()">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
         var currentItem = {};
-        var lang = '<%= lang %>';
 
         function openCustomize(name, price, ingredients) {
             currentItem = { name: name, price: Number(price), ingredients: ingredients };
@@ -80,7 +79,7 @@
                 cb.value = ing;
                 cb.className = 'sub-checkbox';
                 label.appendChild(cb);
-                label.appendChild(document.createTextNode((lang === 'es' ? ' Sin ' : ' No ') + ing));
+                label.appendChild(document.createTextNode(' No ' + ing));
                 div.appendChild(label);
                 container.appendChild(div);
             });
@@ -100,7 +99,7 @@
 
             var customizations = 'Milk: ' + milk;
             if (removed.length > 0) {
-                customizations += ', ' + (lang === 'es' ? 'Sin: ' : 'No: ') + removed.join(', ');
+                customizations += ', No: ' + removed.join(', ');
             }
 
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
@@ -112,7 +111,7 @@
             localStorage.setItem('customer-cart', JSON.stringify(cart));
 
             closeCustomize();
-            alert(lang === 'es' ? 'Agregado al carrito' : 'Added to cart');
+            alert('Added to cart');
         }
     </script>
     <script src="/customer/magnify.js"></script>
