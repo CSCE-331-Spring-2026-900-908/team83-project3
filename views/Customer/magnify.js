@@ -5,40 +5,42 @@ const toggleButton = document.getElementById('magnifier-toggle');
 const statusText = document.getElementById('toggle-status');
 let toggle = false;
 
-lensContent.innerHTML = pageContent.innerHTML;
-if (toggleButton) {
-  toggleButton.addEventListener('click', () => {
-    toggle = !toggle;
-    statusText.innerText = toggle ? "ON" : "OFF";
-    if (!toggle) {
-      lens.style.display = 'none';
-    }
-  })
+function cloneContent() {
+    lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
 }
+
+cloneContent();
+
+if (toggleButton) {
+    toggleButton.addEventListener('click', () => {
+        toggle = !toggle;
+        statusText.innerText = toggle ? "ON" : "OFF";
+        if (!toggle) {
+            lens.style.display = 'none';
+        }
+    });
+}
+
 window.addEventListener('load', () => {
-  lensContent.innerHTML = pageContent.innerHTML;
-  console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);
+    cloneContent();
+    console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);
 });
 
 window.addEventListener('mousemove', (e) => {
-  if (!toggle) {
-    return;
-  }
-  lens.style.display = 'block';
-  lens.style.left = `${e.clientX}px`;
-  lens.style.top = `${e.clientY}px`;
-   const zoom = 2;
-  const lensRadius = 125;
-  const totalX = e.pageX * zoom;
-  const totalY = e.pageY * zoom;
-  lensContent.style.left = `${lensRadius-totalX}px`;
-  lensContent.style.top = `${lensRadius-totalY}px`;
-  console.log("Lens Top:", lensContent.style.top);
+    if (!toggle) return;
+    lens.style.display = 'block';
+    lens.style.left = `${e.clientX}px`;
+    lens.style.top = `${e.clientY}px`;
+    const zoom = 2;
+    const lensRadius = 125;
+    const totalX = e.pageX * zoom;
+    const totalY = e.pageY * zoom;
+    lensContent.style.left = `${lensRadius - totalX}px`;
+    lensContent.style.top = `${lensRadius - totalY}px`;
 });
 
-
 window.addEventListener('mouseleave', () => {
-  lens.style.display = 'none';
+    lens.style.display = 'none';
 });
 
 function moveMagnifier(pageX, pageY, clientX, clientY) {
@@ -48,7 +50,6 @@ function moveMagnifier(pageX, pageY, clientX, clientY) {
 
     const zoom = 2;
     const lensRadius = 75;
-
     const moveX = lensRadius - (pageX * zoom);
     const moveY = lensRadius - (pageY * zoom);
 
@@ -56,10 +57,8 @@ function moveMagnifier(pageX, pageY, clientX, clientY) {
     lensContent.style.top = `${moveY}px`;
 }
 
-//Touchscreen
 window.addEventListener('touchmove', (e) => {
     if (!toggle) return;
-    
     const touch = e.touches[0];
     const fingerOffset = 80;
     lens.style.top = `${touch.clientY - fingerOffset}px`;
