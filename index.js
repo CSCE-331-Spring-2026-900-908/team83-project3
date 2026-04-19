@@ -4,7 +4,7 @@ const dotenv = require('dotenv').config();
 
 // Create express app
 const app = express();
-const port = 5500;
+const port = 3000;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -490,6 +490,19 @@ app.post('/api/customer-checkout', (req, res) => {
     console.log(`Customer Order #${newOrder.id} placed.`);
     res.status(200).json({ success: true });
 });
+
+// MENU VIEW
+app.get('/menu-board', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(query_res => {
+            res.render('Menu/menu-board', { menu: query_res.rows });
+        })
+        .catch(err => {
+            console.error("Error fetching menu for menu-board:", err);
+            res.status(500).send("Error loading menu-board");
+        });
+});
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
