@@ -45,6 +45,7 @@ body {
     color: #ffffff;
 }
 
+
 .accessibility-controls {
     display: flex;
     gap: 20px;
@@ -62,8 +63,9 @@ body {
 
 .accessibility-controls input[type="range"] {
     cursor: pointer;
-    accent-color: #919191;    /* Makes the slider handle white in modern browsers */
+    accent-color: #919191;    
 }
+
 /* Main Content Layout */
 .content-wrapper-active-orders {
     padding: 40px 20px;

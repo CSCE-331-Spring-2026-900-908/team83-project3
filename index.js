@@ -106,7 +106,9 @@ app.get('/', isAuthenticated, (req, res) => {
         });
 });
 
-//Initializes inventory
+
+/** MANAGER VIEW */
+// Initializes inventory
 app.get('/inventory', isAuthenticated, (req, res) => {
     inventory = [];
     pool
@@ -121,7 +123,7 @@ app.get('/inventory', isAuthenticated, (req, res) => {
         });
 });
 
-//Handles adding an ingredient to the inventory
+// Handles adding an ingredient to the inventory
 app.post('/add-ingredient', isAuthenticated, (req, res) => {
     const { ingredient, quantity } = req.body;
     const query = 'INSERT INTO inventory (ingredient, quantity) VALUES ($1, $2)';
@@ -133,7 +135,7 @@ app.post('/add-ingredient', isAuthenticated, (req, res) => {
         });
 });
 
-//delete ingredient
+// Delete ingredient
 app.post('/delete-ingredient', isAuthenticated, (req, res) => {
     const { ingredient } = req.body;
     const query = "DELETE FROM inventory WHERE ingredient = $1";
@@ -145,7 +147,7 @@ app.post('/delete-ingredient', isAuthenticated, (req, res) => {
         });
 });
 
-//update ingredient quantity
+// Update ingredient quantity
 app.post('/update-ingredient', isAuthenticated, (req, res) => {
     const { ingredient_id, quantity } = req.body;
     const query = "UPDATE inventory SET quantity = $2 WHERE ingredient_id = $1";
@@ -157,7 +159,7 @@ app.post('/update-ingredient', isAuthenticated, (req, res) => {
         });
 });
 
-//Initializes employee view table
+// Initializes employee view table
 app.get('/employee', isAuthenticated, (req, res) => {
     employees = [];
     pool
@@ -172,7 +174,7 @@ app.get('/employee', isAuthenticated, (req, res) => {
         });
 });
 
-//Handles adding an employee to employee
+// Handles adding an employee to employee
 app.post('/add-employee', isAuthenticated, (req, res) => {
     const { employee_id, employee_name, hours } = req.body;
     const query = "INSERT INTO employees (employee_id, employee_name, hours) VALUES ($1, $2, $3) ON CONFLICT (employee_id) DO UPDATE SET employee_name = EXCLUDED.employee_name, hours = EXCLUDED.hours";
@@ -184,7 +186,7 @@ app.post('/add-employee', isAuthenticated, (req, res) => {
         });
 });
 
-//Delete an employee
+// Delete an employee
 app.post('/delete-employee', isAuthenticated, (req, res) => {
     const { employee_id } = req.body;
     const query = "DELETE FROM employees WHERE employee_id = $1";
@@ -196,7 +198,7 @@ app.post('/delete-employee', isAuthenticated, (req, res) => {
         });
 });
 
-//Initializes menu view table
+// Initializes menu view table
 app.get('/menu', isAuthenticated, (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(result => {
@@ -208,7 +210,7 @@ app.get('/menu', isAuthenticated, (req, res) => {
         });
 });
 
-//Handles adding a menu item to menu
+// Handles adding a menu item to menu
 app.post('/add-menu-item', isAuthenticated, (req, res) => {
     const { item_name, cost, ingredients } = req.body;
     const query = `
@@ -225,7 +227,7 @@ app.post('/add-menu-item', isAuthenticated, (req, res) => {
         });
 });
 
-//Edit a menu item
+// Edit a menu item
 app.post('/edit-menu-item', (req, res) => {
     const { item_id, cost, ingredients } = req.body;
     const query = "UPDATE menu SET cost = $2, ingredients = $3 WHERE item_id = $1";
@@ -236,7 +238,7 @@ app.post('/edit-menu-item', (req, res) => {
             res.status(500).send("Error updating menu item");
         });
 });
-//Delete a menu item
+// Delete a menu item
 app.post('/delete-menu-item', isAuthenticated, (req, res) => {
     const { item_id } = req.body;
     const query = "DELETE FROM menu WHERE item_id = $1";
@@ -248,13 +250,13 @@ app.post('/delete-menu-item', isAuthenticated, (req, res) => {
         });
 });
 
-// ORDER REPORT PAGE
+// Order Report Page
 let lastZReport = null;
 app.get('/order-report', (req, res) => {
     res.render('Manager/order-report');
 });
 
-// X REPORT
+// X Rerport
 app.post('/api/x-report', async (req, res) => {
     const { date, hour } = req.body;
 
@@ -289,7 +291,7 @@ app.post('/api/x-report', async (req, res) => {
     }
 });
 
-// Z REPORT
+// Z Report
 app.post('/api/z-report', async (req, res) => {
     const { date } = req.body;
 
@@ -332,7 +334,7 @@ app.get('/stats', (req, res) => {
 });
 
 
-// SALES REPORT
+// Sales Report
 app.get('/api/sales-report', async (req, res) => {
     const { start, end } = req.query;
 
@@ -359,7 +361,7 @@ app.get('/api/sales-report', async (req, res) => {
     }
 });
 
-// PRODUCT USAGE REPORT
+// Product Usage Report
 app.get('/api/product-usage', async (req, res) => {
     const { start, end } = req.query;
 
@@ -557,7 +559,8 @@ app.post('/api/customer-checkout', (req, res) => {
     res.status(200).json({ success: true });
 });
 
-// MENU VIEW
+
+/* MENU VIEW */
 app.get('/menu-board', (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {

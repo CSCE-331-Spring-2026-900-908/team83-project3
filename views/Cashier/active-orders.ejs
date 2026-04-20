@@ -4,11 +4,12 @@
         <link rel="stylesheet" href="/cashier/cashier.css">
     </head>
     <body>
+    <!-- Navigation -->
     <%- include('../partials/navigation-cashier') %>
-
+    <!-- Main Content -->
     <main class="content-wrapper-active-orders">
         <h1 class="page-title">Active Orders</h1>
-        
+        <!-- Box Containing Order Cards -->
         <div class="orders-container">
             <% if (orders.length === 0) { %>
                 <p>No active orders at the moment.</p>
@@ -16,6 +17,7 @@
                 <% orders.forEach(order => { %>
                     <div class="order-card" id="order-<%= order.id %>">
                         <h3>Order #<%= order.id %></h3>
+                        <!-- List of each drink in the order -->
                         <ul class = "checklist">
                             <% order.items.forEach(item => { %>
                                 <li> <%= item.name %>: $<%= Number(item.price).toFixed(2) %></li>

@@ -4,16 +4,17 @@
         <link rel="stylesheet" href="/Cashier/cashier.css">
     </head>
     <body>
+        <!-- Navigation -->
         <%- include('../partials/navigation-cashier') %>
-
+        <!-- Main Content -->
         <main class="content-wrapper-create-order">
             <h1 class="page-title">Menu</h1>
-            
+            <!-- Dynamic Menu Items Grid-->
             <section class="menu-grid">
                 <% items.forEach(item => { %>
+                    <!-- Display Item Name and Cost From DB-->
                     <div class="menu-item" onclick="addToCart('<%= item.item_name %>', '<%= item.cost %>')">
                         <h3><%= item.item_name %></h3>
-                        
                         <p class="price">$<%= item.cost ? Number(item.cost).toFixed(2) : "0.00" %></p>
                     </div>
                 <% }); %>
