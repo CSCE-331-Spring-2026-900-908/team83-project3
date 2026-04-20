@@ -16,6 +16,7 @@ app.use('/cashier', express.static('views/Cashier'));
 app.use('/customer', express.static('views/Customer'));
 app.use('/manager', express.static('views/Manager'));
 app.use('/portal', express.static('views/Portal'));
+app.use('/menu', express.static('views/Menu'));
 
 // Create pool
 const pool = new Pool({
@@ -548,6 +549,19 @@ app.post('/api/customer-checkout', (req, res) => {
     console.log(`Customer Order #${newOrder.id} placed.`);
     res.status(200).json({ success: true });
 });
+
+// MENU VIEW
+app.get('/menu-board', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(query_res => {
+            res.render('Menu/menu-board', { menu: query_res.rows });
+        })
+        .catch(err => {
+            console.error("Error fetching menu for menu-board:", err);
+            res.status(500).send("Error loading menu-board");
+        });
+});
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
