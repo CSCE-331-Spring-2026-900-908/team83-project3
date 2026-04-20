@@ -517,6 +517,8 @@ app.post('/api/complete-order/:id', async (req, res) => {
 });
 
 /** CUSTOMER VIEW */
+
+// SQL query to load menu items when customer screen is rendered
 app.get('/customer', (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
@@ -528,18 +530,22 @@ app.get('/customer', (req, res) => {
         });
 });
 
+// Renders the cart for customer view
 app.get('/customer/cart', (req, res) => {
     res.render('Customer/cart');
 });
 
+// Renders the checkout for customer view
 app.get('/customer/checkout', (req, res) => {
     res.render('Customer/checkout');
 });
 
+// Renders the order confirmation for customer view
 app.get('/customer/order-confirmation', (req, res) => {
     res.render('Customer/order_confirmation');
 });
 
+// app response and error handling for cart in customer view
 app.post('/api/customer-checkout', (req, res) => {
     const { items } = req.body;
     if (!items || items.length === 0) {
@@ -558,6 +564,8 @@ app.post('/api/customer-checkout', (req, res) => {
 });
 
 // MENU VIEW
+
+// SQL query to load menu items when menu-board is rendered
 app.get('/menu-board', (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
