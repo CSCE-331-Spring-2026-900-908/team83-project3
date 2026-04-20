@@ -33,7 +33,7 @@ Meeting Date: 4-06-2026
 | Task Description | Assigned To | Completed? (yes/no) |
 |---------------------|----------------|----------------------|
 |Make a viewable Customer Page | Matthew/Caroline/Varun |        Yes         |
-|Implement X- Reports |    Robbie    |        Yes         |
+|Implement X - Reports |    Robbie    |        Yes         |
 ---
 
 ## Before the Next Meeting
@@ -52,14 +52,17 @@ Meeting Date: 4-06-2026
 |------------------|-------------|
 | Manager Page Full Stack     |    Robbie   |
 | Magnifying Glass    |    Aedan    |
-| Button/Image Enlarging    |    Matthew    |
+| Button/Text Enlarging    |    Matthew    |
+| Active Order Completion  |    Matthew    |
 | High Contrast    |    Caroline |
+| OAuth    |    Varun    |
+| Machine Translation    |    Varun  |
 
 ---
 
 ## Minutes from Previous Meeting
 Summarize discussion in paragraph form from the previous meeting.
 
-Finilized some of the applications for Manager and Cashier while beginning to
-implement Cashier and delegated the remaining tasks among team memebers.
+Finalized some of the applications for Manager and Cashier while beginning to
+implement Cashier and delegated the remaining tasks among team members.
 
