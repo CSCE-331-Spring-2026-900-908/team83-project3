@@ -19,7 +19,7 @@
 
     <button onclick="runXReport()">Run X Report</button>
     <button onclick="runZReport()">Run Z Report</button>
-
+    <!-- Create table for X Report Data -->
     <h2>X Report</h2>
     <table id="xReportTable" border="1">
         <tr><th>Hour</th><th>Quantity</th><th>Subtotal</th></tr>
@@ -29,6 +29,7 @@
     <div id="zReport"></div>
 
     <script>
+        <!-- X Report Logic -->
         async function runXReport() {
             const date = document.getElementById("reportDate").value;
             const hour = document.getElementById("reportHour").value;
@@ -54,6 +55,7 @@
             });
         }
 
+        <!-- Z Report Logic -->
         async function runZReport() {
             const date = document.getElementById("reportDate").value;
 
