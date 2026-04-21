@@ -25,6 +25,7 @@ body {
     display: flex;             /* Enable Flexbox */
     justify-content: space-between; /* Links left, Sliders right */
     align-items: center;       /* Vertical centering */
+    color: white;
 }
 
 .nav-links {
