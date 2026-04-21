@@ -1,4 +1,5 @@
 <nav class="customer-nav">
+    <!--renders layout, main buttons, nav bar, and portal stuff-->
     <div class="nav-brand">SHARETEA</div>
     <div class="nav-links">
         <a href="/customer">Menu</a>
@@ -14,6 +15,7 @@
     </div>
 </nav>
 <script>
+    /*handles switching stylesheet*/
     function toggleTheme() {
         var themeLink = document.getElementById('theme-stylesheet');
         if (!themeLink) return;
@@ -36,14 +38,14 @@
     var isSpanish = false;
     var originalTexts = [];
 
-    function toggleTranslate() {
+    function toggleTranslate() {/*wrapper function to handle machine translate button*/
         if (isSpanish) {
             restoreOriginal();
             return;
         }
-        translateToSpanish();
+        translateToSpanish(); 
     }
-
+    /*switches back to original text without wasting translation credits*/
     function restoreOriginal() {
         originalTexts.forEach(function(item) {
             item.el.textContent = item.text;
@@ -51,7 +53,7 @@
         document.getElementById('translate-btn').textContent = 'Español';
         isSpanish = false;
     }
-
+    /*pulls text in, filters by character type, and maps english to translation language for easy retrieval*/
     function translateToSpanish() {
         var elements = document.querySelectorAll('#page-content h1, #page-content h2, #page-content h3, #page-content p, #page-content a, #page-content button, #page-content label, #page-content option, .modal-box h2, .modal-box p, .modal-box label, .modal-box option, .modal-box button');
         originalTexts = [];
@@ -64,6 +66,7 @@
                 }
             }
         });
+        /*splits text into chunks before querying translation api to stay under query limit*/
 
         if (originalTexts.length === 0) return;
 
@@ -101,7 +104,7 @@
                 isSpanish = true;
                 return;
             }
-
+            /*logic to call translation api in the backend*/
             var combined = batches[batchIndex].join(' || ');
             var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(combined) + '&langpair=en|es';
 

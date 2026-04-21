@@ -32,6 +32,7 @@
     </div>
 
     <script>
+        /*renders cat with active items seperated by divs*/
         function renderCart() {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             var listEl = document.getElementById('cart-list');
@@ -61,7 +62,7 @@
             document.getElementById('total').textContent = '$' + (subtotal + tax).toFixed(2);
             summaryEl.style.display = 'block';
         }
-
+        /*handles removing items from cart*/
         function removeItem(index) {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             cart.splice(index, 1);
