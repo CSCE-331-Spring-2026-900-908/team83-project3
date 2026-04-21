@@ -10,7 +10,7 @@
     </div>
     <div id="page-content">
     <%- include('../partials/navigation-customer') %>
-
+    <!-- Main Content -->
     <main class="content-wrapper">
         <h1 class="page-title">Your Cart</h1>
 
@@ -32,7 +32,7 @@
     </div>
 
     <script>
-        /*renders cat with active items seperated by divs*/
+        /*renders cart with active items seperated by divs*/
         function renderCart() {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             var listEl = document.getElementById('cart-list');
