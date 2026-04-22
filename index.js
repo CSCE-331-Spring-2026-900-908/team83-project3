@@ -557,7 +557,11 @@ app.post('/api/customer-checkout', (req, res) => {
 
     const newOrder = {
         id: orderCounter++,
-        items: items,
+        items: items.map(item => ({
+            name: item.name,
+            price: item.price,
+            customizations: item.customizations || "" // Capture the string from the frontend
+        })),
         timestamp: new Date().toLocaleString()
     };
 

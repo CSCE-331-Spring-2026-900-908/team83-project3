@@ -178,7 +178,7 @@ body {
 }
 
 .checklist li::before {
-    content: "- "; 
+    content: none; 
     margin-right: 8px;
 }
 
