@@ -1,4 +1,5 @@
 <html>
+     <!-- renders layout, handles imports and navigation-->
     <head>
         <title>Checkout</title>
         <link id="theme-stylesheet" rel="stylesheet" href="/customer/customer.css">
@@ -28,6 +29,7 @@
     </div>
 
     <script>
+        /*submit order button pushes item to checkout cart*/
         function submitOrder() {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
 
@@ -53,6 +55,7 @@
                 console.error(err);
                 alert('Could not place order. Please try again.');
             });
+            /*error handling if order does not go through*/
         }
     </script>
     <script src="/customer/sliders.js"></script>

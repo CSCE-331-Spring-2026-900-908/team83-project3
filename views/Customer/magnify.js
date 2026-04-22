@@ -5,12 +5,14 @@ const toggleButton = document.getElementById('magnifier-toggle');
 const statusText = document.getElementById('toggle-status');
 let toggle = false;
 
+//Page content is 'snpashotted'
 function cloneContent() {
     lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
 }
 
 cloneContent();
 
+//Toggle magnifier on and off
 if (toggleButton) {
     toggleButton.addEventListener('click', () => {
         toggle = !toggle;
@@ -21,11 +23,13 @@ if (toggleButton) {
     });
 }
 
+//Clone page content when page loads
 window.addEventListener('load', () => {
     cloneContent();
     console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);
 });
 
+//Magnifier will follow mouse
 window.addEventListener('mousemove', (e) => {
     if (!toggle) return;
     lens.style.display = 'block';
@@ -39,10 +43,12 @@ window.addEventListener('mousemove', (e) => {
     lensContent.style.top = `${lensRadius - totalY}px`;
 });
 
+//Magnifier leaves when mouse is gone
 window.addEventListener('mouseleave', () => {
     lens.style.display = 'none';
 });
 
+//Moves the magnifier accurately
 function moveMagnifier(pageX, pageY, clientX, clientY) {
     lens.style.display = 'block';
     lens.style.left = `${clientX}px`;
@@ -57,6 +63,7 @@ function moveMagnifier(pageX, pageY, clientX, clientY) {
     lensContent.style.top = `${moveY}px`;
 }
 
+//Magnifier follows touch input
 window.addEventListener('touchmove', (e) => {
     if (!toggle) return;
     const touch = e.touches[0];
@@ -65,12 +72,14 @@ window.addEventListener('touchmove', (e) => {
     moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
 }, { passive: false });
 
+//Magnifier gets placed at touch input
 window.addEventListener('touchstart', (e) => {
     if (!toggle) return;
     const touch = e.touches[0];
     moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
 });
 
+//Magnifier stops when touch input is gone
 window.addEventListener('touchend', () => {
     lens.style.display = 'none';
 });

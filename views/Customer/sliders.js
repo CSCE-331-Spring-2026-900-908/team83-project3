@@ -1,3 +1,4 @@
+// Update text and button sizes
 function updateAccessibility(type, value) {
     if (type === 'text') {
         document.documentElement.style.setProperty('--base-text-size', `${value}px`);
@@ -8,6 +9,7 @@ function updateAccessibility(type, value) {
     }
 }
 
+// Sync magnifying glass and sliders
 function syncMagnifier() {
     const lensContent = document.getElementById('magnifier-content');
     const pageContent = document.getElementById('page-content');
@@ -16,6 +18,7 @@ function syncMagnifier() {
     }
 }
 
+// Load saved preferences on page load
 document.addEventListener('DOMContentLoaded', () => {
     const textSizeSlider = document.getElementById('text-size-slider');
     const buttonSizeSlider = document.getElementById('button-size-slider');

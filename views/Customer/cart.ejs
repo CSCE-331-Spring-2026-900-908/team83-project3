@@ -10,20 +10,20 @@
     </div>
     <div id="page-content">
     <%- include('../partials/navigation-customer') %>
-
+    <!-- Main Content -->
     <main class="content-wrapper">
         <h1 class="page-title">Your Cart</h1>
 
         <div class="cart-list" id="cart-list">
             <p>Loading cart...</p>
         </div>
-
+        <!-- Cart Details -->
         <div class="cart-summary" id="cart-summary">
             <p>Subtotal: <span id="subtotal">$0.00</span></p>
             <p>Tax (8.25%): <span id="tax">$0.00</span></p>
             <p class="total">Total: <span id="total">$0.00</span></p>
         </div>
-
+        <!-- Buttons -->
         <div class="cart-actions">
             <a href="/customer">Back to Menu</a>
             <a href="/customer/checkout">Checkout</a>
@@ -32,6 +32,7 @@
     </div>
 
     <script>
+        /*renders cart with active items seperated by divs*/
         function renderCart() {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             var listEl = document.getElementById('cart-list');
@@ -61,7 +62,7 @@
             document.getElementById('total').textContent = '$' + (subtotal + tax).toFixed(2);
             summaryEl.style.display = 'block';
         }
-
+        /*handles removing items from cart*/
         function removeItem(index) {
             var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             cart.splice(index, 1);

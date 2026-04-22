@@ -4,9 +4,15 @@
         <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+
+    <!-- Makes an object for magnification purposes-->
     <div id="magnifier">
+
+        <!-- Grabs a snapshot of the things the magnifier is over -->
         <div id="magnifier-content"></div>
     </div>
+
+    <!-- Used to take a 'snapshot' of the entire page -->
     <div id="page-content">
     <%- include('../partials/navigation-customer') %>
 
@@ -61,7 +67,7 @@
 
     <script>
         var currentItem = {};
-
+        /*takes item and loads it into a card*/
         function openCustomize(name, price, ingredients) {
             currentItem = { name: name, price: Number(price), ingredients: ingredients };
             document.getElementById('modal-title').textContent = name;
@@ -70,7 +76,7 @@
             var parts = ingredients.split(',').map(function(s) { return s.trim(); });
             var container = document.getElementById('subs-container');
             container.innerHTML = '';
-
+            /*customization logic, also checks if it has milk subs*/
             parts.forEach(function(ing) {
                 if (ing.toLowerCase().indexOf('milk') !== -1) return;
 
@@ -89,7 +95,7 @@
 
             document.getElementById('customize-modal').classList.add('active');
         }
-
+        /*closes customization menu before sending to checkout*/
         function closeCustomize() {
             document.getElementById('customize-modal').classList.remove('active');
         }
@@ -116,6 +122,7 @@
             closeCustomize();
             alert('Added to cart');
         }
+        /*switches stylesheets when toggle theme button is interacted with*/
         function toggleTheme() {
             const themeLink = document.getElementById('theme-stylesheet');
             const currentTheme = themeLink.getAttribute('href');
