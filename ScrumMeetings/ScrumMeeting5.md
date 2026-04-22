@@ -51,7 +51,7 @@ Meeting Date: 4-08-2026
 
 | Make a viewable stats page |    Robbie    |        Yes         |
 
-| High Contrast Accessibility |    Caroline/Matthew   |        Yes         |
+| High Contrast Accessibility |    Caroline   |        Yes         |
 
 |Active Order Completion | Matthew     | Yes   |
 
@@ -65,11 +65,11 @@ Meeting Date: 4-08-2026
 
 ### Plans
 
-● Get OAuth Working
+● Finish up OAuth
 
-● Get Machine Translation Working
+● Continue working on machine translation
 
-● Implement Weather API
+● Continue working text/button sliders
 
 
 ### Task Assignments
@@ -80,11 +80,11 @@ Meeting Date: 4-08-2026
 
 | OAuth      |    Varun    |
 
-| Machine Translation    |    Robbie   |
+| Machine Translation    |    Varun   |
 
-| Scheduler | Aedan |
+| Magnifier Touch Screen Compatibility    |    Aedan    |
 
-| Button/Image Enlarging    |    Matthew/Caroline  |
+| Button/Text Enlarging    |    Matthew  |
 
 | CSS Pages    |    Caroline |
 

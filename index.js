@@ -15,6 +15,9 @@ app.use(express.json());
 app.use('/cashier', express.static('views/Cashier'));
 app.use('/customer', express.static('views/Customer'));
 app.use('/manager', express.static('views/Manager'));
+app.use('/portal', express.static('views/Portal'));
+app.use('/menu', express.static('views/Menu'));
+app.use(express.static('public'));
 
 // Create pool
 const pool = new Pool({
@@ -395,6 +398,8 @@ app.get('/api/product-usage', async (req, res) => {
 let activeOrders = [];
 let orderCounter = 1; // Simple counter to assign order IDs
 
+
+// SQL query to load menu items when cashier screen is rendered
 app.get('/cashier-order-screen', isAuthenticated, (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
@@ -406,14 +411,17 @@ app.get('/cashier-order-screen', isAuthenticated, (req, res) => {
         });
 });
 
+// Active orders page for cashier
 app.get('/active-orders', isAuthenticated, (req, res) => {
     res.render('Cashier/active-orders', { orders: activeOrders });
 });
 
+// Cart page for cashier
 app.get('/cart', isAuthenticated, (req, res) => {
     res.render('Cashier/cart');
 });
 
+// Checkout endpoint for cashier - receives cart items and adds to active orders 
 app.post('/api/checkout', (req, res) => {
     const { items } = req.body;
     if (!items || items.length === 0) {
@@ -431,7 +439,7 @@ app.post('/api/checkout', (req, res) => {
     res.status(200).json({ success: true });
 });
 
-const crypto = require('crypto');
+const crypto = require('crypto');   // Crypto module for generating unique receipt IDs
 
 app.post('/api/complete-order/:id', async (req, res) => {
     const activeOrderId = parseInt(req.params.id);
@@ -446,6 +454,7 @@ app.post('/api/complete-order/:id', async (req, res) => {
             const maxIdResult = await pool.query('SELECT MAX(order_id) FROM orders');
             const nextDbOrderId = (maxIdResult.rows[0].max || 0) + 1;
 
+            // Calculate date components for orders table
             const startOfYear = new Date(now.getFullYear(), 0, 0);
             const diff = now - startOfYear;
             const oneDay = 1000 * 60 * 60 * 24;
@@ -471,6 +480,7 @@ app.post('/api/complete-order/:id', async (req, res) => {
                 const menuResult = await pool.query('SELECT item_id FROM menu WHERE item_name = $1', [itemName]);
                 const itemId = menuResult.rows.length > 0 ? menuResult.rows[0].item_id : null;
 
+                // Insert each item in the order into the orders table
                 await pool.query(
                     `INSERT INTO orders (
                         order_id, receipt_id, date, week_index, day_index, 
@@ -508,11 +518,12 @@ app.post('/api/complete-order/:id', async (req, res) => {
 });
 
 /** CUSTOMER VIEW */
+
+// SQL query to load menu items when customer screen is rendered
 app.get('/customer', (req, res) => {
-    const lang = req.query.lang || 'en';
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(query_res => {
-            res.render('Customer/customer_menu', { menu: query_res.rows, lang: lang });
+            res.render('Customer/customer_menu', { menu: query_res.rows });
         })
         .catch(err => {
             console.error("Error fetching menu for customer:", err);
@@ -520,21 +531,22 @@ app.get('/customer', (req, res) => {
         });
 });
 
+// Renders the cart for customer view
 app.get('/customer/cart', (req, res) => {
-    const lang = req.query.lang || 'en';
-    res.render('Customer/cart', { lang: lang });
+    res.render('Customer/cart');
 });
 
+// Renders the checkout for customer view
 app.get('/customer/checkout', (req, res) => {
-    const lang = req.query.lang || 'en';
-    res.render('Customer/checkout', { lang: lang });
+    res.render('Customer/checkout');
 });
 
+// Renders the order confirmation for customer view
 app.get('/customer/order-confirmation', (req, res) => {
-    const lang = req.query.lang || 'en';
-    res.render('Customer/order_confirmation', { lang: lang });
+    res.render('Customer/order_confirmation');
 });
 
+// app response and error handling for cart in customer view
 app.post('/api/customer-checkout', (req, res) => {
     const { items } = req.body;
     if (!items || items.length === 0) {
@@ -551,6 +563,21 @@ app.post('/api/customer-checkout', (req, res) => {
     console.log(`Customer Order #${newOrder.id} placed.`);
     res.status(200).json({ success: true });
 });
+
+// MENU VIEW
+
+// SQL query to load menu items when menu-board is rendered
+app.get('/menu-board', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(query_res => {
+            res.render('Menu/menu-board', { menu: query_res.rows });
+        })
+        .catch(err => {
+            console.error("Error fetching menu for menu-board:", err);
+            res.status(500).send("Error loading menu-board");
+        });
+});
+
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);

@@ -1,22 +1,125 @@
 <nav class="customer-nav">
-    <div class="nav-brand">SHARETEA</div>
+    <div class="nav-brand">EIGHTTEATHREE TEA</div>
     <div class="nav-links">
-        <a href="/customer?lang=<%= lang %>"><%= lang === 'es' ? 'Menú' : 'Menu' %></a>
-        <a href="/customer/cart?lang=<%= lang %>"><%= lang === 'es' ? 'Carrito' : 'Cart' %></a>
-        <a href="/customer/checkout?lang=<%= lang %>"><%= lang === 'es' ? 'Pagar' : 'Checkout' %></a>
-        <button id="magnifier-toggle" class="btn-secondary"><%= lang === 'es' ? 'Lupa' : 'Magnifier' %>: <span id="toggle-status">OFF</span></button>
-        <% if (lang === 'es') { %>
-            <a href="?lang=en" class="lang-toggle">English</a>
-        <% } else { %>
-            <a href="?lang=es" class="lang-toggle">Español</a>
-        <% } %>
-    </div>
-    <div class="accessibility-controls">
-        <label>Text Size: 
-            <input type="range" id="text-size-slider" min="12" max="30" value="16">
-        </label>
-        <label>Button Size: 
-            <input type="range" id="button-size-slider" min="0.5" max="2" step="0.1" value="1">
-        </label>
+        <a href="/customer">Menu</a>
+        <a href="/customer/cart">Cart</a>
+        <a href="/customer/checkout">Checkout</a>
+        <div class="accessibility-controls">
+            <label>Text <input type="range" id="text-size-slider" min="12" max="28" step="1" value="16"></label>
+            <label>Buttons <input type="range" id="button-size-slider" min="0.8" max="2" step="0.1" value="1"></label>
+        </div>
+        <button id="magnifier-toggle" class="btn-secondary">Magnifier: <span id="toggle-status">OFF</span></button>
+        <button onclick="toggleTheme()" class="btn-secondary">Theme</button>
+        <button id="translate-btn" class="btn-secondary" onclick="toggleTranslate()">Español</button>
     </div>
 </nav>
+<script>
+    function toggleTheme() {
+        var themeLink = document.getElementById('theme-stylesheet');
+        if (!themeLink) return;
+        var currentTheme = themeLink.getAttribute('href');
+        var newTheme = currentTheme === '/customer/customer.css'
+            ? '/customer/high-contrast-customer.css'
+            : '/customer/customer.css';
+        themeLink.setAttribute('href', newTheme);
+        localStorage.setItem('kiosk-theme', newTheme);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var savedTheme = localStorage.getItem('kiosk-theme');
+        var themeLink = document.getElementById('theme-stylesheet');
+        if (savedTheme && themeLink) {
+            themeLink.setAttribute('href', savedTheme);
+        }
+    });
+
+    var isSpanish = false;
+    var originalTexts = [];
+
+    function toggleTranslate() {
+        if (isSpanish) {
+            restoreOriginal();
+            return;
+        }
+        translateToSpanish();
+    }
+
+    function restoreOriginal() {
+        originalTexts.forEach(function(item) {
+            item.el.textContent = item.text;
+        });
+        document.getElementById('translate-btn').textContent = 'Español';
+        isSpanish = false;
+    }
+
+    function translateToSpanish() {
+        var elements = document.querySelectorAll('#page-content h1, #page-content h2, #page-content h3, #page-content p, #page-content a, #page-content button, #page-content label, #page-content option, .modal-box h2, .modal-box p, .modal-box label, .modal-box option, .modal-box button');
+        originalTexts = [];
+
+        elements.forEach(function(el) {
+            if (el.children.length === 0 || el.tagName === 'BUTTON' || el.tagName === 'OPTION') {
+                var text = el.textContent.trim();
+                if (text && text !== '' && !text.match(/^\$[\d.]+$/)) {
+                    originalTexts.push({ el: el, text: el.textContent });
+                }
+            }
+        });
+
+        if (originalTexts.length === 0) return;
+
+        document.getElementById('translate-btn').textContent = '...';
+
+        var batches = [];
+        var current = [];
+        var currentLen = 0;
+
+        originalTexts.forEach(function(item) {
+            var addition = item.text.trim().length + 4;
+            if (currentLen + addition > 450 && current.length > 0) {
+                batches.push(current.slice());
+                current = [];
+                currentLen = 0;
+            }
+            current.push(item.text.trim());
+            currentLen += addition;
+        });
+        if (current.length > 0) batches.push(current);
+
+        var allTranslated = [];
+        var batchIndex = 0;
+
+        function nextBatch() {
+            if (batchIndex >= batches.length) {
+                var i = 0;
+                originalTexts.forEach(function(item) {
+                    if (i < allTranslated.length) {
+                        item.el.textContent = allTranslated[i];
+                    }
+                    i++;
+                });
+                document.getElementById('translate-btn').textContent = 'English';
+                isSpanish = true;
+                return;
+            }
+
+            var combined = batches[batchIndex].join(' || ');
+            var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(combined) + '&langpair=en|es';
+
+            fetch(url)
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    var parts = data.responseData.translatedText.split(' || ');
+                    parts.forEach(function(p) { allTranslated.push(p.trim()); });
+                    batchIndex++;
+                    nextBatch();
+                })
+                .catch(function(err) {
+                    console.error('Translation error:', err);
+                    document.getElementById('translate-btn').textContent = 'Español';
+                    alert('Translation failed. Please try again.');
+                });
+        }
+
+        nextBatch();
+    }
+</script>

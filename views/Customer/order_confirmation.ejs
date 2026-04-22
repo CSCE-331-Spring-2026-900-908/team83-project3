@@ -1,6 +1,7 @@
 <html>
     <head>
-        <title><%= lang === 'es' ? 'Pedido Confirmado' : 'Order Confirmed' %></title>
+        <!--outline and structure of order confirmation page-->
+        <title>Order Confirmed</title>
         <link rel="stylesheet" href="/customer/customer.css">
         <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
@@ -9,14 +10,14 @@
         <div id="magnifier-content"></div>
     </div>
     <div id="page-content">
-    <%- include('../partials/navigation-customer', { lang: lang }) %>
+    <%- include('../partials/navigation-customer') %>
 
     <main class="content-wrapper">
         <div class="confirmation-box">
-            <h1><%= lang === 'es' ? '¡Pedido Confirmado!' : 'Order Confirmed!' %></h1>
-            <p><%= lang === 'es' ? 'Gracias por su pedido.' : 'Thank you for your order.' %></p>
-            <p><%= lang === 'es' ? 'Su boba se está preparando.' : 'Your boba is being prepared.' %></p>
-            <a href="/customer?lang=<%= lang %>"><%= lang === 'es' ? 'Volver al Menú' : 'Back to Menu' %></a>
+            <h1>Order Confirmed!</h1>
+            <p>Thank you for your order.</p>
+            <p>Your boba is being prepared.</p>
+            <a href="/customer">Back to Menu</a>
         </div>
     </main>
     </div>

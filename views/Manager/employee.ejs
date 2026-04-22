@@ -6,6 +6,8 @@
 <body>
     <%- include('../partials/navigation-manager') %>
     <h1>Employees</h1>
+
+    <!-- Table containing all employee information -->
     <table class="employeeTable" border="1">
         <tr>
             <th>ID</th>
@@ -19,6 +21,7 @@
             <td><%= employee.employee_name %></td>
             <td><%= employee.hours %></td>
             <td>
+                <!-- Button for deleting an employee from the database -->
                 <form action="/delete-employee" method="POST" style="display:inline;">
                     <input type="hidden" name="employee_id" value="<%= employee.employee_id %>">
                     <button type="submit">Delete</button>
@@ -28,6 +31,7 @@
     <% }) %>
     </table>
    <h2>Add New Employee</h2>
+    <!-- Button and text boxes for adding a new employee -->
    <form action="/add-employee" method="POST">
     <input type="number" name="employee_id" placeholder="Employee ID" required>
     <input type="text" name="employee_name" placeholder="Employee Name" required>

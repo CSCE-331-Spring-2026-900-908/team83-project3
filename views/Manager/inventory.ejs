@@ -6,6 +6,7 @@
 <body>
     <%- include('../partials/navigation-manager') %>
     <h1>Inventory</h1>
+        <!-- Table containing all inventory information -->
         <table class="inventoryTable" border="1">
             <thead>
                 <tr>
@@ -21,6 +22,7 @@
                     <td><%= item.ingredient%></td>
                     <td><%= item.quantity%></td>
                     <td>
+                    <!-- Button for deleting an ingredient from the database -->
                     <form action="/delete-ingredient" method="POST" style="display:inline;">
                         <input type="hidden" name="ingredient" value="<%= item.ingredient %>">
                         <button type="submit">Delete</button>
@@ -31,6 +33,7 @@
             </tbody>
         </table>
    <h2>Add New Ingredient</h2>
+    <!-- Button and text fields for adding a new ingredient to the databse -->
    <form action="/add-ingredient" method="POST">
         <input type="text" name="ingredient" placeholder="Ingredient Name" required>
         <input type="number" name="quantity" placeholder="Quantity" required>
