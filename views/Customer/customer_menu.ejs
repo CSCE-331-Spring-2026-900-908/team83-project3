@@ -88,10 +88,12 @@
             });
 
             document.getElementById('customize-modal').classList.add('active');
+            window.dispatchEvent(new CustomEvent('refreshMagnifier'));
         }
 
         function closeCustomize() {
             document.getElementById('customize-modal').classList.remove('active');
+            window.dispatchEvent(new CustomEvent('refreshMagnifier'));
         }
 
         function confirmAdd() {

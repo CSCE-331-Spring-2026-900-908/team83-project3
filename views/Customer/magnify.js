@@ -6,10 +6,30 @@ const statusText = document.getElementById('toggle-status');
 let toggle = false;
 
 function cloneContent() {
-    lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
+    //lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
+    lensContent.innerHTML = '';
+    const mainContent = document.getElementById('page-content').cloneNode(true);
+    const modalOriginal = document.getElementById('customize-modal');
+    const modalContent = modalOriginal.cloneNode(true);
+    if (modalOriginal.classList.contains('active')) {
+        modalContent.classList.add('active');
+        modalContent.style.display = 'flex'; 
+        modalContent.style.opacity = '1';
+        modalContent.style.visibility = 'visible';
+    }
+    [mainContent, modalContent].forEach(el => {
+        el.removeAttribute('id');
+        el.querySelectorAll('[id]').forEach(child => child.removeAttribute('id'));
+    });
+    lensContent.appendChild(mainContent);
+    lensContent.appendChild(modalContent);
 }
 
 cloneContent();
+
+window.addEventListener('refreshMagnifier', () => {
+    cloneContent();
+});
 
 if (toggleButton) {
     toggleButton.addEventListener('click', () => {
@@ -18,12 +38,17 @@ if (toggleButton) {
         if (!toggle) {
             lens.style.display = 'none';
         }
+        cloneContent();
     });
 }
 
 window.addEventListener('load', () => {
     cloneContent();
     console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);
+});
+
+window.addEventListener('click', () => {
+    cloneContent();
 });
 
 window.addEventListener('mousemove', (e) => {
@@ -33,8 +58,8 @@ window.addEventListener('mousemove', (e) => {
     lens.style.top = `${e.clientY}px`;
     const zoom = 2;
     const lensRadius = 125;
-    const totalX = e.pageX * zoom;
-    const totalY = e.pageY * zoom;
+    const totalX = e.clientX * zoom;
+    const totalY = e.clientY * zoom;
     lensContent.style.left = `${lensRadius - totalX}px`;
     lensContent.style.top = `${lensRadius - totalY}px`;
 });
@@ -69,6 +94,7 @@ window.addEventListener('touchstart', (e) => {
     if (!toggle) return;
     const touch = e.touches[0];
     moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
+    cloneContent;
 });
 
 window.addEventListener('touchend', () => {
