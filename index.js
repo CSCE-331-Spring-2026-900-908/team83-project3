@@ -17,6 +17,7 @@ app.use('/customer', express.static('views/Customer'));
 app.use('/manager', express.static('views/Manager'));
 app.use('/portal', express.static('views/Portal'));
 app.use('/menu', express.static('views/Menu'));
+app.use(express.static('public'));
 
 // Create pool
 const pool = new Pool({
