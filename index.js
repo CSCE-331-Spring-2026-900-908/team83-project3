@@ -392,12 +392,13 @@ app.get('/api/product-usage', async (req, res) => {
     }
 });
 
+// SCHEDULER 
 app.get('/scheduler', isAuthenticated, async (req, res) => {
     const employees = await pool.query("SELECT * FROM employees ORDER BY employee_id ASC");
     res.render('Manager/scheduler', { employees: employees.rows });
 });
 
-app.get('/api/schedule', isAuthenticated, async (req, res) => {
+app.get('/api/scheduler', async (req, res) => {
     const result = await pool.query(`
         SELECT s.shift_id, s.shift_date, s.start_time, s.end_time,
                e.employee_name
@@ -405,32 +406,73 @@ app.get('/api/schedule', isAuthenticated, async (req, res) => {
         JOIN employees e ON s.employee_id = e.employee_id
     `);
 
-    const events = result.rows.map(row => ({
-        id: row.shift_id,
-        title: row.employee_name,
-        start: `${row.shift_date}T${row.start_time}`,
-        end: `${row.shift_date}T${row.end_time}`
-    }));
+    const events = result.rows.map(row => {
+    const isoDate = new Date(row.shift_date).toISOString().split('T')[0];
+            return {
+                id: row.shift_id,
+                title: `${row.employee_name} (${formatTime(row.start_time)} – ${formatTime(row.end_time)})`,
+                start: `${isoDate}T${row.start_time}`,
+                end: `${isoDate}T${row.end_time}`
+            };
+    });
 
     res.json(events);
 });
 
-app.post('/api/schedule/add', isAuthenticated, async (req, res) => {
+app.post('/api/scheduler/add', async (req, res) => {
     const { employee_id, shift_date, start_time, end_time } = req.body;
 
     try {
+        // Check for duplicate shift
+        const conflict = await pool.query(
+            `SELECT * FROM schedule 
+             WHERE employee_id = $1 
+             AND shift_date = $2 
+             AND start_time = $3 
+             AND end_time = $4`,
+            [employee_id, shift_date, start_time, end_time]
+        );
+
+        if (conflict.rows.length > 0) {
+            return res.status(400).json({ error: "Employee already booked for this shift" });
+        }
+
+        // Insert shift
         await pool.query(
             `INSERT INTO schedule (employee_id, shift_date, start_time, end_time)
              VALUES ($1, $2, $3, $4)`,
             [employee_id, shift_date, start_time, end_time]
         );
+
         res.json({ success: true });
+
     } catch (err) {
         console.error("Error adding shift:", err);
         res.status(500).json({ error: "Error adding shift" });
     }
 });
 
+app.post('/api/scheduler/delete', async (req, res) => {
+    const { shift_id } = req.body;
+
+    try {
+        await pool.query(`DELETE FROM schedule WHERE shift_id = $1`, [shift_id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Error deleting shift:", err);
+        res.status(500).json({ error: "Error deleting shift" });
+    }
+});
+
+
+//Time formatting helper function for scheduler events
+function formatTime(t) {
+    let [h, m] = t.split(':');
+    h = parseInt(h);
+    const suffix = h >= 12 ? "PM" : "AM";
+    h = (h % 12) || 12;
+    return `${h}:${m} ${suffix}`;
+}
 
 /** CASHIER VIEW */
 let activeOrders = [];
