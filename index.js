@@ -268,6 +268,11 @@ app.post('/api/x-report', async (req, res) => {
         lastZReport = new Date(date);
         lastZReport.setDate(lastZReport.getDate() - 1);
     }
+    if (lastZReport && lastZReport.toISOString().slice(0, 10) !== date) {
+    lastZReport = new Date(date);
+    lastZReport.setDate(lastZReport.getDate() - 1);
+}
+
 
     const lastZString = lastZReport.toISOString().slice(0, 10);
 
