@@ -392,6 +392,44 @@ app.get('/api/product-usage', async (req, res) => {
     }
 });
 
+app.get('/scheduler', isAuthenticated, async (req, res) => {
+    const employees = await pool.query("SELECT * FROM employees ORDER BY employee_id ASC");
+    res.render('Manager/scheduler', { employees: employees.rows });
+});
+
+app.get('/api/schedule', isAuthenticated, async (req, res) => {
+    const result = await pool.query(`
+        SELECT s.shift_id, s.shift_date, s.start_time, s.end_time,
+               e.employee_name
+        FROM schedule s
+        JOIN employees e ON s.employee_id = e.employee_id
+    `);
+
+    const events = result.rows.map(row => ({
+        id: row.shift_id,
+        title: row.employee_name,
+        start: `${row.shift_date}T${row.start_time}`,
+        end: `${row.shift_date}T${row.end_time}`
+    }));
+
+    res.json(events);
+});
+
+app.post('/api/schedule/add', isAuthenticated, async (req, res) => {
+    const { employee_id, shift_date, start_time, end_time } = req.body;
+
+    try {
+        await pool.query(
+            `INSERT INTO schedule (employee_id, shift_date, start_time, end_time)
+             VALUES ($1, $2, $3, $4)`,
+            [employee_id, shift_date, start_time, end_time]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Error adding shift:", err);
+        res.status(500).json({ error: "Error adding shift" });
+    }
+});
 
 
 /** CASHIER VIEW */
