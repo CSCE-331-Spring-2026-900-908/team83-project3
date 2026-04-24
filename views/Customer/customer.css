@@ -12,11 +12,11 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
 .customer-nav { background: #222; color: #fff; padding: 14px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .nav-brand { font-size: 20px; font-weight: bold; }
 .nav-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.nav-links a { color: #ccc; text-decoration: none; font-size: 14px; }
+.nav-links a { color: #ccc; text-decoration: none; font-size: 1em; }
 .nav-links a:hover { color: #fff; }
 .lang-toggle { color: #ffcc00 !important; }
 
-.accessibility-controls { display: flex; gap: 20px; color: #ffffff; font-size: 0.85em; font-weight: 500; }
+.accessibility-controls { display: flex; gap: 20px; color: #ffffff; font-size: 1em; font-weight: 500; }
 .accessibility-controls label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .accessibility-controls input[type="range"] { cursor: pointer; accent-color: #919191; }
 
@@ -138,6 +138,10 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     font-size: calc(0.9em * var(--button-scale));
     cursor: pointer;
 }
+.btn-primary:hover {
+    background: #616161;
+}
+
 .btn-secondary {
     background: none;
     border: 1px solid #ccc;
@@ -146,6 +150,44 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     cursor: pointer;
     color: inherit;
 }
+
+#theme-toggle:hover {
+    color: #7b7b7b;
+} 
+#magnifier-toggle:hover {
+    color: #7b7b7b;
+}
+#translate-btn:hover {
+    color: #7b7b7b;
+}
+#cancel-btn:hover {
+    color: #cacaca;
+}
+
 .accessibility-controls, .accessibility-controls * {
     pointer-events: auto !important;
+}
+
+.theme-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+}
+.theme-modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    color: black; /* Ensure text is visible regardless of page theme */
+}
+.theme-options {
+    display: grid;
+    gap: 10px;
+    margin: 1.5rem 0;
+}
+.theme-options button {
+    padding: 10px;
+    cursor: pointer;
 }

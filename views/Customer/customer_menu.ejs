@@ -15,14 +15,7 @@
     <!-- Used to take a 'snapshot' of the entire page -->
     <div id="page-content">
     <%- include('../partials/navigation-customer') %>
-
     <main class="content-wrapper">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <button onclick="toggleTheme()" style="padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border: 2px solid currentColor; background: transparent; color: inherit;">
-                Toggle Theme
-            </button>
-        </div>
-
         <div class="menu-grid">
             <% if (menu.length === 0) { %>
                 <p>No menu items available.</p>
@@ -33,7 +26,7 @@
                         <h3><%= item.item_name %></h3>
                         <p class="menu-card-price">$<%= Number(item.cost).toFixed(2) %></p>
                         <p class="menu-card-ingredients"><%= item.ingredients %></p>
-                        <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>', '<%= item.ingredients %>')">Add to Cart</button>
+                        <button class="btn-primary" onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>', '<%= item.ingredients %>')">Add to Cart</button>
                     </div>
                 <% }); %>
             <% } %>
@@ -60,7 +53,7 @@
 
             <div class="modal-actions">
                 <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
-                <button class="btn-secondary" onclick="closeCustomize()">Cancel</button>
+                <button id="cancel-btn" class="btn-secondary" onclick="closeCustomize()">Cancel</button>
             </div>
         </div>
     </div>
@@ -124,24 +117,9 @@
             closeCustomize();
             alert('Added to cart');
         }
-        /*switches stylesheets when toggle theme button is interacted with*/
-        function toggleTheme() {
-            const themeLink = document.getElementById('theme-stylesheet');
-            const currentTheme = themeLink.getAttribute('href');
-            const newTheme = currentTheme === '/customer/customer.css'
-                ? '/customer/high-contrast-customer.css'
-                : '/customer/customer.css';
-            themeLink.setAttribute('href', newTheme);
-            localStorage.setItem('kiosk-theme', newTheme);
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('kiosk-theme');
-            if (savedTheme) {
-                document.getElementById('theme-stylesheet').setAttribute('href', savedTheme);
-            }
-        });
     </script>
     <script src="/customer/sliders.js"></script>
     <script src="/customer/magnify.js"></script>
+    <script src="/weather.js"></script>
     </body>
 </html>

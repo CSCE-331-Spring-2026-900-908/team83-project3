@@ -4,11 +4,12 @@
         <link rel="stylesheet" href="/cashier/cashier.css">
     </head>
     <body>
+    <!-- Navigation -->
     <%- include('../partials/navigation-cashier') %>
-
+    <!-- Main Content -->
     <main class="content-wrapper-active-orders">
         <h1 class="page-title">Active Orders</h1>
-        
+        <!-- Box Containing Order Cards -->
         <div class="orders-container">
             <% if (orders.length === 0) { %>
                 <p>No active orders at the moment.</p>
@@ -16,9 +17,25 @@
                 <% orders.forEach(order => { %>
                     <div class="order-card" id="order-<%= order.id %>">
                         <h3>Order #<%= order.id %></h3>
-                        <ul class = "checklist">
+                        <!-- List of each drink in the order -->
+                        <ul class="checklist" style="list-style-type: none; padding: 0;">
                             <% order.items.forEach(item => { %>
-                                <li> <%= item.name %>: $<%= Number(item.price).toFixed(2) %></li>
+                                <li style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; text-align: left;"> 
+                                    
+                                    <div style="display: flex; align-items: baseline; width: 100%;">
+                                        <span style="margin-right: 10px; font-weight: bold;">-</span> 
+                                        <span style="font-weight: bold;">
+                                            <%= item.name %>: $<%= Number(item.price).toFixed(2) %>
+                                        </span>
+                                    </div>
+
+                                    <% if (item.customizations) { %>
+                                        <div style="margin-left: 22px; font-size: 0.85em; color: #666; font-style: italic; margin-top: 2px;">
+                                            ↳ <%= item.customizations %>
+                                        </div>
+                                    <% } %>
+                                    
+                                </li>
                             <% }); %>
                         </ul>
                         <button class="complete-button" onclick="completeOrder(<%= order.id %>)">Order Complete</button>
@@ -40,5 +57,6 @@
         }
     </script>
     <script src="/Cashier/script.js"></script>
+    <script src="/weather.js"></script>
     </body>
 </html>
