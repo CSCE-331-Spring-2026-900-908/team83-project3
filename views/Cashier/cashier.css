@@ -20,8 +20,9 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #1a1a1a;
-    padding: 1rem 2rem;
+    background-color: #000000;
+    /*padding: 1rem 2rem; */
+    padding: 14px 32px;
     display: flex;             /* Enable Flexbox */
     justify-content: space-between; /* Links left, Sliders right */
     align-items: center;       /* Vertical centering */
@@ -38,7 +39,7 @@ body {
 .nav-item {
     color: #bfbfbf;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 1em;
     transition: color 0.2s;
 }
 

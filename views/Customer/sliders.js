@@ -36,14 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (textSizeSlider) {
-        textSizeSlider.addEventListener('input', (e) => {
+        textSizeSlider.addEventListener('change', (e) => {
             updateAccessibility('text', e.target.value);
             syncMagnifier();
         });
     }
 
     if (buttonSizeSlider) {
-        buttonSizeSlider.addEventListener('input', (e) => {
+        buttonSizeSlider.addEventListener('change', (e) => {
             updateAccessibility('button', e.target.value);
             syncMagnifier();
         });
