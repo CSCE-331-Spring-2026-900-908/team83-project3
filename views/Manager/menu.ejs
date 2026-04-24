@@ -7,6 +7,7 @@
 <body>
 <%- include('../partials/navigation-manager') %>
 <h1>Menu</h1>
+<!-- Table containing all menu information -->
 <table border="1">
     <tr>
         <th>ID</th>
@@ -20,6 +21,7 @@
         <tr>
             <td><%= item.item_id %></td>
             <td><%= item.item_name %></td>
+            <!-- Relevant information fields are editable text fields populated by default with their database value that can be updated manually -->
             <form action="/edit-menu-item" method="POST">
                 <input type="hidden" name="item_id" value="<%= item.item_id%>">
                 <td>
@@ -33,6 +35,7 @@
                 </td>
             </form>
             <td>
+                <!-- Button for deleting an item from the database -->
                 <form action="/delete-menu-item" method="POST">
                     <input type="hidden" name="item_id" value="<%= item.item_id %>">
                     <button type="submit">Delete</button>
@@ -43,7 +46,7 @@
 </table>
 
 <h2>Add Menu Item</h2>
-
+<!-- Button and text fields for adding a new menu item -->
 <form action="/add-menu-item" method="POST">
     <input type="text" name="item_name" placeholder="Item name" required>
     <input type="number" step="0.01" name="cost" placeholder="Cost" required>
