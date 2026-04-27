@@ -11,7 +11,7 @@
         <button id="magnifier-toggle" class="btn-secondary">Magnifier: <span id="toggle-status">OFF</span></button>
         <button id="theme-toggle" class="btn-secondary" onclick="openThemeModal()">Theme</button>
         <button id="translate-btn" class="btn-secondary" onclick="toggleTranslate()">Español</button>
-        <span style="color:var(--nav-text); font-size:13px; white-space:nowrap;"><span id="temp">--</span> | <span id="weather">--</span></span>
+        <span class="nav-weather"><span id="temp">--</span> | <span id="weather">--</span></span>
     </div>
 </nav>
 
@@ -31,7 +31,21 @@
     </div>
 </div>
 
-<script src="/partials/weather.js"></script>
+<!-- Chatbot Widget -->
+<div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
+<div id="chatbot-container">
+    <div id="chatbot-header">
+        <span>Sharetea Assistant</span>
+        <button onclick="toggleChatbot()">✕</button>
+    </div>
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input-area">
+        <input type="text" id="chatbot-input" placeholder="Ask about our menu..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()">Send</button>
+    </div>
+</div>
+
+<script src="/customer/weather.js"></script>
 <script>
     // Theme
     function openThemeModal() {
@@ -100,5 +114,69 @@
                 isSpanish = true;
             })
             .catch(function(err) { console.error('Translation error:', err); });
+    }
+
+    // Chatbot
+    function toggleChatbot() {
+        var container = document.getElementById('chatbot-container');
+        var toggle = document.getElementById('chatbot-toggle');
+        if (container.classList.contains('open')) {
+            container.classList.remove('open');
+            toggle.style.display = 'flex';
+        } else {
+            container.classList.add('open');
+            toggle.style.display = 'none';
+        }
+    }
+
+    var chatHistory = [];
+
+    async function sendChat() {
+        var input = document.getElementById('chatbot-input');
+        var msg = input.value.trim();
+        if (!msg) return;
+        input.value = '';
+
+        appendMessage('user', msg);
+        chatHistory.push({ role: 'user', content: msg });
+
+        appendMessage('assistant', '...');
+
+        try {
+            var res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: 1000,
+                    system: 'You are a helpful assistant for Sharetea, a bubble tea shop. Help customers with menu questions, drink recommendations, and customization options. Keep responses short and friendly. The customization options are: Milk (whole, 2%, oat, soy, none), Sugar (30%, 60%, 90%, 100%, 120%), Temperature (hot or cold), Ice (extra, regular, less, none), and Toppings (boba, taro, lychee jelly).',
+                    messages: chatHistory
+                })
+            });
+            var data = await res.json();
+            var reply = data.content.map(function(c) { return c.text || ''; }).join('');
+            removeLastAssistant();
+            appendMessage('assistant', reply);
+            chatHistory.push({ role: 'assistant', content: reply });
+        } catch (err) {
+            removeLastAssistant();
+            appendMessage('assistant', 'Sorry, I couldn\'t connect. Please try again.');
+            console.error(err);
+        }
+    }
+
+    function appendMessage(role, text) {
+        var container = document.getElementById('chatbot-messages');
+        var div = document.createElement('div');
+        div.className = 'chat-msg chat-' + role;
+        div.textContent = text;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function removeLastAssistant() {
+        var container = document.getElementById('chatbot-messages');
+        var msgs = container.querySelectorAll('.chat-assistant');
+        if (msgs.length > 0) msgs[msgs.length - 1].remove();
     }
 </script>
