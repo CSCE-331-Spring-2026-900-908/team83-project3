@@ -29,7 +29,13 @@
             <% } else { %>
                 <% menu.forEach(item => { %>
                     <div class="menu-card">
-                        <div class="img-placeholder"></div>
+                        <!--Displays the image associated with a drink's category-->
+                            <img 
+                                src="/images/<%= item.category %>.png" 
+                                alt="<%= item.item_name %>" 
+                                class="menu-item-img"
+                                onerror="this.src='/images/default.png'"
+                            >
                         <h3><%= item.item_name %></h3>
                         <p class="menu-card-price">$<%= Number(item.cost).toFixed(2) %></p>
                         <p class="menu-card-ingredients"><%= item.ingredients %></p>
