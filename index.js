@@ -176,6 +176,235 @@ app.get('/employee', requireAuthenticated, (req, res) => {
             res.render('Manager/employee', data);
         });
 });
+// ORDER REPORT PAGE
+let lastZReport = null;
+app.get('/order-report', (req, res) => {
+    res.render('Manager/order-report');
+});
+
+// X REPORT
+app.post('/api/x-report', async (req, res) => {
+    const { date, hour } = req.body;
+
+    if (!date || hour === undefined) {
+        return res.status(400).json({ error: "Missing date or hour" });
+    }
+
+    // Initialize lastZReport
+    if (!lastZReport) {
+        lastZReport = new Date(date);
+        lastZReport.setDate(lastZReport.getDate() - 1);
+    }
+    if (lastZReport && lastZReport.toISOString().slice(0, 10) !== date) {
+    lastZReport = new Date(date);
+    lastZReport.setDate(lastZReport.getDate() - 1);
+}
+
+
+    const lastZString = lastZReport.toISOString().slice(0, 10);
+
+    const sql = `
+        SELECT hour, SUM(quantity) AS quantity, SUM(subtotal) AS subtotal
+        FROM orders
+        WHERE date = $1
+        AND hour <= $2
+        AND date > $3
+        GROUP BY hour
+        ORDER BY hour ASC;
+    `;
+
+    try {
+        const result = await pool.query(sql, [date, hour, lastZString]);
+        res.json({ rows: result.rows });
+    } catch (err) {
+        console.error("Error generating X report:", err);
+        res.status(500).json({ error: "Error generating X report" });
+    }
+});
+
+// Z REPORT
+app.post('/api/z-report', async (req, res) => {
+    const { date } = req.body;
+
+    if (!date) {
+        return res.status(400).json({ error: "Missing date" });
+    }
+
+    // Duplicate check
+    if (lastZReport && lastZReport.toISOString().slice(0, 10) === date) {
+        return res.json({ message: "Already ran Z-report today", data: null });
+    }
+
+    const sql = `
+        SELECT
+            SUM(quantity) AS total_quantity,
+            SUM(subtotal) AS total_sales
+        FROM orders
+        WHERE date = $1;
+    `;
+
+    try {
+        const result = await pool.query(sql, [date]);
+        const row = result.rows[0];
+
+        lastZReport = new Date(date);
+
+        res.json({
+            total_quantity: row.total_quantity || 0,
+            total_sales: row.total_sales || 0
+        });
+    } catch (err) {
+        console.error("Error generating Z report:", err);
+        res.status(500).json({ error: "Error generating Z report" });
+    }
+});
+
+// Combined Sales + Product Usage page
+app.get('/stats', (req, res) => {
+    res.render('Manager/stats');
+});
+
+
+// SALES REPORT
+app.get('/api/sales-report', async (req, res) => {
+    const { start, end } = req.query;
+
+    if (!start || !end) {
+        return res.status(400).json({ error: "Missing start or end date" });
+    }
+
+    const sql = `
+        SELECT o.item_name,
+               SUM(o.quantity * m.cost) AS revenue
+        FROM orders o
+        JOIN menu m ON o.item_name = m.item_name
+        WHERE o.date BETWEEN $1 AND $2
+        GROUP BY o.item_name
+        ORDER BY revenue DESC;
+    `;
+
+    try {
+        const result = await pool.query(sql, [start, end]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error generating sales report:", err);
+        res.status(500).json({ error: "Error generating sales report" });
+    }
+});
+
+// PRODUCT USAGE REPORT
+app.get('/api/product-usage', async (req, res) => {
+    const { start, end } = req.query;
+
+    if (!start || !end) {
+        return res.status(400).json({ error: "Missing start or end date" });
+    }
+
+    const sql = `
+        SELECT 
+            TRIM(ingredient) AS ingredient_name,
+            COUNT(*) AS ingredient_usage
+        FROM (
+            SELECT 
+                unnest(string_to_array(m.ingredients, ',')) AS ingredient
+            FROM orders o
+            JOIN menu m ON o.item_id = m.item_id
+            WHERE o.date BETWEEN $1 AND $2
+        ) AS ingredient_list
+        GROUP BY TRIM(ingredient)
+        ORDER BY ingredient_usage DESC;
+    `;
+
+    try {
+        const result = await pool.query(sql, [start, end]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error generating product usage report:", err);
+        res.status(500).json({ error: "Error generating product usage report" });
+    }
+});
+
+// SCHEDULER 
+app.get('/scheduler', isAuthenticated, async (req, res) => {
+    const employees = await pool.query("SELECT * FROM employees ORDER BY employee_id ASC");
+    res.render('Manager/scheduler', { employees: employees.rows });
+});
+
+app.get('/api/scheduler', async (req, res) => {
+    const result = await pool.query(`
+        SELECT s.shift_id, s.shift_date, s.start_time, s.end_time,
+               e.employee_name
+        FROM schedule s
+        JOIN employees e ON s.employee_id = e.employee_id
+    `);
+
+    const events = result.rows.map(row => {
+    const isoDate = new Date(row.shift_date).toISOString().split('T')[0];
+            return {
+                id: row.shift_id,
+                title: `${row.employee_name} (${formatTime(row.start_time)} – ${formatTime(row.end_time)})`,
+                start: `${isoDate}T${row.start_time}`,
+                end: `${isoDate}T${row.end_time}`
+            };
+    });
+
+    res.json(events);
+});
+
+app.post('/api/scheduler/add', async (req, res) => {
+    const { employee_id, shift_date, start_time, end_time } = req.body;
+
+    try {
+        // Check for duplicate shift
+        const conflict = await pool.query(
+            `SELECT * FROM schedule 
+             WHERE employee_id = $1 
+             AND shift_date = $2 
+             AND start_time = $3 
+             AND end_time = $4`,
+            [employee_id, shift_date, start_time, end_time]
+        );
+
+        if (conflict.rows.length > 0) {
+            return res.status(400).json({ error: "Employee already booked for this shift" });
+        }
+
+        // Insert shift
+        await pool.query(
+            `INSERT INTO schedule (employee_id, shift_date, start_time, end_time)
+             VALUES ($1, $2, $3, $4)`,
+            [employee_id, shift_date, start_time, end_time]
+        );
+
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error("Error adding shift:", err);
+        res.status(500).json({ error: "Error adding shift" });
+    }
+});
+
+app.post('/api/scheduler/delete', async (req, res) => {
+    const { shift_id } = req.body;
+
+    try {
+        await pool.query(`DELETE FROM schedule WHERE shift_id = $1`, [shift_id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Error deleting shift:", err);
+        res.status(500).json({ error: "Error deleting shift" });
+    }
+});
+
+
+//Time formatting helper function for scheduler events
+function formatTime(t) {
+    let [h, m] = t.split(':');
+    h = parseInt(h);
+    const suffix = h >= 12 ? "PM" : "AM";
+    h = (h % 12) || 12;
+    return `${h}:${m} ${suffix}`;
+}
 
 //Handles adding an employee to employee
 app.post('/add-employee', (req, res) => {
