@@ -8,6 +8,8 @@ const weatherDescriptions = {
         95: "Thunderstorm",
     };
 
+const THEME_KEY = 'user-preferred-theme';
+
 async function getWeather() {
     const lat = 30.6278;
     const lon = -96.3344;
@@ -24,6 +26,21 @@ async function getWeather() {
         const currentTemp = data.current.temperature_2m;
         document.getElementById('temp').innerText = `${currentTemp}°F`;
         document.getElementById('weather').innerText = `${description}`
+
+         // Map weather codes to CSS classes
+        const savedTheme = localStorage.getItem(THEME_KEY);
+
+        if (savedTheme && savedTheme !== 'auto') {
+            // Manual theme selection takes precedence
+            applyTheme(savedTheme);
+        } else {
+            // Default theme based on weather code
+            let weatherTheme = 'theme-sunny';
+            if ([1, 2, 3].includes(code)) weatherTheme = 'theme-cloudy';
+            if ([51, 53, 55, 61, 63, 65, 95].includes(code)) weatherTheme = 'theme-rainy';
+            if([71, 73, 75].includes(code)) weatherTheme = 'theme-snowy';
+            applyTheme(weatherTheme);
+        } 
     } 
     catch (error) {
         console.error("Error fetching weather:", error);
@@ -35,3 +52,28 @@ async function getWeather() {
 document.addEventListener('DOMContentLoaded', () => {
     getWeather();
 });
+
+// Function to actually swap the class
+function applyTheme(themeName) {
+    // Remove all possible theme classes
+    document.body.classList.remove('theme-cloudy', 'theme-rainy', 'theme-high-contrast', 'theme-sunny', 'theme-snowy');
+    
+    // Add the selected one (if it's not default/sunny)
+    if (themeName !== 'theme-standard' && themeName !== 'auto') {
+        document.body.classList.add(themeName);
+    }
+}
+
+function manualThemeSelect(choice) {
+    localStorage.setItem(THEME_KEY, choice);
+    applyTheme(choice);
+    
+    if (choice === 'auto') {
+        getWeather(); 
+    }
+    
+    // Close the modal after selection
+    if (typeof closeThemeModal === 'function') {
+        closeThemeModal();
+    }
+}
