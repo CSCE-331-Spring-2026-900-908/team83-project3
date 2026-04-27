@@ -20,13 +20,12 @@
             <% } else { %>
                 <% menu.forEach(item => { %>
                     <div class="menu-card">
-                        <!--Displays the image associated with a drink's category-->
-                            <img 
-                                src="/images/<%= item.category %>.png" 
-                                alt="<%= item.item_name %>" 
-                                class="menu-item-img"
-                                onerror="this.src='/images/default.png'"
-                            >
+                        <img 
+                            src="/images/<%= item.category %>.png" 
+                            alt="<%= item.item_name %>" 
+                            class="menu-item-img"
+                            onerror="this.src='/images/default.png'"
+                        >
                         <h3><%= item.item_name %></h3>
                         <p>$<%= Number(item.cost).toFixed(2) %></p>
                         <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>')">Add to Cart</button>
@@ -44,24 +43,45 @@
 
             <div class="customization-group">
                 <h3>Milk</h3>
-                <label><input type="checkbox" id="opt-milk"> Add Milk</label>
+                <label><input type="radio" name="milk" value="whole" checked> Whole</label>
+                <label><input type="radio" name="milk" value="2%"> 2%</label>
+                <label><input type="radio" name="milk" value="oat"> Oat</label>
+                <label><input type="radio" name="milk" value="soy"> Soy</label>
+                <label><input type="radio" name="milk" value="none"> No Milk</label>
             </div>
 
             <div class="customization-group">
-                <h3>Ice</h3>
-                <label><input type="radio" name="ice" value="ice" checked> Ice</label>
+                <h3>Sugar Level</h3>
+                <label><input type="radio" name="sugar" value="30%"> 30%</label>
+                <label><input type="radio" name="sugar" value="60%"> 60%</label>
+                <label><input type="radio" name="sugar" value="90%"> 90%</label>
+                <label><input type="radio" name="sugar" value="100%" checked> 100%</label>
+                <label><input type="radio" name="sugar" value="120%"> 120%</label>
+            </div>
+
+            <div class="customization-group">
+                <h3>Temperature</h3>
+                <label><input type="radio" name="temp" value="cold" checked onchange="toggleIce()"> Cold</label>
+                <label><input type="radio" name="temp" value="hot" onchange="toggleIce()"> Hot</label>
+            </div>
+
+            <div class="customization-group" id="ice-group">
+                <h3>Ice Level</h3>
+                <label><input type="radio" name="ice" value="extra ice"> Extra Ice</label>
+                <label><input type="radio" name="ice" value="regular ice" checked> Regular Ice</label>
+                <label><input type="radio" name="ice" value="less ice"> Less Ice</label>
                 <label><input type="radio" name="ice" value="no ice"> No Ice</label>
             </div>
 
             <div class="customization-group">
                 <h3>Toppings</h3>
-                <label><input type="radio" name="topping" value="no boba" checked> No Boba</label>
-                <label><input type="radio" name="topping" value="taro"> Taro</label>
-                <label><input type="radio" name="topping" value="lychee jelly"> Lychee Jelly</label>
+                <label><input type="checkbox" name="topping" value="boba"> Boba</label>
+                <label><input type="checkbox" name="topping" value="taro"> Taro</label>
+                <label><input type="checkbox" name="topping" value="lychee jelly"> Lychee Jelly</label>
             </div>
 
             <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeCustomize()">Cancel</button>
+                <button class="btn-secondary" id="cancel-btn" onclick="closeCustomize()">Cancel</button>
                 <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
             </div>
         </div>
@@ -70,39 +90,56 @@
     <script>
         let currentItem = { name: '', price: 0 };
 
+        function toggleIce() {
+            var temp = document.querySelector('input[name="temp"]:checked').value;
+            var iceGroup = document.getElementById('ice-group');
+            if (temp === 'hot') {
+                iceGroup.classList.add('disabled');
+                document.querySelector('input[name="ice"][value="no ice"]').checked = true;
+            } else {
+                iceGroup.classList.remove('disabled');
+                document.querySelector('input[name="ice"][value="regular ice"]').checked = true;
+            }
+        }
+
         function openCustomize(name, price) {
             currentItem = { name, price: Number(price) };
             document.getElementById('modal-item-name').textContent = name;
 
             // Reset selections
-            document.getElementById('opt-milk').checked = false;
-            document.querySelector('input[name="ice"][value="ice"]').checked = true;
-            document.querySelector('input[name="topping"][value="no boba"]').checked = true;
+            document.querySelector('input[name="milk"][value="whole"]').checked = true;
+            document.querySelector('input[name="sugar"][value="100%"]').checked = true;
+            document.querySelector('input[name="temp"][value="cold"]').checked = true;
+            document.querySelector('input[name="ice"][value="regular ice"]').checked = true;
+            document.querySelectorAll('input[name="topping"]').forEach(function(cb) { cb.checked = false; });
+            document.getElementById('ice-group').classList.remove('disabled');
 
             document.getElementById('customizeModal').classList.add('active');
-            window.dispatchEvent(new CustomEvent('refreshMagnifier'));
+            window.dispatchEvent(new Event('refreshMagnifier'));
         }
 
         function closeCustomize() {
             document.getElementById('customizeModal').classList.remove('active');
-            window.dispatchEvent(new CustomEvent('refreshMagnifier'));
+            window.dispatchEvent(new Event('refreshMagnifier'));
         }
 
         function confirmAdd() {
-            const milk = document.getElementById('opt-milk').checked;
-            const ice = document.querySelector('input[name="ice"]:checked').value;
-            const topping = document.querySelector('input[name="topping"]:checked').value;
+            var milk = document.querySelector('input[name="milk"]:checked').value;
+            var sugar = document.querySelector('input[name="sugar"]:checked').value;
+            var temp = document.querySelector('input[name="temp"]:checked').value;
+            var ice = document.querySelector('input[name="ice"]:checked').value;
+            var toppings = Array.from(document.querySelectorAll('input[name="topping"]:checked')).map(function(cb) { return cb.value; });
 
-            const customizations = [];
-            if (milk) customizations.push('Milk');
-            customizations.push(ice === 'no ice' ? 'No Ice' : 'Ice');
-            if (topping !== 'no boba') customizations.push(topping.charAt(0).toUpperCase() + topping.slice(1));
+            var parts = [];
+            if (milk !== 'none') parts.push(milk.charAt(0).toUpperCase() + milk.slice(1) + ' Milk');
+            parts.push(sugar + ' Sugar');
+            parts.push(temp.charAt(0).toUpperCase() + temp.slice(1));
+            if (temp === 'cold') parts.push(ice.charAt(0).toUpperCase() + ice.slice(1));
+            toppings.forEach(function(t) { parts.push(t.charAt(0).toUpperCase() + t.slice(1)); });
 
-            const label = customizations.length > 0
-                ? currentItem.name + ' (' + customizations.join(', ') + ')'
-                : currentItem.name;
+            var label = currentItem.name + ' (' + parts.join(', ') + ')';
 
-            let cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+            var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
             cart.push({ name: label, price: currentItem.price });
             localStorage.setItem('customer-cart', JSON.stringify(cart));
 
