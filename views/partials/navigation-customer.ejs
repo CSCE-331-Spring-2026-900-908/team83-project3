@@ -30,25 +30,6 @@
         document.getElementById('theme-modal').style.display = 'none';
     }
 
-    // Function to apply the selected theme
-    function applyTheme(themePath) {
-        var themeLink = document.getElementById('theme-stylesheet');
-        if (themeLink) {
-            themeLink.setAttribute('href', themePath);
-            localStorage.setItem('kiosk-theme', themePath);
-        }
-        closeThemeModal();
-    }
-
-    // Ensure the saved theme loads on page refresh
-    document.addEventListener('DOMContentLoaded', function() {
-        var savedTheme = localStorage.getItem('kiosk-theme');
-        var themeLink = document.getElementById('theme-stylesheet');
-        if (savedTheme && themeLink) {
-            themeLink.setAttribute('href', savedTheme);
-        }
-    });
-
     // Close modal if user clicks outside of the box
     window.onclick = function(event) {
         var modal = document.getElementById('theme-modal');

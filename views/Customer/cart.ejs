@@ -52,7 +52,7 @@
                 if (item.customizations) {
                     html += '<span class="cart-item-custom">' + item.customizations + '</span>';
                 }
-                html += '</div><button onclick="removeItem(' + i + ')">Remove</button></div>';
+                html += '</div><button class="btn-secondary" onclick="removeItem(' + i + ')">Remove</button></div>';
             });
             listEl.innerHTML = html;
 
