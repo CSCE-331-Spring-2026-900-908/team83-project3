@@ -28,7 +28,7 @@
                         >
                         <h3><%= item.item_name %></h3>
                         <p>$<%= Number(item.cost).toFixed(2) %></p>
-                        <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>')">Add to Cart</button>
+                        <button class="btn-primary" onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>')">Add to Cart</button>
                     </div>
                 <% }); %>
             <% } %>

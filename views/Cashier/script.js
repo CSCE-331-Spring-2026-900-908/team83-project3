@@ -19,7 +19,6 @@ function updateCartButton() {
     }
 }
 
-// Display items on the Cart page
 function displayCart() {
     const container = document.getElementById('cart-container');
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -33,13 +32,13 @@ function displayCart() {
         <div class="cart-item">
             <div class="item-info">
                 <h3>${item.name}</h3>
-                <p>$${item.price.toFixed(2)}</p>
+                ${item.customizations ? `<p style="font-style: italic; color: #666;">↳ ${item.customizations}</p>` : ''}
+                <p>$${parseFloat(item.price).toFixed(2)}</p>
             </div>
             <button class="remove-button" onclick="removeItem(${index})">Remove</button>
         </div>
     `).join('');
 }
-
 function removeItem(index) {
     let cart = JSON.parse(localStorage.getItem('cart'));
     cart.splice(index, 1);
