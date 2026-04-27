@@ -1,30 +1,94 @@
+:root {
+    --bg-color: #f5f5f5;
+    --text-primary: #222;
+    --text-secondary: #000000;
+    --accent: #00ff6a;
+    --accent2: #1cb14e;
+    --card-bg: #ffffff;
+    --card-border: transparent;
+    --nav-bg: #222;
+    --nav-text: #ffffff;
+    --btn-text: #ffffff;
+}
+
+/* Additional Themes */
+body.theme-sunny
+{
+    --bg-color: #fff8dc;
+    --text-primary: #333;
+    --accent: #ffcc00;
+    --accent2: #ca8300;
+    --card-bg: #fff8dc;
+    --card-border: transparent;
+    --nav-bg: #333;
+    --nav-text: #fff8dc;
+    --btn-text: #333;
+}
+
+body.theme-cloudy {
+    --bg-color: #d1d1d1;
+    --text-primary: #333;
+    --accent: #708090;
+    --accent2: #496670;
+    --nav-bg: #4a4a4a;
+    --nav-text: #9ab7b9;
+}
+
+body.theme-rainy {
+    --bg-color: #a4b0be;
+    --accent: #335697;
+    --accent2: #2a4275;
+    --nav-bg: #2f3542;
+    --nav-text: #b4bfeb;
+}
+
+body.theme-snowy {
+    --bg-color: #f0f0f0;
+    --accent: #81d0f5;
+    --accent2: #4da6ff;
+    --nav-bg: #c8dcff;
+    --nav-text: #958fc9;
+}
+
+body.theme-high-contrast {
+    --bg-color: #000000;
+    --text-primary: #ffffff;    
+    --accent: #ffff00;  
+    --accent2: #9be800;        
+    --card-bg: #000000;        
+    --card-border: #ffffff;     
+    --nav-bg: #ffff00;          
+    --nav-text: #000000;       
+    --btn-text: #000000;        
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
     --base-text-size: 16px;
     --button-scale: 1;
 }
-body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-size: var(--base-text-size); }
+body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(--text-primary); font-size: var(--base-text-size); transition: all 0.5s ease; }
 
 .content-wrapper { padding: 20px 32px; max-width: 1000px; margin: 0 auto; }
 .page-title { font-size: calc(var(--base-text-size) * 1.5); margin-bottom: 16px; }
 
 /* Navigation */
-.customer-nav { background: #222; color: #fff; padding: 14px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.customer-nav { background: var(--nav-bg); color: var(--nav-text); padding: 14px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 .nav-brand { font-size: 20px; font-weight: bold; }
 .nav-links { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.nav-links a { color: #ccc; text-decoration: none; font-size: 1em; }
+.nav-links a { color: var(--nav-text); text-decoration: none; font-size: 1em; }
 .nav-links a:hover { color: #fff; }
-.lang-toggle { color: #ffcc00 !important; }
+.lang-toggle { color: var(--accent) !important; }
 
-.accessibility-controls { display: flex; gap: 20px; color: #ffffff; font-size: 1em; font-weight: 500; }
+.accessibility-controls { display: flex; gap: 20px; color: var(--nav-text); font-size: 1em; font-weight: 500; }
 .accessibility-controls label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .accessibility-controls input[type="range"] { cursor: pointer; accent-color: #919191; }
 
 /* Menu Grid */
 .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 .menu-card {
-    background: #fff;
-    border: 1px solid #ddd;
+    background: var(--card-bg);
+    border: 1px solid var(--text-primary);
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -33,26 +97,28 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
+
 .menu-card .img-placeholder { height: 120px; width: 100%; background: #e0e0e0; margin-bottom: 10px; }
 .menu-card h3 { font-size: 1.1em; margin-bottom: 4px; word-wrap: break-word; width: 100%; }
 .menu-card p { color: #666; font-size: 0.8em; margin-bottom: 8px; word-wrap: break-word; width: 100%; }
 .menu-card-price { color: #666; font-size: 0.85em; }
-.menu-card-ingredients { font-size: 0.75em; color: #999; }
+.menu-card-ingredients { font-size: 0.75em; color: var(--text-primary); }
 .menu-card button {
-    background: #333;
-    color: #fff;
+    background: var(--accent);
+    color: var(--btn-text);
     border: none;
     padding: calc(8px * var(--button-scale)) calc(16px * var(--button-scale));
     font-size: calc(0.9em * var(--button-scale));
     cursor: pointer;
     margin-top: auto;
+    transition: all 0.5s ease;
 }
 
 /* Cart */
 .cart-list { max-width: 600px; }
 .cart-item {
-    background: #fff;
-    border: 1px solid #ddd;
+    background: var(--card-bg);
+    border: 1px solid var(--text-primary);
     padding: 12px 16px;
     margin-bottom: 6px;
     display: flex;
@@ -71,19 +137,20 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     font-size: calc(0.8em * var(--button-scale));
     cursor: pointer;
     flex-shrink: 0;
+    transition: all 0.5s ease;
 }
 .cart-summary { margin-top: 16px; font-size: 0.9em; }
 .cart-summary p { margin-bottom: 4px; }
 .cart-summary .total { font-weight: bold; margin-top: 6px; }
 .cart-actions { margin-top: 16px; }
-.cart-actions a { margin-right: 12px; color: #333; font-size: 0.85em; }
+.cart-actions a { margin-right: 12px; color: var(--text-primary); font-size: 0.85em; }
 
 /* Payment */
 .payment-options { display: flex; gap: 20px; max-width: 600px; margin-top: 10px; flex-wrap: wrap; }
 .payment-card {
     flex: 1;
     min-width: 220px;
-    background: #fff;
+    background: var(--card-bg);
     border: 1px solid #ddd;
     padding: calc(40px * var(--button-scale)) calc(24px * var(--button-scale));
     text-align: center;
@@ -93,8 +160,9 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     align-items: center;
     justify-content: center;
     word-wrap: break-word;
+    transition: all 0.5s ease;
 }
-.payment-card:hover { background: #222; color: #fff; }
+.payment-card:hover { background: var(--accent); color: var(--btn-text); }
 .payment-card h2 { font-size: 1.25em; margin-bottom: 8px; }
 .payment-card p { font-size: 0.85em; color: #888; }
 .payment-card:hover p { color: #ccc; }
@@ -109,11 +177,11 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; }
 .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
 .modal-box {
-    background: #fff;
+    background: var(--card-bg);
     max-width: 400px;
     width: 90%;
     padding: 24px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--text-primary);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -124,7 +192,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
 .modal-ingredients { font-size: 0.85em; color: #666; word-wrap: break-word; }
 .modal-field { display: flex; flex-direction: column; gap: 4px; }
 .modal-field label { font-size: 0.85em; font-weight: bold; }
-.modal-field select { padding: 4px 8px; font-size: 0.85em; width: 100%; }
+.modal-field select { color: var(--text-secondary); padding: 4px 8px; font-size: 0.85em; width: 100%; }
 .sub-option { margin-bottom: 6px; }
 .sub-option label { font-size: 0.85em; font-weight: normal; display: flex; align-items: center; gap: 6px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
@@ -137,9 +205,10 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     padding: calc(8px * var(--button-scale)) calc(16px * var(--button-scale));
     font-size: calc(0.9em * var(--button-scale));
     cursor: pointer;
+    transition: all 0.5s ease;
 }
 .btn-primary:hover {
-    background: #616161;
+    background: var(--accent2);
 }
 
 .btn-secondary {
@@ -149,6 +218,7 @@ body { font-family: Arial, sans-serif; background: #f5f5f5; color: #222; font-si
     font-size: calc(0.85em * var(--button-scale));
     cursor: pointer;
     color: inherit;
+    transition: all 0.5s ease;
 }
 
 #theme-toggle:hover {
