@@ -254,6 +254,31 @@ app.post('/delete-menu-item', (req, res) => {
         });
 });
 
+//API ROUTE for chatbot
+app.post('/api/chat', async (req, res) => {
+    try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 1000,
+                system: 'You are a helpful assistant for Sharetea, a bubble tea shop. Help customers with menu questions, drink recommendations, and customization options. Keep responses short and friendly. The customization options are: Milk (whole, 2%, oat, soy, none), Sugar (30%, 60%, 90%, 100%, 120%), Temperature (hot or cold), Ice (extra, regular, less, none), and Toppings (boba, taro, lychee jelly).',
+                messages: req.body.messages
+            })
+        });
+        const data = await response.json();
+        res.json(data);
+    } catch (err) {
+        console.error('Chat API error:', err);
+        res.status(500).json({ error: 'Failed to reach AI service' });
+    }
+});
+
 //CUSTOMER VIEW
 
 app.use('/customer', express.static('views/Customer'));
