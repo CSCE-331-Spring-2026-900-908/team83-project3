@@ -14,13 +14,100 @@
             <section class="menu-grid">
                 <% items.forEach(item => { %>
                     <!-- Display Item Name and Cost From DB-->
-                    <div class="menu-item" onclick="addToCart('<%= item.item_name %>', '<%= item.cost %>')">
+                    <div class="menu-item" onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>')">
                         <h3><%= item.item_name %></h3>
                         <p class="price">$<%= item.cost ? Number(item.cost).toFixed(2) : "0.00" %></p>
                     </div>
                 <% }); %>
             </section> </main>
             <a href="/cart" class="floating-cart-button">View Cart (0 items)</a>
+
+            <div class="modal-overlay" id="customizeModal">
+                <div class="modal-box">
+                    <h2>Customize: <span id="modal-item-name"></span></h2>
+
+                    <div class="customization-group">
+                        <h3>Milk</h3>
+                        <label><input type="checkbox" id="opt-milk"> Add Milk</label>
+                    </div>
+
+                    <div class="customization-group">
+                        <h3>Ice</h3>
+                        <label><input type="radio" name="ice" value="ice" checked> Ice</label>
+                        <label><input type="radio" name="ice" value="no ice"> No Ice</label>
+                    </div>
+
+                    <div class="customization-group">
+                        <h3>Toppings</h3>
+                        <label><input type="radio" name="topping" value="no boba" checked> No Boba</label>
+                        <label><input type="radio" name="topping" value="taro"> Taro</label>
+                        <label><input type="radio" name="topping" value="lychee jelly"> Lychee Jelly</label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button id="cancel-btn" class="btn-secondary" onclick="closeCustomize()">Cancel</button>
+                        <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <script>
+            let currentItem = { name: '', price: 0 };
+
+            function updateCartCount() {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const count = cart.length;
+                const cartBtn = document.querySelector('.floating-cart-button');
+                if (cartBtn) {
+                    cartBtn.textContent = `View Cart (${count} items)`;
+                }
+            }
+
+            function openCustomize(name, price) {
+                currentItem = { name, price: Number(price) };
+                document.getElementById('modal-item-name').textContent = name;
+
+                // Reset selections
+                document.getElementById('opt-milk').checked = false;
+                // Check if these radio buttons exist before setting checked
+                const defaultIce = document.querySelector('input[name="ice"][value="ice"]');
+                if(defaultIce) defaultIce.checked = true;
+                
+                const defaultTopping = document.querySelector('input[name="topping"][value="no boba"]');
+                if(defaultTopping) defaultTopping.checked = true;
+
+                document.getElementById('customizeModal').classList.add('active');
+            }
+            
+            function closeCustomize() {
+            document.getElementById('customizeModal').classList.remove('active');
+            }
+
+            function confirmAdd() {
+                const milk = document.getElementById('opt-milk').checked;
+                const ice = document.querySelector('input[name="ice"]:checked').value;
+                const topping = document.querySelector('input[name="topping"]:checked').value;
+
+                const customizationsArray = [];
+                if (milk) customizationsArray.push('Milk');
+                customizationsArray.push(ice === 'no ice' ? 'No Ice' : 'Ice');
+                if (topping !== 'no boba') customizationsArray.push(topping);
+
+                const customizationsString = customizationsArray.join(', ');
+
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                cart.push({ 
+                    name: currentItem.name, 
+                    price: currentItem.price,
+                    customizations: customizationsString // Store this separately!
+                });
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                closeCustomize();
+                alert('Added to cart!');
+            }
+            document.addEventListener('DOMContentLoaded', updateCartCount);
+            </script>
+
         <script src="/Cashier/script.js"></script>
         <script src="/weather.js"></script>
     </body>
