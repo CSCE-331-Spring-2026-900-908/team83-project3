@@ -1,75 +1,14 @@
 <html>
     <head>
         <title>Menu</title>
-        <link rel="stylesheet" href="/customer/customer.css">
-        <style>
-            .modal-overlay {
-                display: none;
-                position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 1000;
-                justify-content: center;
-                align-items: center;
-            }
-            .modal-overlay.active {
-                display: flex;
-            }
-            .modal {
-                background: white;
-                border-radius: 12px;
-                padding: 24px;
-                max-width: 400px;
-                width: 90%;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            }
-            .modal h2 {
-                margin-top: 0;
-                font-size: 20px;
-            }
-            .modal h3 {
-                font-size: 15px;
-                margin-bottom: 6px;
-                color: #333;
-            }
-            .customization-group {
-                margin-bottom: 16px;
-            }
-            .customization-group label {
-                display: block;
-                padding: 6px 0;
-                cursor: pointer;
-                font-size: 14px;
-            }
-            .customization-group input[type="radio"],
-            .customization-group input[type="checkbox"] {
-                margin-right: 8px;
-            }
-            .modal-actions {
-                display: flex;
-                justify-content: flex-end;
-                gap: 10px;
-                margin-top: 18px;
-            }
-            .modal-actions button {
-                padding: 8px 18px;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-            }
-            .btn-cancel {
-                background: #ccc;
-                color: #333;
-            }
-            .btn-add {
-                background: #500000;
-                color: white;
-            }
-            .btn-add:hover { background: #700000; }
-        </style>
+        <link id="theme-stylesheet" rel="stylesheet" href="/customer/customer.css">
+        <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
+    <div id="magnifier">
+        <div id="magnifier-content"></div>
+    </div>
+    <div id="page-content">
     <%- include('../partials/navigation-customer') %>
 
     <main class="content-wrapper">
@@ -90,10 +29,11 @@
             <% } %>
         </div>
     </main>
+    </div>
 
     <!-- Customization Modal -->
     <div class="modal-overlay" id="customizeModal">
-        <div class="modal">
+        <div class="modal-box">
             <h2>Customize: <span id="modal-item-name"></span></h2>
 
             <div class="customization-group">
@@ -115,8 +55,8 @@
             </div>
 
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeCustomize()">Cancel</button>
-                <button class="btn-add" onclick="confirmAdd()">Add to Cart</button>
+                <button class="btn-secondary" onclick="closeCustomize()">Cancel</button>
+                <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
             </div>
         </div>
     </div>
@@ -161,5 +101,7 @@
             closeCustomize();
         }
     </script>
+    <script src="/customer/sliders.js"></script>
+    <script src="/customer/magnify.js"></script>
     </body>
 </html>

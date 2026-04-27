@@ -11,8 +11,15 @@
         <button id="magnifier-toggle" class="btn-secondary">Magnifier: <span id="toggle-status">OFF</span></button>
         <button onclick="toggleTheme()" class="btn-secondary">Theme</button>
         <button id="translate-btn" class="btn-secondary" onclick="toggleTranslate()">Español</button>
+        <div id="weather-container">
+        <h2>Current Weather</h2>
+        <p id="temp">Loading...</p>
+        <p id="weather">Loading...</p>
+    </div>
     </div>
 </nav>
+<script src="/partials/weather.js"></script>
+
 <script>
     function toggleTheme() {
         var themeLink = document.getElementById('theme-stylesheet');
