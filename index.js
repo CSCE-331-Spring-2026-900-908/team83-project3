@@ -9,7 +9,6 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const app = express();
 const port = 3000;
 app.set('view engine', 'ejs');
-app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/partials', express.static('views/partials'));
@@ -56,7 +55,7 @@ app.get('/auth/logout', (req, res) => {
 });
 
 // Middleware to require login for manager/cashier routes
-function requireAuth(req, res, next) {
+function requireAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
@@ -100,7 +99,7 @@ app.get('/', (req, res) => {
 });
 
 //Initializes inventory
-app.get('/inventory', requireAuth, (req, res) => {
+app.get('/inventory', requireAuthenticated, (req, res) => {
     inventory = []
     pool
         .query('SELECT * FROM inventory ORDER BY ingredient_id ASC;')
@@ -161,7 +160,7 @@ app.post('/update-ingredient', (req, res) => {
 });
 
 //Initializes employee view table
-app.get('/employee', requireAuth, (req, res) => {
+app.get('/employee', requireAuthenticated, (req, res) => {
     employees = []
     pool
         .query('SELECT * FROM employees ORDER BY employee_id ASC;')
@@ -208,7 +207,7 @@ app.post('/delete-employee', (req, res) => {
 });
 
 //Initializes menu view table
-app.get('/menu', requireAuth, (req, res) => {
+app.get('/menu', requireAuthenticated, (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(result => {
             res.render('Manager/menu', { menu: result.rows });
@@ -302,7 +301,7 @@ app.listen(port, () => {
 let activeOrders = []
 let orderCounter = 1; // Simple counter to assign order IDs
 
-app.get('/cashier-order-screen', requireAuth, (req, res) => {
+app.get('/cashier-order-screen', requireAuthenticated, (req, res) => {
     // Make sure this table name matches 'menu' from your screenshot
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;') 
         .then(query_res => {
@@ -314,12 +313,12 @@ app.get('/cashier-order-screen', requireAuth, (req, res) => {
         });
 });
 
-app.get('/active-orders', requireAuth, (req, res) => {
+app.get('/active-orders', requireAuthenticated, (req, res) => {
     // Pass the activeOrders array to the EJS template
     res.render('Cashier/active-orders', { orders: activeOrders });
 });
 
-app.get('/cart', requireAuth, (req, res) => {
+app.get('/cart', requireAuthenticated, (req, res) => {
     // We don't need to pass database items here yet, 
     // because the cart lives in the browser's Local Storage
     res.render('Cashier/cart'); 
@@ -408,7 +407,11 @@ app.post('/api/customer-checkout', (req, res) => {
 
     const newOrder = {
         id: orderCounter++,
-        items: items,
+        items: items.map(item => ({
+            name: item.name,
+            price: item.price,
+            customizations: item.customizations || "" // Capture the string from the frontend
+        })),
         timestamp: new Date().toLocaleString()
     };
 
@@ -417,7 +420,8 @@ app.post('/api/customer-checkout', (req, res) => {
     res.status(200).json({ success: true });
 });
 
-// MENU VIEW
+
+/* MENU VIEW */
 
 // SQL query to load menu items when menu-board is rendered
 app.get('/menu-board', (req, res) => {
@@ -435,3 +439,4 @@ app.get('/menu-board', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
+
