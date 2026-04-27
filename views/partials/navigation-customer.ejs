@@ -1,15 +1,15 @@
 <nav class="customer-nav">
-    <div class="nav-brand">EIGHTTEATHREE TEA</div>
+    <div class="nav-brand">SHARETEA</div>
     <div class="nav-links">
         <a href="/customer">Menu</a>
         <a href="/customer/cart">Cart</a>
         <a href="/customer/checkout">Checkout</a>
         <div class="accessibility-controls">
-            <label>Text <input type="range" id="text-size-slider" min="12" max="28" step="0.1" value="16"></label>
+            <label>Text <input type="range" id="text-size-slider" min="12" max="28" step="1" value="16"></label>
             <label>Buttons <input type="range" id="button-size-slider" min="0.8" max="2" step="0.1" value="1"></label>
-        </div> 
+        </div>
         <button id="magnifier-toggle" class="btn-secondary">Magnifier: <span id="toggle-status">OFF</span></button>
-        <button id="theme-toggle" class="btn-secondary" onclick="toggleTheme()">Change Theme</button>
+        <button id="theme-toggle" class="btn-secondary" onclick="openThemeModal()">Theme</button>
         <button id="translate-btn" class="btn-secondary" onclick="toggleTranslate()">Español</button>
     </div>
     <div id="weather-container">
@@ -37,24 +37,42 @@
 
 <script src="/partials/weather.js"></script>
 
+<!-- Theme Picker Modal -->
+<div class="theme-modal-overlay" id="themeModal" style="display:none;">
+    <div class="theme-modal-content">
+        <h2>Choose a Theme</h2>
+        <div class="theme-options">
+            <button onclick="setTheme('')">Default</button>
+            <button onclick="setTheme('theme-sunny')">Sunny</button>
+            <button onclick="setTheme('theme-cloudy')">Cloudy</button>
+            <button onclick="setTheme('theme-rainy')">Rainy</button>
+            <button onclick="setTheme('theme-snowy')">Snowy</button>
+            <button onclick="setTheme('theme-high-contrast')">High Contrast</button>
+        </div>
+        <button onclick="closeThemeModal()">Close</button>
+    </div>
+</div>
+
+<script src="/partials/weather.js"></script>
 <script>
-// Open the modal instead of toggling directly
-    function toggleTheme() {
-        document.getElementById('theme-modal').style.display = 'flex';
+    // Theme
+    function openThemeModal() {
+        document.getElementById('themeModal').style.display = 'flex';
     }
-
     function closeThemeModal() {
-        document.getElementById('theme-modal').style.display = 'none';
+        document.getElementById('themeModal').style.display = 'none';
     }
-
-    // Close modal if user clicks outside of the box
-    window.onclick = function(event) {
-        var modal = document.getElementById('theme-modal');
-        if (event.target == modal) {
-            closeThemeModal();
-        }
+    function setTheme(className) {
+        document.body.className = className;
+        localStorage.setItem('kiosk-theme', className);
+        closeThemeModal();
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        var saved = localStorage.getItem('kiosk-theme');
+        if (saved) document.body.className = saved;
+    });
 
+    // Translate
     var isSpanish = false;
     var originalTexts = [];
 
@@ -87,61 +105,22 @@
             }
         });
 
-        if (originalTexts.length === 0) return;
+        var textsToTranslate = originalTexts.map(function(item) { return item.text.trim(); });
 
-        document.getElementById('translate-btn').textContent = '...';
-
-        var batches = [];
-        var current = [];
-        var currentLen = 0;
-
-        originalTexts.forEach(function(item) {
-            var addition = item.text.trim().length + 4;
-            if (currentLen + addition > 450 && current.length > 0) {
-                batches.push(current.slice());
-                current = [];
-                currentLen = 0;
-            }
-            current.push(item.text.trim());
-            currentLen += addition;
-        });
-        if (current.length > 0) batches.push(current);
-
-        var allTranslated = [];
-        var batchIndex = 0;
-
-        function nextBatch() {
-            if (batchIndex >= batches.length) {
-                var i = 0;
-                originalTexts.forEach(function(item) {
-                    if (i < allTranslated.length) {
-                        item.el.textContent = allTranslated[i];
-                    }
-                    i++;
-                });
+        fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(textsToTranslate.join('\n')) + '&langpair=en|es')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.responseData && data.responseData.translatedText) {
+                    var translations = data.responseData.translatedText.split('\n');
+                    originalTexts.forEach(function(item, i) {
+                        if (translations[i]) {
+                            item.el.textContent = translations[i];
+                        }
+                    });
+                }
                 document.getElementById('translate-btn').textContent = 'English';
                 isSpanish = true;
-                return;
-            }
-
-            var combined = batches[batchIndex].join(' || ');
-            var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(combined) + '&langpair=en|es';
-
-            fetch(url)
-                .then(function(res) { return res.json(); })
-                .then(function(data) {
-                    var parts = data.responseData.translatedText.split(' || ');
-                    parts.forEach(function(p) { allTranslated.push(p.trim()); });
-                    batchIndex++;
-                    nextBatch();
-                })
-                .catch(function(err) {
-                    console.error('Translation error:', err);
-                    document.getElementById('translate-btn').textContent = 'Español';
-                    alert('Translation failed. Please try again.');
-                });
-        }
-
-        nextBatch();
+            })
+            .catch(function(err) { console.error('Translation error:', err); });
     }
 </script>

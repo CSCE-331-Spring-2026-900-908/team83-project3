@@ -12,8 +12,7 @@
 }
 
 /* Additional Themes */
-body.theme-sunny
-{
+body.theme-sunny {
     --bg-color: #fff8dc;
     --text-primary: #333;
     --accent: #ffcc00;
@@ -52,14 +51,14 @@ body.theme-snowy {
 
 body.theme-high-contrast {
     --bg-color: #000000;
-    --text-primary: #ffffff;    
-    --accent: #ffff00;  
-    --accent2: #9be800;        
-    --card-bg: #000000;        
-    --card-border: #ffffff;     
-    --nav-bg: #ffff00;          
-    --nav-text: #000000;       
-    --btn-text: #000000;        
+    --text-primary: #ffffff;
+    --accent: #ffff00;
+    --accent2: #9be800;
+    --card-bg: #000000;
+    --card-border: #ffffff;
+    --nav-bg: #ffff00;
+    --nav-text: #000000;
+    --btn-text: #000000;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -177,17 +176,23 @@ body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(-
 .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
 .modal-box {
     background: var(--card-bg);
-    max-width: 400px;
+    max-width: 450px;
     width: 90%;
     padding: 24px;
     border: 1px solid var(--text-primary);
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     gap: 12px;
     max-height: 90vh;
     overflow-y: auto;
 }
-.modal-box h2 { font-size: 1.1em; }
+.modal-box h2 {
+    font-size: 1.2em;
+    margin-bottom: 4px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+}
 .modal-ingredients { font-size: 0.85em; color: #666; word-wrap: break-word; }
 .modal-field { display: flex; flex-direction: column; gap: 4px; }
 .modal-field label { font-size: 0.85em; font-weight: bold; }
@@ -195,6 +200,40 @@ body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(-
 .sub-option { margin-bottom: 6px; }
 .sub-option label { font-size: 0.85em; font-weight: normal; display: flex; align-items: center; gap: 6px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+
+/* Customization Groups */
+.customization-group {
+    margin-bottom: 14px;
+}
+.customization-group h3 {
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--card-border, #eee);
+}
+.customization-group label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    margin: 3px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.customization-group label:hover {
+    border-color: var(--accent);
+}
+.customization-group input[type="radio"],
+.customization-group input[type="checkbox"] {
+    accent-color: var(--accent2);
+}
+.customization-group.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
 
 /* Buttons */
 .btn-primary {
@@ -204,6 +243,7 @@ body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(-
     padding: calc(8px * var(--button-scale)) calc(16px * var(--button-scale));
     font-size: calc(0.9em * var(--button-scale));
     cursor: pointer;
+    border-radius: 6px;
     transition: all 0.5s ease;
 }
 .btn-primary:hover {
@@ -217,12 +257,13 @@ body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(-
     font-size: calc(0.85em * var(--button-scale));
     cursor: pointer;
     color: inherit;
+    border-radius: 6px;
     transition: all 0.5s ease;
 }
 
 #theme-toggle:hover {
     color: #7b7b7b;
-} 
+}
 #magnifier-toggle:hover {
     color: #7b7b7b;
 }
@@ -249,7 +290,7 @@ body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(-
     padding: 2rem;
     border-radius: 8px;
     text-align: center;
-    color: black; /* Ensure text is visible regardless of page theme */
+    color: black;
 }
 .theme-options {
     display: grid;
@@ -259,4 +300,11 @@ body { font-family: Arial, sans-serif; background: var(--bg-color); color: var(-
 .theme-options button {
     padding: 10px;
     cursor: pointer;
+}
+
+/* Weather display in nav */
+.nav-weather {
+    color: var(--nav-text);
+    font-size: 13px;
+    white-space: nowrap;
 }
