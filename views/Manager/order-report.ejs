@@ -15,24 +15,42 @@
     <input type="date" id="reportDate">
 
     <label>Hour:</label>
-    <input type="number" id="reportHour" min="0" max="23">
+    <select id="Hour">
+    <% for (let h = 8; h <= 21; h++) { %>
+        <option value="<%= h %>"><%= h %>:00</option>
+    <% } %>
+    </select>
 
     <button onclick="runXReport()">Run X Report</button>
     <button onclick="runZReport()">Run Z Report</button>
     <!-- Create table for X Report Data -->
     <h2>X Report</h2>
     <table id="xReportTable" border="1">
-        <tr><th>Hour</th><th>Quantity</th><th>Subtotal</th></tr>
+        <thead>
+            <tr><th>Hour</th><th>Quantity</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody id="xReportTableBody"></tbody>
     </table>
 
+
     <h2>Z Report</h2>
-    <div id="zReport"></div>
+    <table id="zReportTable" border="1">
+        <thead>
+            <tr><th>Total Quantity</th><th>Total Sales</th></tr>
+        </thead>
+        <tbody id="zReportBody"></tbody>
+    </table>
 
     <script>
+    document.getElementById("reportDate").addEventListener("change", () => {
+    document.getElementById("xReportTableBody").innerHTML = "";
+    document.getElementById("zReportBody").innerHTML = "";
+});
+
         // X Report Logic
         async function runXReport() {
             const date = document.getElementById("reportDate").value;
-            const hour = document.getElementById("reportHour").value;
+            const hour = Number(document.getElementById("Hour").value);
 
             const res = await fetch('/api/x-report', {
                 method: 'POST',
@@ -41,12 +59,12 @@
             });
 
             const data = await res.json();
-            const table = document.getElementById("xReportTable");
 
-            table.innerHTML = "<tr><th>Hour</th><th>Quantity</th><th>Subtotal</th></tr>";
+            const tableBody = document.getElementById("xReportTableBody");
+            tableBody.innerHTML = "";
 
             data.rows.forEach(r => {
-                table.innerHTML += `
+                tableBody.innerHTML += `
                     <tr>
                         <td>${r.hour}</td>
                         <td>${r.quantity}</td>
@@ -54,6 +72,7 @@
                     </tr>`;
             });
         }
+
 
         // Z Report Logic
         async function runZReport() {
@@ -66,10 +85,15 @@
             });
 
             const data = await res.json();
-            document.getElementById("zReport").innerHTML =
-                `Total Quantity: ${data.total_quantity}<br>
-                 Total Sales: $${data.total_sales}`;
+
+            document.getElementById("zReportBody").innerHTML = `
+                <tr>
+                    <td>${data.total_quantity}</td>
+                    <td>$${data.total_sales}</td>
+                </tr>
+            `;
         }
+
     </script>
 </body>
 </html>
