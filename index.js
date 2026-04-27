@@ -9,6 +9,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const app = express();
 const port = 3000;
 app.set('view engine', 'ejs');
+app.set('trust proxy',1);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
