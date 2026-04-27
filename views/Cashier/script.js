@@ -71,13 +71,13 @@ const textSizeSlider = document.getElementById('text-size-slider');
 const buttonSizeSlider = document.getElementById('button-size-slider');
 
 // Update Text Size
-textSizeSlider.addEventListener('input', (e) => {
+textSizeSlider.addEventListener('change', (e) => {
     document.documentElement.style.setProperty('--base-text-size', `${e.target.value}px`);
     localStorage.setItem('preferred-text-size', e.target.value); // Save preference
 });
 
 // Update Button Scale
-buttonSizeSlider.addEventListener('input', (e) => {
+buttonSizeSlider.addEventListener('change', (e) => {
     document.documentElement.style.setProperty('--button-scale', e.target.value);
     localStorage.setItem('preferred-button-scale', e.target.value); // Save preference
 });

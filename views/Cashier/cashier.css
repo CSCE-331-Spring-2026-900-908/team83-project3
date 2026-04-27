@@ -20,8 +20,9 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #1a1a1a;
-    padding: 1rem 2rem;
+    background-color: #000000;
+    /*padding: 1rem 2rem; */
+    padding: 14px 32px;
     display: flex;             /* Enable Flexbox */
     justify-content: space-between; /* Links left, Sliders right */
     align-items: center;       /* Vertical centering */
@@ -38,13 +39,14 @@ body {
 .nav-item {
     color: #bfbfbf;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 1em;
     transition: color 0.2s;
 }
 
 .nav-item:hover, .nav-item.active {
     color: #ffffff;
 }
+
 
 .accessibility-controls {
     display: flex;
@@ -63,8 +65,9 @@ body {
 
 .accessibility-controls input[type="range"] {
     cursor: pointer;
-    accent-color: #919191;    /* Makes the slider handle white in modern browsers */
+    accent-color: #919191;    
 }
+
 /* Main Content Layout */
 .content-wrapper-active-orders {
     padding: 40px 20px;
@@ -176,7 +179,7 @@ body {
 }
 
 .checklist li::before {
-    content: "- "; 
+    content: none; 
     margin-right: 8px;
 }
 

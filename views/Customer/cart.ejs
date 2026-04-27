@@ -52,7 +52,7 @@
                 if (item.customizations) {
                     html += '<span class="cart-item-custom">' + item.customizations + '</span>';
                 }
-                html += '</div><button onclick="removeItem(' + i + ')">Remove</button></div>';
+                html += '</div><button class="btn-secondary" onclick="removeItem(' + i + ')">Remove</button></div>';
             });
             listEl.innerHTML = html;
 
@@ -74,5 +74,5 @@
     </script>
     <script src="/customer/sliders.js"></script>
     <script src="/customer/magnify.js"></script>
-    </body>
+    <script src="/weather.js"></script></body>
 </html>

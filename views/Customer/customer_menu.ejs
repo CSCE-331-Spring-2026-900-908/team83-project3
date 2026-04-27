@@ -8,10 +8,10 @@
     <div id="magnifier">
         <div id="magnifier-content"></div>
     </div>
-    <div id="page-content">
+    <div id="page-wrapper">
     <%- include('../partials/navigation-customer') %>
 
-    <main class="content-wrapper">
+    <main class="content-wrapper" id="page-content">
         <h1 class="page-title">Menu</h1>
 
         <div class="menu-grid">
@@ -74,10 +74,12 @@
             document.querySelector('input[name="topping"][value="no boba"]').checked = true;
 
             document.getElementById('customizeModal').classList.add('active');
+            window.dispatchEvent(new CustomEvent('refreshMagnifier'));
         }
 
         function closeCustomize() {
             document.getElementById('customizeModal').classList.remove('active');
+            window.dispatchEvent(new CustomEvent('refreshMagnifier'));
         }
 
         function confirmAdd() {

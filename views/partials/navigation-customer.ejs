@@ -5,11 +5,11 @@
         <a href="/customer/cart">Cart</a>
         <a href="/customer/checkout">Checkout</a>
         <div class="accessibility-controls">
-            <label>Text <input type="range" id="text-size-slider" min="12" max="28" step="1" value="16"></label>
+            <label>Text <input type="range" id="text-size-slider" min="12" max="28" step="0.1" value="16"></label>
             <label>Buttons <input type="range" id="button-size-slider" min="0.8" max="2" step="0.1" value="1"></label>
-        </div>
+        </div> 
         <button id="magnifier-toggle" class="btn-secondary">Magnifier: <span id="toggle-status">OFF</span></button>
-        <button onclick="toggleTheme()" class="btn-secondary">Theme</button>
+        <button id="theme-toggle" class="btn-secondary" onclick="toggleTheme()">Change Theme</button>
         <button id="translate-btn" class="btn-secondary" onclick="toggleTranslate()">Español</button>
         <div id="weather-container">
         <h2>Current Weather</h2>
@@ -21,24 +21,22 @@
 <script src="/partials/weather.js"></script>
 
 <script>
+// Open the modal instead of toggling directly
     function toggleTheme() {
-        var themeLink = document.getElementById('theme-stylesheet');
-        if (!themeLink) return;
-        var currentTheme = themeLink.getAttribute('href');
-        var newTheme = currentTheme === '/customer/customer.css'
-            ? '/customer/high-contrast-customer.css'
-            : '/customer/customer.css';
-        themeLink.setAttribute('href', newTheme);
-        localStorage.setItem('kiosk-theme', newTheme);
+        document.getElementById('theme-modal').style.display = 'flex';
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        var savedTheme = localStorage.getItem('kiosk-theme');
-        var themeLink = document.getElementById('theme-stylesheet');
-        if (savedTheme && themeLink) {
-            themeLink.setAttribute('href', savedTheme);
+    function closeThemeModal() {
+        document.getElementById('theme-modal').style.display = 'none';
+    }
+
+    // Close modal if user clicks outside of the box
+    window.onclick = function(event) {
+        var modal = document.getElementById('theme-modal');
+        if (event.target == modal) {
+            closeThemeModal();
         }
-    });
+    }
 
     var isSpanish = false;
     var originalTexts = [];
