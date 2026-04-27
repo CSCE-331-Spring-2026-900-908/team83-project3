@@ -87,65 +87,82 @@
         </div>
     </div>
 
-    <script>
-        let currentItem = { name: '', price: 0 };
+   <script>
+    let currentItem = { name: '', price: 0 };
 
-        function toggleIce() {
-            var temp = document.querySelector('input[name="temp"]:checked').value;
-            var iceGroup = document.getElementById('ice-group');
-            if (temp === 'hot') {
-                iceGroup.classList.add('disabled');
-                document.querySelector('input[name="ice"][value="no ice"]').checked = true;
-            } else {
-                iceGroup.classList.remove('disabled');
-                document.querySelector('input[name="ice"][value="regular ice"]').checked = true;
-            }
+    function getModal() {
+        return document.getElementById('customizeModal');
+    }
+
+    function toggleIce() {
+        var m = getModal();
+        var temp = m.querySelector('input[name="temp"]:checked');
+        var iceGroup = document.getElementById('ice-group');
+        if (temp && temp.value === 'hot') {
+            iceGroup.classList.add('disabled');
+            m.querySelector('input[name="ice"][value="no ice"]').checked = true;
+        } else {
+            iceGroup.classList.remove('disabled');
+            m.querySelector('input[name="ice"][value="regular ice"]').checked = true;
+        }
+    }
+
+    function openCustomize(name, price) {
+        currentItem = { name, price: Number(price) };
+        var m = getModal();
+        document.getElementById('modal-item-name').textContent = name;
+
+        m.querySelector('input[name="milk"][value="whole"]').checked = true;
+        m.querySelector('input[name="sugar"][value="100%"]').checked = true;
+        m.querySelector('input[name="temp"][value="cold"]').checked = true;
+        m.querySelector('input[name="ice"][value="regular ice"]').checked = true;
+        m.querySelectorAll('input[name="topping"]').forEach(function(cb) { cb.checked = false; });
+        document.getElementById('ice-group').classList.remove('disabled');
+
+        m.classList.add('active');
+        window.dispatchEvent(new Event('refreshMagnifier'));
+    }
+
+    function closeCustomize() {
+        var m = getModal();
+        m.classList.remove('active');
+        window.dispatchEvent(new Event('refreshMagnifier'));
+    }
+
+    function confirmAdd() {
+        var m = getModal();
+        var milk = m.querySelector('input[name="milk"]:checked');
+        var sugar = m.querySelector('input[name="sugar"]:checked');
+        var temp = m.querySelector('input[name="temp"]:checked');
+        var ice = m.querySelector('input[name="ice"]:checked');
+        var toppings = Array.from(m.querySelectorAll('input[name="topping"]:checked'));
+
+        if (!milk || !sugar || !temp || !ice) {
+            console.error('Missing selections:', { milk, sugar, temp, ice });
+            return;
         }
 
-        function openCustomize(name, price) {
-            currentItem = { name, price: Number(price) };
-            document.getElementById('modal-item-name').textContent = name;
+        var parts = [];
+        if (milk.value !== 'none') parts.push(milk.value.charAt(0).toUpperCase() + milk.value.slice(1) + ' Milk');
+        parts.push(sugar.value + ' Sugar');
+        parts.push(temp.value.charAt(0).toUpperCase() + temp.value.slice(1));
+        if (temp.value === 'cold') parts.push(ice.value.charAt(0).toUpperCase() + ice.value.slice(1));
+        toppings.forEach(function(t) { parts.push(t.value.charAt(0).toUpperCase() + t.value.slice(1)); });
 
-            // Reset selections
-            document.querySelector('input[name="milk"][value="whole"]').checked = true;
-            document.querySelector('input[name="sugar"][value="100%"]').checked = true;
-            document.querySelector('input[name="temp"][value="cold"]').checked = true;
-            document.querySelector('input[name="ice"][value="regular ice"]').checked = true;
-            document.querySelectorAll('input[name="topping"]').forEach(function(cb) { cb.checked = false; });
-            document.getElementById('ice-group').classList.remove('disabled');
+        var label = currentItem.name + ' (' + parts.join(', ') + ')';
 
-            document.getElementById('customizeModal').classList.add('active');
-            window.dispatchEvent(new Event('refreshMagnifier'));
-        }
+        var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+        cart.push({ name: label, price: currentItem.price });
+        localStorage.setItem('customer-cart', JSON.stringify(cart));
 
-        function closeCustomize() {
-            document.getElementById('customizeModal').classList.remove('active');
-            window.dispatchEvent(new Event('refreshMagnifier'));
-        }
+        closeCustomize();
+    }
 
-        function confirmAdd() {
-            var milk = document.querySelector('input[name="milk"]:checked').value;
-            var sugar = document.querySelector('input[name="sugar"]:checked').value;
-            var temp = document.querySelector('input[name="temp"]:checked').value;
-            var ice = document.querySelector('input[name="ice"]:checked').value;
-            var toppings = Array.from(document.querySelectorAll('input[name="topping"]:checked')).map(function(cb) { return cb.value; });
-
-            var parts = [];
-            if (milk !== 'none') parts.push(milk.charAt(0).toUpperCase() + milk.slice(1) + ' Milk');
-            parts.push(sugar + ' Sugar');
-            parts.push(temp.charAt(0).toUpperCase() + temp.slice(1));
-            if (temp === 'cold') parts.push(ice.charAt(0).toUpperCase() + ice.slice(1));
-            toppings.forEach(function(t) { parts.push(t.charAt(0).toUpperCase() + t.slice(1)); });
-
-            var label = currentItem.name + ' (' + parts.join(', ') + ')';
-
-            var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
-            cart.push({ name: label, price: currentItem.price });
-            localStorage.setItem('customer-cart', JSON.stringify(cart));
-
-            closeCustomize();
-        }
-    </script>
+    // Stop modal clicks from triggering magnifier re-clone
+    document.getElementById('customizeModal').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+</script>
     <script src="/customer/sliders.js"></script>
     <script src="/customer/magnify.js"></script>
     </body>
