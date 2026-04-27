@@ -211,14 +211,14 @@ app.get('/menu', isAuthenticated, (req, res) => {
 
 //Handles adding a menu item to menu
 app.post('/add-menu-item', isAuthenticated, (req, res) => {
-    const { item_name, cost, ingredients } = req.body;
+    const { item_name, cost, ingredients, category } = req.body;
     const query = `
-        INSERT INTO menu (item_name, cost, ingredients)
-        VALUES ($1, $2, $3)
+        INSERT INTO menu (item_name, cost, ingredients, category)
+        VALUES ($1, $2, $3, $4)
         ON CONFLICT (item_name) DO UPDATE
-        SET cost = EXCLUDED.cost
+        SET cost = EXCLUDED.cost, category = EXCLUDED.category
     `;
-    pool.query(query, [item_name, cost, ingredients])
+    pool.query(query, [item_name, cost, ingredients, category])
         .then(() => res.redirect('/menu'))
         .catch(err => {
             console.error("Error saving menu item:", err);
@@ -228,9 +228,9 @@ app.post('/add-menu-item', isAuthenticated, (req, res) => {
 
 //Edit a menu item
 app.post('/edit-menu-item', (req, res) => {
-    const { item_id, cost, ingredients } = req.body;
-    const query = "UPDATE menu SET cost = $2, ingredients = $3 WHERE item_id = $1";
-    pool.query(query, [item_id, cost, ingredients])
+    const { item_id, cost, ingredients, category } = req.body;
+    const query = "UPDATE menu SET cost = $2, ingredients = $3, category = $4 WHERE item_id = $1";
+    pool.query(query, [item_id, cost, ingredients, category])
         .then(() => res.redirect('/menu'))
         .catch(err => {
             console.error("Error updating menu item:", err);
