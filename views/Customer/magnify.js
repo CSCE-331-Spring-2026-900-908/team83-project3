@@ -10,7 +10,7 @@ function cloneContent() {
     //lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
     lensContent.innerHTML = '';
     const mainContent = document.getElementById('page-content').cloneNode(true);
-    const modalOriginal = document.getElementById('customize-modal');
+    const modalOriginal = document.getElementById('customizeModal');
     const modalContent = modalOriginal.cloneNode(true);
     if (modalOriginal.classList.contains('active')) {
         modalContent.classList.add('active');

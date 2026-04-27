@@ -1,26 +1,102 @@
 <!DOCTYPE html>
 <head>
    <title>Home Page</title>
-   <link rel="stylesheet" href="/portal/portal.css"> </head>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           margin: 0;
+           padding: 0;
+           background: #f5f5f5;
+       }
+       .portal-container {
+           max-width: 800px;
+           margin: 40px auto;
+           padding: 20px;
+       }
+       h1, h2 { color: #333; }
+       .portal-section {
+           background: white;
+           border-radius: 8px;
+           padding: 20px;
+           margin-bottom: 20px;
+           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+       }
+       .portal-section a {
+           display: inline-block;
+           padding: 10px 20px;
+           margin: 5px;
+           background: #500000;
+           color: white;
+           text-decoration: none;
+           border-radius: 4px;
+       }
+       .portal-section a:hover { background: #700000; }
+       .login-btn {
+           display: inline-block;
+           padding: 10px 20px;
+           margin: 5px;
+           background: #4285f4;
+           color: white;
+           text-decoration: none;
+           border-radius: 4px;
+       }
+       .login-btn:hover { background: #3367d6; }
+       .logout-btn {
+           display: inline-block;
+           padding: 6px 14px;
+           background: #888;
+           color: white;
+           text-decoration: none;
+           border-radius: 4px;
+           font-size: 14px;
+       }
+       .user-info {
+           color: #555;
+           font-size: 14px;
+           margin-bottom: 10px;
+       }
+   </style>
 </head>
 <body>
-   <!-- Main Contents -->
-   <div class="content-wrapper">
-      <h1 class="page-title">Portal</h1>
-      <!-- Portal Buttons -->
-      <ul class="portal-grid">
-            <li class="portal-card">
-                <a href="/menu">Manager</a>
-            </li>
-            <li class="portal-card">
-                <a href="/cashier-order-screen">Cashier</a>
-            </li>
-            <li class="portal-card">
-                <a href="/customer">Customer</a>
-            </li>
-            <li class="portal-card">
-                <a href="/menu-board">Menu</a>
-            </li>
-        </ul>
+   <div class="portal-container">
+       <h1>Boba Shop</h1>
+
+       <div class="portal-section">
+           <h2>Customer</h2>
+           <a href="/customer">Order Now</a>
+       </div>
+
+       <div class="portal-section">
+           <h2>Manager</h2>
+           <% if (user) { %>
+               <div class="user-info">
+                   Logged in as <%= user.displayName %>
+                   <a href="/auth/logout" class="logout-btn">Logout</a>
+               </div>
+               <a href="/inventory">View Inventory</a>
+               <a href="/employee">View Employees</a>
+               <a href="/menu">View Menu</a>
+           <% } else { %>
+               <p>Please log in to access manager tools.</p>
+               <a href="/auth/google" class="login-btn">Login with Google</a>
+           <% } %>
+       </div>
+
+       <div class="portal-section">
+           <h2>Cashier</h2>
+           <% if (user) { %>
+               <a href="/cashier-order-screen">Cashier Order Screen</a>
+           <% } else { %>
+               <p>Please log in to access the cashier view.</p>
+               <a href="/auth/google" class="login-btn">Login with Google</a>
+           <% } %>
+       </div>
+
+       <div class="portal-section">
+           <h2>Team Members</h2>
+           <% for (var i in teammembers) { %>
+               <p>Name: <%=teammembers[i].student_name%>, Section: <%=teammembers[i].section%>, Fave Movie: <%=teammembers[i].favorite_movie%></p>
+           <% } %>
+       </div>
    </div>
 </body>
