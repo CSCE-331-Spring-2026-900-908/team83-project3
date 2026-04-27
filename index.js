@@ -9,11 +9,12 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const app = express();
 const port = 3000;
 app.set('view engine', 'ejs');
-app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static('public'));
 app.use('/partials', express.static('views/partials'));
 app.use('/cashier', express.static('views/Cashier'));
+
 
 // Session setup
 app.use(session({
@@ -56,7 +57,7 @@ app.get('/auth/logout', (req, res) => {
 });
 
 // Middleware to require login for manager/cashier routes
-function requireAuth(req, res, next) {
+function requireAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
@@ -100,7 +101,7 @@ app.get('/', (req, res) => {
 });
 
 //Initializes inventory
-app.get('/inventory', requireAuth, (req, res) => {
+app.get('/inventory', requireAuthenticated, (req, res) => {
     inventory = []
     pool
         .query('SELECT * FROM inventory ORDER BY ingredient_id ASC;')
@@ -161,7 +162,7 @@ app.post('/update-ingredient', (req, res) => {
 });
 
 //Initializes employee view table
-app.get('/employee', requireAuth, (req, res) => {
+app.get('/employee', requireAuthenticated, (req, res) => {
     employees = []
     pool
         .query('SELECT * FROM employees ORDER BY employee_id ASC;')
@@ -208,7 +209,7 @@ app.post('/delete-employee', (req, res) => {
 });
 
 //Initializes menu view table
-app.get('/menu', requireAuth, (req, res) => {
+app.get('/menu', requireAuthenticated, (req, res) => {
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
         .then(result => {
             res.render('Manager/menu', { menu: result.rows });
@@ -302,7 +303,7 @@ app.listen(port, () => {
 let activeOrders = []
 let orderCounter = 1; // Simple counter to assign order IDs
 
-app.get('/cashier-order-screen', requireAuth, (req, res) => {
+app.get('/cashier-order-screen', requireAuthenticated, (req, res) => {
     // Make sure this table name matches 'menu' from your screenshot
     pool.query('SELECT * FROM menu ORDER BY item_id ASC;') 
         .then(query_res => {
@@ -314,12 +315,12 @@ app.get('/cashier-order-screen', requireAuth, (req, res) => {
         });
 });
 
-app.get('/active-orders', requireAuth, (req, res) => {
+app.get('/active-orders', requireAuthenticated, (req, res) => {
     // Pass the activeOrders array to the EJS template
     res.render('Cashier/active-orders', { orders: activeOrders });
 });
 
-app.get('/cart', requireAuth, (req, res) => {
+app.get('/cart', requireAuthenticated, (req, res) => {
     // We don't need to pass database items here yet, 
     // because the cart lives in the browser's Local Storage
     res.render('Cashier/cart'); 
@@ -346,26 +347,147 @@ app.post('/api/checkout', (req, res) => {
 });
 
 app.post('/api/complete-order/:id', async (req, res) => {
-    const orderId = parseInt(req.params.id);
-    const orderIndex = activeOrders.findIndex(o => o.id === orderId);
+    const activeOrderId = parseInt(req.params.id);
+    const orderIndex = activeOrders.findIndex(o => o.id === activeOrderId);
 
     if (orderIndex > -1) {
         const orderToSave = activeOrders[orderIndex];
+        const receiptId = crypto.randomUUID();
+        const now = new Date();
 
         try {
-            
-            const total = orderToSave.items.reduce((sum, item) => sum + Number(item.price), 0);
-            
-            await pool.query('INSERT INTO order_history (order_id, total_price) VALUES ($1, $2)', [orderToSave.id, total]);
+            const maxIdResult = await pool.query('SELECT MAX(order_id) FROM orders');
+            const nextDbOrderId = (maxIdResult.rows[0].max || 0) + 1;
 
-            // Remove from temporary server list
+            const startOfYear = new Date(now.getFullYear(), 0, 0);
+            const diff = now - startOfYear;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayIndex = Math.floor(diff / oneDay);
+            const weekIndex = Math.floor(dayIndex / 7);
+            const dayOfWeek = now.getDay();
+            const hour = now.getHours();
+            const dateString = now.toISOString().split('T')[0];
+
+            // Group items by name to calculate quantity and subtotal
+            const groupedItems = {};
+            orderToSave.items.forEach(item => {
+                if (groupedItems[item.name]) {
+                    groupedItems[item.name].quantity += 1;
+                } else {
+                    groupedItems[item.name] = { price: item.price, quantity: 1 };
+                }
+            });
+
+            for (const itemName in groupedItems) {
+                const itemData = groupedItems[itemName];
+                const subtotal = itemData.price * itemData.quantity;
+                const menuResult = await pool.query('SELECT item_id FROM menu WHERE item_name = $1', [itemName]);
+                const itemId = menuResult.rows.length > 0 ? menuResult.rows[0].item_id : null;
+
+                await pool.query(
+                    `INSERT INTO orders (
+                        order_id, receipt_id, date, week_index, day_index, 
+                        day_of_we, is_peak_da, hour, item_id, item_name, 
+                        unit_price, quantity, subtotal
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+                    [
+                        nextDbOrderId, 
+                        receiptId, 
+                        dateString, 
+                        weekIndex, 
+                        dayIndex, 
+                        dayOfWeek,
+                        'f', 
+                        hour, 
+                        itemId,
+                        itemName,           
+                        itemData.price,   
+                        itemData.quantity,  
+                        subtotal            
+                    ]
+                );
+            }
+
             activeOrders.splice(orderIndex, 1);
-            res.status(200).send("Order finalized and saved to DB");
+            res.status(200).json({ success: true });
+
         } catch (err) {
-            console.error(err);
-            res.status(500).send("Error saving to database");
+            console.error("DATABASE INSERT ERROR:", err);
+            res.status(500).json({ success: false, error: err.message });
         }
     } else {
-        res.status(404).send("Order not found");
+        res.status(404).json({ success: false, message: "Order not found" });
     }
 });
+
+/** CUSTOMER VIEW */
+
+// SQL query to load menu items when customer screen is rendered
+app.get('/customer', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(query_res => {
+            res.render('Customer/customer_menu', { menu: query_res.rows });
+        })
+        .catch(err => {
+            console.error("Error fetching menu for customer:", err);
+            res.status(500).send("Error loading menu");
+        });
+});
+
+// Renders the cart for customer view
+app.get('/customer/cart', (req, res) => {
+    res.render('Customer/cart');
+});
+
+// Renders the checkout for customer view
+app.get('/customer/checkout', (req, res) => {
+    res.render('Customer/checkout');
+});
+
+// Renders the order confirmation for customer view
+app.get('/customer/order-confirmation', (req, res) => {
+    res.render('Customer/order_confirmation');
+});
+
+// app response and error handling for cart in customer view
+app.post('/api/customer-checkout', (req, res) => {
+    const { items } = req.body;
+    if (!items || items.length === 0) {
+        return res.status(400).json({ error: "No items in cart" });
+    }
+
+    const newOrder = {
+        id: orderCounter++,
+        items: items.map(item => ({
+            name: item.name,
+            price: item.price,
+            customizations: item.customizations || "" // Capture the string from the frontend
+        })),
+        timestamp: new Date().toLocaleString()
+    };
+
+    activeOrders.push(newOrder);
+    console.log(`Customer Order #${newOrder.id} placed.`);
+    res.status(200).json({ success: true });
+});
+
+
+/* MENU VIEW */
+
+// SQL query to load menu items when menu-board is rendered
+app.get('/menu-board', (req, res) => {
+    pool.query('SELECT * FROM menu ORDER BY item_id ASC;')
+        .then(query_res => {
+            res.render('Menu/menu-board', { menu: query_res.rows });
+        })
+        .catch(err => {
+            console.error("Error fetching menu for menu-board:", err);
+            res.status(500).send("Error loading menu-board");
+        });
+});
+
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});
+

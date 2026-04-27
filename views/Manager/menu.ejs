@@ -14,6 +14,7 @@
         <th>Name</th>
         <th>Cost</th>
         <th>Ingredients</th>
+        <th>Category</th>
         <th>Edit</th>
         <th>Delete</th>
     </tr>
@@ -29,6 +30,16 @@
                 </td>
                 <td>
                     <input type="text" name="ingredients" value="<%=item.ingredients%>">
+                </td>
+                <td>
+                    <select name="category">
+                        <option value="classic" <%= item.category === 'classic' ? 'selected' : '' %>>Classic</option>
+                        <option value="green" <%= item.category === 'green' ? 'selected' : '' %>>Green Tea</option>
+                        <option value="fruit" <%= item.category === 'fruit' ? 'selected' : '' %>>Fruit</option>
+                        <option value="coffee" <%= item.category === 'coffee' ? 'selected' : '' %>>Coffee</option>
+                        <option value="specialty" <%= item.category === 'specialty' ? 'selected' : '' %>>Specialty</option>
+                        <option value="default" <%= item.category === 'default' ? 'selected' : '' %>>Default</option>
+                    </select>
                 </td>
                 <td>
                     <button type="submit">Save Edits</button>
@@ -51,6 +62,15 @@
     <input type="text" name="item_name" placeholder="Item name" required>
     <input type="number" step="0.01" name="cost" placeholder="Cost" required>
     <input type="text" name="ingredients" placeholder="Ingredients">
+    <select name="category" required>
+        <option value="" disabled selected>Select Category</option>
+        <option value="classic">Classic</option>
+        <option value="green">Green Tea</option>
+        <option value="fruit">Fruit</option>
+        <option value="coffee">Coffee</option>
+        <option value="specialty">Specialty</option>
+        <option value="default">Default</option>
+    </select>
     <button type="submit">Save</button>
 </form>
 </body>

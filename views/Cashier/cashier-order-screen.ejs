@@ -54,7 +54,7 @@
             let currentItem = { name: '', price: 0 };
 
             function updateCartCount() {
-                const cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
                 const count = cart.length;
                 const cartBtn = document.querySelector('.floating-cart-button');
                 if (cartBtn) {
@@ -94,20 +94,20 @@
 
                 const customizationsString = customizationsArray.join(', ');
 
-                let cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+                let cart = JSON.parse(localStorage.getItem('cart') || '[]');
                 cart.push({ 
                     name: currentItem.name, 
                     price: currentItem.price,
                     customizations: customizationsString // Store this separately!
                 });
-                localStorage.setItem('customer-cart', JSON.stringify(cart));
+                localStorage.setItem('cart', JSON.stringify(cart));
 
                 closeCustomize();
                 alert('Added to cart!');
             }
+            document.addEventListener('DOMContentLoaded', updateCartCount);
             </script>
 
-document.addEventListener('DOMContentLoaded', updateCartCount);
         <script src="/Cashier/script.js"></script>
         <script src="/weather.js"></script>
     </body>
