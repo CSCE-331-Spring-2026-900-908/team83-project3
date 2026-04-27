@@ -11,23 +11,15 @@
         <button id="magnifier-toggle" class="btn-secondary">Magnifier: <span id="toggle-status">OFF</span></button>
         <button id="theme-toggle" class="btn-secondary" onclick="toggleTheme()">Change Theme</button>
         <button id="translate-btn" class="btn-secondary" onclick="toggleTranslate()">Español</button>
-    </div>
-    <div id="weather-container">
+        <div id="weather-container">
         <h2>Current Weather</h2>
         <p id="temp">Loading...</p>
         <p id="weather">Loading...</p>
     </div>
-</nav>
-<div id="theme-modal" class="theme-modal-overlay" style="display: none;">
-    <div class="theme-modal-content">
-        <h3>Select a Theme</h3>
-        <div class="theme-options">
-            <button onclick="applyTheme('/customer/customer.css')">Default Light</button>
-            <button onclick="applyTheme('/customer/high-contrast-customer.css')">High Contrast</button>
-        </div>
-        <button class="btn-close" onclick="closeThemeModal()">Close</button>
     </div>
-</div>
+</nav>
+<script src="/partials/weather.js"></script>
+
 <script>
 // Open the modal instead of toggling directly
     function toggleTheme() {
