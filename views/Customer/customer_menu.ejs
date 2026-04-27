@@ -1,21 +1,18 @@
 <html>
     <head>
+        <title>Menu</title>
         <link id="theme-stylesheet" rel="stylesheet" href="/customer/customer.css">
         <link rel="stylesheet" href="/customer/magnifying.css">
     </head>
     <body>
-
-    <!-- Makes an object for magnification purposes-->
     <div id="magnifier">
-
-        <!-- Grabs a snapshot of the things the magnifier is over -->
         <div id="magnifier-content"></div>
     </div>
-
-    <!-- Used to take a 'snapshot' of the entire page -->
     <div id="page-content">
     <%- include('../partials/navigation-customer') %>
     <main class="content-wrapper">
+        <h1 class="page-title">Menu</h1>
+
         <div class="menu-grid">
             <% if (menu.length === 0) { %>
                 <p>No menu items available.</p>
@@ -24,9 +21,8 @@
                     <div class="menu-card">
                         <div class="img-placeholder"></div>
                         <h3><%= item.item_name %></h3>
-                        <p class="menu-card-price">$<%= Number(item.cost).toFixed(2) %></p>
-                        <p class="menu-card-ingredients"><%= item.ingredients %></p>
-                        <button class="btn-primary" onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>', '<%= item.ingredients %>')">Add to Cart</button>
+                        <p>$<%= Number(item.cost).toFixed(2) %></p>
+                        <button onclick="openCustomize('<%= item.item_name %>', '<%= item.cost %>')">Add to Cart</button>
                     </div>
                 <% }); %>
             <% } %>
@@ -34,86 +30,74 @@
     </main>
     </div>
 
-    <div id="customize-modal" class="modal-overlay">
+    <!-- Customization Modal -->
+    <div class="modal-overlay" id="customizeModal">
         <div class="modal-box">
-            <h2 id="modal-title"></h2>
-            <p class="modal-ingredients">Ingredients: <span id="modal-ingredients"></span></p>
+            <h2>Customize: <span id="modal-item-name"></span></h2>
 
-            <div class="modal-field">
-                <label>Milk Choice:</label>
-                <select id="milk-choice">
-                    <option value="2% Milk">2% Milk</option>
-                    <option value="Whole Milk">Whole Milk</option>
-                    <option value="Soy Milk">Soy Milk</option>
-                    <option value="Oat Milk">Oat Milk</option>
-                </select>
+            <div class="customization-group">
+                <h3>Milk</h3>
+                <label><input type="checkbox" id="opt-milk"> Add Milk</label>
             </div>
 
-            <div id="subs-container" class="modal-field"></div>
+            <div class="customization-group">
+                <h3>Ice</h3>
+                <label><input type="radio" name="ice" value="ice" checked> Ice</label>
+                <label><input type="radio" name="ice" value="no ice"> No Ice</label>
+            </div>
+
+            <div class="customization-group">
+                <h3>Toppings</h3>
+                <label><input type="radio" name="topping" value="no boba" checked> No Boba</label>
+                <label><input type="radio" name="topping" value="taro"> Taro</label>
+                <label><input type="radio" name="topping" value="lychee jelly"> Lychee Jelly</label>
+            </div>
 
             <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeCustomize()">Cancel</button>
                 <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
-                <button id="cancel-btn" class="btn-secondary" onclick="closeCustomize()">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
-        var currentItem = {};
-        /*takes item and loads it into a card*/
-        function openCustomize(name, price, ingredients) {
-            currentItem = { name: name, price: Number(price), ingredients: ingredients };
-            document.getElementById('modal-title').textContent = name;
-            document.getElementById('modal-ingredients').textContent = ingredients;
+        let currentItem = { name: '', price: 0 };
 
-            var parts = ingredients.split(',').map(function(s) { return s.trim(); });
-            var container = document.getElementById('subs-container');
-            container.innerHTML = '';
-            /*customization logic, also checks if it has milk subs*/
-            parts.forEach(function(ing) {
-                if (ing.toLowerCase().indexOf('milk') !== -1) return;
+        function openCustomize(name, price) {
+            currentItem = { name, price: Number(price) };
+            document.getElementById('modal-item-name').textContent = name;
 
-                var div = document.createElement('div');
-                div.className = 'sub-option';
-                var label = document.createElement('label');
-                var cb = document.createElement('input');
-                cb.type = 'checkbox';
-                cb.value = ing;
-                cb.className = 'sub-checkbox';
-                label.appendChild(cb);
-                label.appendChild(document.createTextNode(' No ' + ing));
-                div.appendChild(label);
-                container.appendChild(div);
-            });
+            // Reset selections
+            document.getElementById('opt-milk').checked = false;
+            document.querySelector('input[name="ice"][value="ice"]').checked = true;
+            document.querySelector('input[name="topping"][value="no boba"]').checked = true;
 
-            document.getElementById('customize-modal').classList.add('active');
+            document.getElementById('customizeModal').classList.add('active');
         }
-        /*closes customization menu before sending to checkout*/
+
         function closeCustomize() {
-            document.getElementById('customize-modal').classList.remove('active');
+            document.getElementById('customizeModal').classList.remove('active');
         }
 
         function confirmAdd() {
-            var milk = document.getElementById('milk-choice').value;
-            var removed = [];
-            var checkboxes = document.querySelectorAll('.sub-checkbox:checked');
-            checkboxes.forEach(function(cb) { removed.push(cb.value); });
+            const milk = document.getElementById('opt-milk').checked;
+            const ice = document.querySelector('input[name="ice"]:checked').value;
+            const topping = document.querySelector('input[name="topping"]:checked').value;
 
-            var customizations = 'Milk: ' + milk;
-            if (removed.length > 0) {
-                customizations += ', No: ' + removed.join(', ');
-            }
+            const customizations = [];
+            if (milk) customizations.push('Milk');
+            customizations.push(ice === 'no ice' ? 'No Ice' : 'Ice');
+            if (topping !== 'no boba') customizations.push(topping.charAt(0).toUpperCase() + topping.slice(1));
 
-            var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
-            cart.push({
-                name: currentItem.name,
-                price: currentItem.price,
-                customizations: customizations
-            });
+            const label = customizations.length > 0
+                ? currentItem.name + ' (' + customizations.join(', ') + ')'
+                : currentItem.name;
+
+            let cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+            cart.push({ name: label, price: currentItem.price });
             localStorage.setItem('customer-cart', JSON.stringify(cart));
 
             closeCustomize();
-            alert('Added to cart');
         }
     </script>
     <script src="/customer/sliders.js"></script>
