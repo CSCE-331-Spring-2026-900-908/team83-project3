@@ -5,11 +5,11 @@ const toggleButton = document.getElementById('magnifier-toggle');
 const statusText = document.getElementById('toggle-status');
 let toggle = false;
 
-//Page content is 'snpashotted'
+//Page content is 'snapshotted'
 function cloneContent() {
     //lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
     lensContent.innerHTML = '';
-    const mainContent = document.getElementById('page-content').cloneNode(true);
+    const mainContent = document.getElementById('page-wrapper').cloneNode(true);
     const modalOriginal = document.getElementById('customizeModal');
     const modalContent = modalOriginal.cloneNode(true);
     if (modalOriginal.classList.contains('active')) {
@@ -22,6 +22,22 @@ function cloneContent() {
         el.removeAttribute('id');
         el.querySelectorAll('[id]').forEach(child => child.removeAttribute('id'));
     });
+    
+
+    if (modalOriginal.classList.contains('active')) {
+        modalContent.classList.add('active');
+        Object.assign(modalContent.style, {
+            display: 'flex',
+            opacity: '1',
+            visibility: 'visible',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: '10001'
+        });
+    }
     lensContent.appendChild(mainContent);
     lensContent.appendChild(modalContent);
 }
@@ -60,10 +76,10 @@ window.addEventListener('mousemove', (e) => {
     lens.style.top = `${e.clientY}px`;
     const zoom = 2;
     const lensRadius = 125;
-    const totalX = e.clientX * zoom;
-    const totalY = e.clientY * zoom;
-    lensContent.style.left = `${lensRadius - totalX}px`;
-    lensContent.style.top = `${lensRadius - totalY}px`;
+    const moveX = lensRadius - (e.pageX * zoom);
+    const moveY = lensRadius - (e.pageY * zoom);
+    lensContent.style.left = `${moveX}px`;
+    lensContent.style.top = `${moveY}px`;
 });
 
 //Magnifier leaves when mouse is gone
@@ -78,7 +94,7 @@ function moveMagnifier(pageX, pageY, clientX, clientY) {
     lens.style.top = `${clientY}px`;
 
     const zoom = 2;
-    const lensRadius = 75;
+    const lensRadius = 125;
     const moveX = lensRadius - (pageX * zoom);
     const moveY = lensRadius - (pageY * zoom);
 
