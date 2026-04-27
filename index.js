@@ -325,7 +325,7 @@ app.get('/api/product-usage', async (req, res) => {
 });
 
 // SCHEDULER 
-app.get('/scheduler', isAuthenticated, async (req, res) => {
+app.get('/scheduler', requireAuthenticated, async (req, res) => {
     const employees = await pool.query("SELECT * FROM employees ORDER BY employee_id ASC");
     res.render('Manager/scheduler', { employees: employees.rows });
 });
