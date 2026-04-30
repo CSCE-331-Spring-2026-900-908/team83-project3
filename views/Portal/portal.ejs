@@ -76,6 +76,9 @@
                <a href="/inventory">View Inventory</a>
                <a href="/employee">View Employees</a>
                <a href="/menu">View Menu</a>
+               <a href="/scheduler">View Scheduler</a>
+               <a href="/order-report">View Reports</a>
+               <a href="/stats">View Stats</a>
            <% } else { %>
                <p>Please log in to access manager tools.</p>
                <a href="/auth/google" class="login-btn">Login with Google</a>
@@ -91,12 +94,16 @@
                <a href="/auth/google" class="login-btn">Login with Google</a>
            <% } %>
        </div>
-
+       <div class ="portal-section">
+            <h2>Menu Board</h2>
+                <a href="/menu-board">View Menu Board</a>
+       </div>
        <div class="portal-section">
            <h2>Team Members</h2>
            <% for (var i in teammembers) { %>
                <p>Name: <%=teammembers[i].student_name%>, Section: <%=teammembers[i].section%>, Fave Movie: <%=teammembers[i].favorite_movie%></p>
            <% } %>
        </div>
+
    </div>
 </body>

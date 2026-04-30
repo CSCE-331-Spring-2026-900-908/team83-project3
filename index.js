@@ -484,6 +484,17 @@ app.post('/delete-menu-item', (req, res) => {
         });
 });
 
+app.post('/edit-menu-item', (req, res) => {
+    const { item_id, cost, ingredients, category } = req.body;
+    const query = 'UPDATE menu SET cost = $1, ingredients = $2, category = $3 WHERE item_id = $4';
+    pool.query(query, [cost, ingredients, category, item_id])
+        .then(() => res.redirect('/menu'))
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("Error updating menu item");
+        });
+});
+
 //API ROUTE for chatbot
 app.post('/api/chat', async (req, res) => {
     try {
@@ -541,18 +552,15 @@ app.post('/api/customer-checkout', (req, res) => {
     if (!items || items.length === 0) {
         return res.status(400).send("No items in cart");
     }
-    const total = items.reduce((sum, item) => sum + Number(item.price), 0);
-    pool.query('INSERT INTO order_history (total_price) VALUES ($1)', [total])
-        .then(() => res.status(200).json({ success: true }))
-        .catch(err => {
-            console.error(err);
-            res.status(500).send("Error saving order");
-        });
+    const newOrder = {
+        id: orderCounter++,
+        items: items,
+        timestamp: new Date().toLocaleString()
+    };
+    activeOrders.push(newOrder);
+    console.log(`Customer Order #${newOrder.id} added to active orders.`);
+    res.status(200).json({ success: true });
 });
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});
-
 
 /** CASHIER VIEW */
 let activeOrders = []
@@ -661,6 +669,16 @@ app.post('/api/complete-order/:id', async (req, res) => {
                         subtotal            
                     ]
                 );
+                const menuIngredientResult = await pool.query('SELECT ingredients FROM menu WHERE item_name = $1', [itemName]);
+                if (menuIngredientResult.rows.length > 0 && menuIngredientResult.rows[0].ingredients) {
+                    const ingredients = menuIngredientResult.rows[0].ingredients.split(',').map(i => i.trim());
+                    for (const ingredient of ingredients) {
+                        await pool.query(
+                            'UPDATE inventory SET quantity = GREATEST(quantity - $1, 0) WHERE ingredient = $2',
+                            [itemData.quantity, ingredient]
+                        );
+                    }
+                }
             }
 
             activeOrders.splice(orderIndex, 1);
