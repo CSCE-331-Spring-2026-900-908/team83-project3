@@ -1,125 +1,83 @@
 const lens = document.getElementById('magnifier');
 const lensContent = document.getElementById('magnifier-content');
-const pageContent = document.getElementById('page-content');
 const toggleButton = document.getElementById('magnifier-toggle');
 const statusText = document.getElementById('toggle-status');
 let toggle = false;
 
-//Page content is 'snapshotted'
+// 1. THE DEBOUNCER: Prevents the "Infinite Loop" crash
+let cloneTimeout;
+function debouncedClone() {
+    clearTimeout(cloneTimeout);
+    cloneTimeout = setTimeout(cloneContent, 50); // Wait 50ms for the UI to settle
+}
+
 function cloneContent() {
-    //lensContent.innerHTML = pageContent.innerHTML.replace(/id="[^"]*"/g, '');
+    if (!toggle) return; // Don't waste resources if the lens is off
+    
     lensContent.innerHTML = '';
-    const mainContent = document.getElementById('page-wrapper').cloneNode(true);
-    const modalOriginal = document.getElementById('customizeModal');
-    const modalContent = modalOriginal.cloneNode(true);
-    if (modalOriginal.classList.contains('active')) {
-        modalContent.classList.add('active');
-        modalContent.style.display = 'flex'; 
-        modalContent.style.opacity = '1';
-        modalContent.style.visibility = 'visible';
+    
+    const wrapperOriginal = document.getElementById('page-wrapper');
+    const chatContainerOriginal = document.getElementById('chatbot-container');
+    const chatToggleOriginal = document.getElementById('chatbot-toggle');
+
+    if (!wrapperOriginal) return;
+
+    // Clone the main pieces
+    const wrapperClone = wrapperOriginal.cloneNode(true);
+    const chatContainerClone = chatContainerOriginal ? chatContainerOriginal.cloneNode(true) : null;
+    const chatToggleClone = chatToggleOriginal ? chatToggleOriginal.cloneNode(true) : null;
+
+    // BAKE VISIBILITY: Use classes/styles instead of IDs for the clone
+    if (chatContainerOriginal && chatContainerClone) {
+        const isOpen = window.getComputedStyle(chatContainerOriginal).display !== 'none';
+        chatContainerClone.style.display = isOpen ? 'block' : 'none';
+        chatContainerClone.style.position = 'fixed';
     }
-    [mainContent, modalContent].forEach(el => {
+
+    // CLEANUP: Remove IDs safely
+    [wrapperClone, chatContainerClone, chatToggleClone].forEach(el => {
+        if (!el) return;
         el.removeAttribute('id');
         el.querySelectorAll('[id]').forEach(child => child.removeAttribute('id'));
     });
-    
 
-    if (modalOriginal.classList.contains('active')) {
-        modalContent.classList.add('active');
-        Object.assign(modalContent.style, {
-            display: 'flex',
-            opacity: '1',
-            visibility: 'visible',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: '10001'
-        });
-    }
-    lensContent.appendChild(mainContent);
-    lensContent.appendChild(modalContent);
+    // APPEND
+    lensContent.appendChild(wrapperClone);
+    if (chatToggleClone) lensContent.appendChild(chatToggleClone);
+    if (chatContainerClone) lensContent.appendChild(chatContainerClone);
 }
 
-cloneContent();
-
-window.addEventListener('refreshMagnifier', () => {
-    cloneContent();
-});
-
+// 2. TRIGGER UPDATES: Use the debouncer instead of direct calls
 if (toggleButton) {
-    toggleButton.addEventListener('click', () => {
+    toggleButton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Stop the click from bubbling up
         toggle = !toggle;
-        statusText.innerText = toggle ? "ON" : "OFF";
+        if (statusText) statusText.innerText = toggle ? "ON" : "OFF";
         if (!toggle) {
             lens.style.display = 'none';
+        } else {
+            debouncedClone();
         }
-        cloneContent();
     });
 }
 
-//Clone page content when page loads
-window.addEventListener('load', () => {
-    cloneContent();
-    console.log("Magnifier clone updated. Menu items found: ", lensContent.querySelectorAll('.menu-card').length);
-});
+// Update whenever the user interacts, but safely
+window.addEventListener('click', debouncedClone);
+window.addEventListener('refreshMagnifier', debouncedClone);
+window.addEventListener('load', debouncedClone);
 
-window.addEventListener('click', () => {
-    cloneContent();
-});
-
-window.addEventListener('mousemove', (e) => {
-    if (!toggle) return;
-    lens.style.display = 'block';
-    lens.style.left = `${e.clientX}px`;
-    lens.style.top = `${e.clientY}px`;
-    const zoom = 2;
-    const lensRadius = 125;
-    const moveX = lensRadius - (e.pageX * zoom);
-    const moveY = lensRadius - (e.pageY * zoom);
-    lensContent.style.left = `${moveX}px`;
-    lensContent.style.top = `${moveY}px`;
-});
-
-//Magnifier leaves when mouse is gone
-window.addEventListener('mouseleave', () => {
-    lens.style.display = 'none';
-});
-
-//Moves the magnifier accurately
+// 3. MOVEMENT (Standard)
 function moveMagnifier(pageX, pageY, clientX, clientY) {
+    if (!toggle) return;
     lens.style.display = 'block';
     lens.style.left = `${clientX}px`;
     lens.style.top = `${clientY}px`;
 
     const zoom = 2;
     const lensRadius = 125;
-    const moveX = lensRadius - (pageX * zoom);
-    const moveY = lensRadius - (pageY * zoom);
-
-    lensContent.style.left = `${moveX}px`;
-    lensContent.style.top = `${moveY}px`;
+    lensContent.style.left = `${lensRadius - (pageX * zoom)}px`;
+    lensContent.style.top = `${lensRadius - (pageY * zoom)}px`;
 }
 
-//Magnifier follows touch input
-window.addEventListener('touchmove', (e) => {
-    if (!toggle) return;
-    const touch = e.touches[0];
-    const fingerOffset = 80;
-    lens.style.top = `${touch.clientY - fingerOffset}px`;
-    moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
-}, { passive: false });
-
-//Magnifier gets placed at touch input
-window.addEventListener('touchstart', (e) => {
-    if (!toggle) return;
-    const touch = e.touches[0];
-    moveMagnifier(touch.pageX, touch.pageY, touch.clientX, touch.clientY);
-    cloneContent;
-});
-
-//Magnifier stops when touch input is gone
-window.addEventListener('touchend', () => {
-    lens.style.display = 'none';
-});
+window.addEventListener('mousemove', (e) => moveMagnifier(e.pageX, e.pageY, e.clientX, e.clientY));
+window.addEventListener('mouseleave', () => lens.style.display = 'none');

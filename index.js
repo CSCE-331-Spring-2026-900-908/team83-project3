@@ -541,18 +541,15 @@ app.post('/api/customer-checkout', (req, res) => {
     if (!items || items.length === 0) {
         return res.status(400).send("No items in cart");
     }
-    const total = items.reduce((sum, item) => sum + Number(item.price), 0);
-    pool.query('INSERT INTO order_history (total_price) VALUES ($1)', [total])
-        .then(() => res.status(200).json({ success: true }))
-        .catch(err => {
-            console.error(err);
-            res.status(500).send("Error saving order");
-        });
+    const newOrder = {
+        id: orderCounter++,
+        items: items,
+        timestamp: new Date().toLocaleString()
+    };
+    activeOrders.push(newOrder);
+    console.log(`Customer Order #${newOrder.id} added to active orders.`);
+    res.status(200).json({ success: true });
 });
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});
-
 
 /** CASHIER VIEW */
 let activeOrders = []

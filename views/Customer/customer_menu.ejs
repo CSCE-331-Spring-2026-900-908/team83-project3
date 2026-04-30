@@ -34,7 +34,6 @@
             <% } %>
         </div>
     </main>
-    </div>
 
     <!-- Customization Modal -->
     <div class="modal-overlay" id="customizeModal">
@@ -74,7 +73,7 @@
             </div>
 
             <div class="customization-group">
-                <h3>Toppings</h3>
+                <h3>Toppings ($1 each)</h3>
                 <label><input type="checkbox" name="topping" value="boba"> Boba</label>
                 <label><input type="checkbox" name="topping" value="taro"> Taro</label>
                 <label><input type="checkbox" name="topping" value="lychee jelly"> Lychee Jelly</label>
@@ -86,6 +85,7 @@
             </div>
         </div>
     </div>
+
 
    <script>
     let currentItem = { name: '', price: 0 };
@@ -136,34 +136,33 @@
         var temp = m.querySelector('input[name="temp"]:checked');
         var ice = m.querySelector('input[name="ice"]:checked');
         var toppings = Array.from(m.querySelectorAll('input[name="topping"]:checked'));
+        var toppings_amount = toppings.length;
 
         if (!milk || !sugar || !temp || !ice) {
             console.error('Missing selections:', { milk, sugar, temp, ice });
             return;
         }
 
-        var parts = [];
-        if (milk.value !== 'none') parts.push(milk.value.charAt(0).toUpperCase() + milk.value.slice(1) + ' Milk');
-        parts.push(sugar.value + ' Sugar');
-        parts.push(temp.value.charAt(0).toUpperCase() + temp.value.slice(1));
-        if (temp.value === 'cold') parts.push(ice.value.charAt(0).toUpperCase() + ice.value.slice(1));
-        toppings.forEach(function(t) { parts.push(t.value.charAt(0).toUpperCase() + t.value.slice(1)); });
-
-        var label = currentItem.name + ' (' + parts.join(', ') + ')';
+        var customizationsArray = [];
+        if (milk.value !== 'none') customizationsArray.push(milk.value.charAt(0).toUpperCase() + milk.value.slice(1) + ' Milk');
+        customizationsArray.push(sugar.value + ' Sugar');
+        customizationsArray.push(temp.value.charAt(0).toUpperCase() + temp.value.slice(1));
+        if (temp.value === 'cold') customizationsArray.push(ice.value.charAt(0).toUpperCase() + ice.value.slice(1));
+        toppings.forEach(function(t) { customizationsArray.push(t.value.charAt(0).toUpperCase() + t.value.slice(1)); });
 
         var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
-        cart.push({ name: label, price: currentItem.price });
+        cart.push({
+            name: currentItem.name,
+            price: parseFloat((currentItem.price + toppings_amount).toFixed(2)),
+            customizations: customizationsArray.join(', ')  // Stored separately
+        });
         localStorage.setItem('customer-cart', JSON.stringify(cart));
-
         closeCustomize();
     }
 
-    // Stop modal clicks from triggering magnifier re-clone
-    document.getElementById('customizeModal').addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
 </script>
     <script src="/customer/sliders.js"></script>
     <script src="/customer/magnify.js"></script>
+    </div>
     </body>
 </html>

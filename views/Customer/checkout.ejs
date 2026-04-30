@@ -48,7 +48,10 @@
                     localStorage.removeItem('customer-cart');
                     window.location.href = '/customer/order-confirmation';
                 } else {
-                    alert('Something went wrong. Please try again.');
+                    res.text().then(function(msg) {
+                    console.error('Server error:', msg);
+                    alert('Something went wrong: ' + msg);
+                     });
                 }
             })
             .catch(function(err) {
