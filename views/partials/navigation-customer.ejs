@@ -14,23 +14,6 @@
         <span class="nav-weather"><span id="temp">--</span> | <span id="weather">--</span></span>
     </div>
 </nav>
-<div id="theme-modal" class="theme-modal-overlay" style="display: none;">
-    <div class="theme-modal-content">
-        <h3>Select a Theme</h3>
-        <div class="theme-options">
-            <button class="btn-secondary" onclick="manualThemeSelect('auto')">Auto </button>
-            <button class="btn-secondary" onclick="manualThemeSelect('theme-standard')">Standard</button>
-            <button class="btn-secondary" onclick="manualThemeSelect('theme-sunny')">Sunny</button>
-            <button class="btn-secondary" onclick="manualThemeSelect('theme-cloudy')">Cloudy</button>
-            <button class="btn-secondary" onclick="manualThemeSelect('theme-rainy')">Rainy</button>
-            <button class="btn-secondary" onclick="manualThemeSelect('theme-snowy')">Snowy</button>
-            <button class="btn-secondary" onclick="manualThemeSelect('theme-high-contrast')">High Contrast</button>
-        </div>
-        <button class="btn-close" onclick="closeThemeModal()">Close</button>
-    </div>
-</div>
-
-<script src="/partials/weather.js"></script>
 
 <!-- Theme Picker Modal -->
 <div class="theme-modal-overlay" id="themeModal" style="display:none;">
@@ -52,7 +35,7 @@
 <div id="chatbot-toggle" onclick="toggleChatbot()">💬</div>
 <div id="chatbot-container">
     <div id="chatbot-header">
-        <span>EIGHTTEATHREE TEA Assistant</span>
+        <span>EightTeaThree Assistant</span>
         <button onclick="toggleChatbot()">✕</button>
     </div>
     <div id="chatbot-messages"></div>
@@ -160,21 +143,21 @@
         appendMessage('assistant', '...');
 
         try {
-            var res = await fetch('https://api.anthropic.com/v1/messages', {
+            var res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    model: 'claude-sonnet-4-20250514',
-                    max_tokens: 1000,
-                    system: 'You are a helpful assistant for Sharetea, a bubble tea shop. Help customers with menu questions, drink recommendations, and customization options. Keep responses short and friendly. The customization options are: Milk (whole, 2%, oat, soy, none), Sugar (30%, 60%, 90%, 100%, 120%), Temperature (hot or cold), Ice (extra, regular, less, none), and Toppings (boba, taro, lychee jelly).',
-                    messages: chatHistory
-                })
+                body: JSON.stringify({ messages: chatHistory })
             });
             var data = await res.json();
-            var reply = data.content.map(function(c) { return c.text || ''; }).join('');
+
             removeLastAssistant();
-            appendMessage('assistant', reply);
-            chatHistory.push({ role: 'assistant', content: reply });
+
+            if (data.reply) {
+                appendMessage('assistant', data.reply);
+                chatHistory.push({ role: 'assistant', content: data.reply });
+            } else {
+                appendMessage('assistant', 'Sorry, I couldn\'t get a response. Please try again.');
+            }
         } catch (err) {
             removeLastAssistant();
             appendMessage('assistant', 'Sorry, I couldn\'t connect. Please try again.');
