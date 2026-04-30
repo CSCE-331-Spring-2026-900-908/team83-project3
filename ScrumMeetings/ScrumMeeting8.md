@@ -19,9 +19,13 @@ Meeting Date: 4-17-2026
 
 ## Meeting Agenda Items
 
-● Beyond Features 
+● Chatbot
 
-● Accessibility Features
+● Linking Theme Switcher to Weather API
+
+● Fixing Magnifying Glass Bugs
+
+● Scheduler
 
 ---
 
@@ -30,31 +34,26 @@ Meeting Date: 4-17-2026
 
 ### Accomplishments
 
-● Order Report Working
+● Weather API
 
-● Stats Page Working
+● Order Report Consumer Feedback
 
-● Magnifier Completed
+● Theme Switcher
 
-● High Contrast Mode Completed
-
-
+● More Robust Customizations
 ### Tasks Completed
 
 | Task Description | Assigned To | Completed? (yes/no) |
 
 |---------------------|----------------|----------------------|
 
-|Magnifier Accessibility | Aedan |        Yes         |
+|Weather API | Aedan |        Yes         |
 
-|Implement Z - Reports |    Robbie    |        Yes         |
+|Order Reports Consumer Feedback |    Robbie    |        Yes         |
 
-| Make a viewable stats page |    Robbie    |        Yes         |
+| Theme Switcher |    Matthew/Caroline   |        Yes         |
 
-| High Contrast Accessibility |    Caroline   |        Yes         |
-
-|Active Order Completion | Matthew     | Yes   |
-
+| Customizations |    Varun  |        Yes         |
 ---
 
 
@@ -65,12 +64,11 @@ Meeting Date: 4-17-2026
 
 ### Plans
 
-● Finish up OAuth
+● Finish Scheduler
 
-● Continue working on machine translation
+● Link Weather API to Theme Switcher
 
-● Continue working text/button sliders
-
+● Fix Bugs
 
 ### Task Assignments
 
@@ -78,15 +76,15 @@ Meeting Date: 4-17-2026
 
 |------------------|-------------|
 
-| OAuth      |    Varun    |
+| Chatbot|    Varun    |
 
-| Machine Translation    |    Varun   |
+| Bug Fixing | Aedan   |
 
-| Magnifier Touch Screen Compatibility    |    Aedan    |
+| Scheduler |    Robbie   |
 
-| Button/Text Enlarging    |    Matthew  |
+| Linking Weather API to Theme Switcher |    Matthew  |
 
-| CSS Pages    |    Caroline |
+| Adding Images to Menu Board and Customer |    Caroline |
 
 
 
@@ -100,10 +98,10 @@ Meeting Date: 4-17-2026
 
 Summarize the discussion in paragraph form from the previous meeting.
 
-The team made plans on what our accessibility and beyond features would be.
+The team made plans on what we would start working on for the 
 
-along with assigning team members to start working on those features along
+beginning of Sprint 3. The team also accomplished the machine translation
 
-with smoothing over some of our previous code.
+and OAuth.
 
 
