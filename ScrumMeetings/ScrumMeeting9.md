@@ -30,14 +30,11 @@ Meeting Date: 4-22-2026
 
 ### Accomplishments
 
-● Order Report Working
+● Scheduler
 
-● Stats Page Working
+● Linked Weather API to Theme Switcher
 
-● Magnifier Completed
-
-● High Contrast Mode Completed
-
+● Had all the images for Menu Board and Customer View
 
 ### Tasks Completed
 
@@ -45,15 +42,13 @@ Meeting Date: 4-22-2026
 
 |---------------------|----------------|----------------------|
 
-|Magnifier Accessibility | Aedan |        Yes         |
+| Bug Fixes | Aedan |        No         |
 
-|Implement Z - Reports |    Robbie    |        Yes         |
+| Scheduler |    Robbie    |        Yes         |
 
-| Make a viewable stats page |    Robbie    |        Yes         |
+| Add images for Menu Board and Customer View |    Caroline   |   Yes         |
 
-| High Contrast Accessibility |    Caroline   |        Yes         |
-
-|Active Order Completion | Matthew     | Yes   |
+| Linked Weather API to Theme Switcher | Matthew     | Yes   |
 
 ---
 
@@ -65,30 +60,22 @@ Meeting Date: 4-22-2026
 
 ### Plans
 
-● Finish up OAuth
+● Finish Chatbot
 
-● Continue working on machine translation
+● Fix Bugs
 
-● Continue working text/button sliders
-
-
+● Add Miscellaneous QoL changes
 ### Task Assignments
 
 | Task Description | Assigned To |
 
 |------------------|-------------|
 
-| OAuth      |    Varun    |
+| Chatbot |    Varun    |
 
-| Machine Translation    |    Varun   |
+| Bug Fixes | Robbie/Aedan/Matthew |
 
-| Magnifier Touch Screen Compatibility    |    Aedan    |
-
-| Button/Text Enlarging    |    Matthew  |
-
-| CSS Pages    |    Caroline |
-
-
+| Add Categories to Manager View  | Caroline  |
 
 
 ---
@@ -100,10 +87,12 @@ Meeting Date: 4-22-2026
 
 Summarize the discussion in paragraph form from the previous meeting.
 
-The team made plans on what our accessibility and beyond features would be.
+The team kept each other updated on what they did and what needed
 
-along with assigning team members to start working on those features along
+to be accomplished by the MVP demo. The team completed the
 
-with smoothing over some of our previous code.
+Weather API and Theme Switcher and discussed how they would link
+
+the two.
 
 

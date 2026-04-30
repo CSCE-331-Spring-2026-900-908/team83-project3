@@ -19,9 +19,9 @@ Meeting Date: 4-13-2026
 
 ## Meeting Agenda Items
 
-● Beyond Features 
+● Weather API
 
-● Accessibility Features
+● Scheduler
 
 ---
 
@@ -30,30 +30,26 @@ Meeting Date: 4-13-2026
 
 ### Accomplishments
 
-● Order Report Working
+● OAuth
 
-● Stats Page Working
+● Machine Translation
 
-● Magnifier Completed
+● Finalized Text and Button Sliders
 
-● High Contrast Mode Completed
-
-
+● Customizations
 ### Tasks Completed
 
 | Task Description | Assigned To | Completed? (yes/no) |
 
 |---------------------|----------------|----------------------|
 
-|Magnifier Accessibility | Aedan |        Yes         |
+| OAuth | Varun |        Yes         |
 
-|Implement Z - Reports |    Robbie    |        Yes         |
+| Machine Translation |   Varun   |      Yes         |
 
-| Make a viewable stats page |    Robbie    |        Yes         |
+| Customizations |  Matthew     | Yes   |
 
-| High Contrast Accessibility |    Caroline   |        Yes         |
-
-|Active Order Completion | Matthew     | Yes   |
+| Magnifying Glass Touch Screen | Aedan     | Yes   |
 
 ---
 
@@ -65,28 +61,30 @@ Meeting Date: 4-13-2026
 
 ### Plans
 
-● Finish up OAuth
+● Weather Based Theme Switcher
 
-● Continue working on machine translation
+● Order Report Consumer Feedback
 
-● Continue working text/button sliders
+● Scheduler
 
-
+● Chatbot
 ### Task Assignments
 
 | Task Description | Assigned To |
 
 |------------------|-------------|
 
-| OAuth      |    Varun    |
+| Chatbot     |    Varun    |
 
-| Machine Translation    |    Varun   |
+| Weather API   |    Aedan    |
 
-| Magnifier Touch Screen Compatibility    |    Aedan    |
+| Theme Switcher   |    Matthew  |
 
-| Button/Text Enlarging    |    Matthew  |
+| Theme Switcher |    Caroline | 
 
-| CSS Pages    |    Caroline |
+| Order Reports Consumer Feedback  |    Robbie    |
+
+| Scheduler |    Robbie    |  
 
 
 
@@ -100,10 +98,9 @@ Meeting Date: 4-13-2026
 
 Summarize the discussion in paragraph form from the previous meeting.
 
-The team made plans on what our accessibility and beyond features would be.
+The team made plans on what we needed to have by the end of Sprint 2.
 
-along with assigning team members to start working on those features along
+The team also assigned members to start working on features to
 
-with smoothing over some of our previous code.
-
+prepare for Sprint 3.
 
