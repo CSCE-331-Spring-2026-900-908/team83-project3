@@ -97,25 +97,39 @@
             }
         });
 
-        var textsToTranslate = originalTexts.map(function(item) { return item.text.trim(); });
+        var chunkSize = 10;
+        var chunks = [];
+        for (var i = 0; i < originalTexts.length; i += chunkSize) {
+            chunks.push(originalTexts.slice(i, i + chunkSize));
+        }
 
-        fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(textsToTranslate.join('\n')) + '&langpair=en|es')
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (data.responseData && data.responseData.translatedText) {
-                    var translations = data.responseData.translatedText.split('\n');
-                    originalTexts.forEach(function(item, i) {
-                        if (translations[i]) {
-                            item.el.textContent = translations[i];
-                        }
-                    });
-                }
-                document.getElementById('translate-btn').textContent = 'English';
-                isSpanish = true;
-            })
-            .catch(function(err) { console.error('Translation error:', err); });
+        var completed = 0;
+        chunks.forEach(function(chunk, chunkIndex) {
+            var textsToTranslate = chunk.map(function(item) { return item.text.trim(); });
+
+            fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(textsToTranslate.join('\n')) + '&langpair=en|es')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.responseData && data.responseData.translatedText) {
+                        var translations = data.responseData.translatedText.split('\n');
+                        chunk.forEach(function(item, i) {
+                            if (translations[i]) {
+                                item.el.textContent = translations[i];
+                            }
+                        });
+                    }
+                    completed++;
+                    if (completed === chunks.length) {
+                        document.getElementById('translate-btn').textContent = 'English';
+                        isSpanish = true;
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Translation error on chunk ' + chunkIndex + ':', err);
+                    completed++;
+                });
+        });
     }
-
     // Chatbot
     function toggleChatbot() {
         var container = document.getElementById('chatbot-container');
