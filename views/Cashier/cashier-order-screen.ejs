@@ -65,6 +65,15 @@
                         <label><input type="checkbox" name="topping" value="lychee jelly"> Lychee Jelly</label>
                     </div>
 
+                    <div class="customization-group">
+                        <h3>Quantity</h3>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <button type="button" class="checkout-button" onclick="changeQty(-1)" style="width:36px;height:36px;font-size:1.2em;display:flex;align-items:center;justify-content:center;padding:0;">−</button>
+                            <span id="item-qty" style="font-size:1.1em;font-weight:bold;min-width:20px;text-align:center;">1</span>
+                            <button type="button" class="checkout-button" onclick="changeQty(1)" style="width:36px;height:36px;font-size:1.2em;display:flex;align-items:center;justify-content:center;padding:0;">+</button>
+                        </div>
+                    </div>
+
                     <div class="modal-actions">
                         <button id="cancel-btn" class="btn-secondary" onclick="closeCustomize()">Cancel</button>
                         <button class="btn-primary" onclick="confirmAdd()">Add to Cart</button>
@@ -73,6 +82,12 @@
             </div>
             <script>
             let currentItem = { name: '', price: 0 };
+            let itemQty = 1;
+
+            function changeQty(delta) {
+                itemQty = Math.max(1, itemQty + delta);
+                document.getElementById('item-qty').textContent = itemQty;
+            }
 
             function updateCartCount() {
                 const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -112,6 +127,9 @@
                 m.querySelectorAll('input[name="topping"]').forEach(function(cb) { cb.checked = false; });
                 document.getElementById('ice-group').classList.remove('disabled');
 
+                itemQty = 1;
+                document.getElementById('item-qty').textContent = 1;
+
                 m.classList.add('active');
             }
 
@@ -141,11 +159,13 @@
                 toppings.forEach(function(t) { customizationsArray.push(t.value.charAt(0).toUpperCase() + t.value.slice(1)); });
 
                 var cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                cart.push({
-                    name: currentItem.name,
-                    price: parseFloat((currentItem.price + toppings_amount).toFixed(2)),
-                    customizations: customizationsArray.join(', ')
-                });
+                for (var i = 0; i < itemQty; i++) {
+                    cart.push({
+                        name: currentItem.name,
+                        price: parseFloat((currentItem.price + toppings_amount).toFixed(2)),
+                        customizations: customizationsArray.join(', ')
+                    });
+                }
                 localStorage.setItem('cart', JSON.stringify(cart));
                 updateCartCount();
                 closeCustomize();

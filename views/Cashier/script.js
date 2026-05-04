@@ -35,13 +35,23 @@ function displayCart() {
                 ${item.customizations ? `<p style="font-style: italic; color: #666;">↳ ${item.customizations}</p>` : ''}
                 <p>$${parseFloat(item.price).toFixed(2)}</p>
             </div>
+            <button class="checkout-button" onclick="addMore(${index})" style="width:36px;height:36px;font-size:1.2em;display:flex;align-items:center;justify-content:center;padding:0;">+</button>
             <button class="remove-button" onclick="removeItem(${index})">Remove</button>
         </div>
     `).join('');
 }
+
 function removeItem(index) {
     let cart = JSON.parse(localStorage.getItem('cart'));
     cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    displayCart();
+}
+
+function addMore(index) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    var copy = JSON.parse(JSON.stringify(cart[index]));
+    cart.splice(index + 1, 0, copy);
     localStorage.setItem('cart', JSON.stringify(cart));
     displayCart();
 }
