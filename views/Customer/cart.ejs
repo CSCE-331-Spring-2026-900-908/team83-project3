@@ -52,7 +52,7 @@
                 if (item.customizations) {
                     html += '<span class="cart-item-custom">' + item.customizations + '</span>';
                 }
-                html += '</div><button class="btn-secondary" onclick="removeItem(' + i + ')">Remove</button></div>';
+                html += '</div><button class="btn-secondary" onclick="addMore(' + i + ')" style="font-size:calc(1em * var(--button-scale));padding:calc(4px * var(--button-scale)) calc(10px * var(--button-scale));">+</button><button class="btn-secondary" onclick="removeItem(' + i + ')">Remove</button></div>';
             });
             listEl.innerHTML = html;
 
@@ -61,6 +61,14 @@
             document.getElementById('tax').textContent = '$' + tax.toFixed(2);
             document.getElementById('total').textContent = '$' + (subtotal + tax).toFixed(2);
             summaryEl.style.display = 'block';
+        }
+        /*handles adding more of the same item to cart*/
+        function addMore(index) {
+            var cart = JSON.parse(localStorage.getItem('customer-cart') || '[]');
+            var copy = JSON.parse(JSON.stringify(cart[index]));
+            cart.splice(index + 1, 0, copy);
+            localStorage.setItem('customer-cart', JSON.stringify(cart));
+            renderCart();
         }
         /*handles removing items from cart*/
         function removeItem(index) {
