@@ -15,6 +15,9 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/partials', express.static('views/partials'));
 app.use('/cashier', express.static('views/Cashier'));
+app.use('/menu', express.static('views/Menu'));
+app.use('/manager', express.static('views/Manager'));
+
 
 
 // Session setup
